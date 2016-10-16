@@ -70,14 +70,18 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
    DcMotor motorRight2 ;
 
    //Drive Control Values
-   static final float normalTurnSpeed = (float) 0.75;
-   static final float normalSpeed = (float) 0.75;
+   static final float normalTurnSpeed = (float) 0.10;
+   static final float normalSpeed = (float) 0.25;
    static final float normalLine = 1;
-   static final double normalturn = 0.5;
-   float resetValueLeft, resetValueRight = 0;
+   static final double normal90turn = 60;
+   float resetValueLeft = 0;
+   float resetValueRight = 0;
+   double resetValueHeading = 0;
+   double degreesTurned = 0;
    float motorPowerMin = -1;
    float motorPowerMax = 1;
-   double positionLeft, positionRight;
+   double positionLeft = 0;
+   double positionRight = 0;
    float motorLeft1Power = 0;
    float motorLeft2Power = 0;
    float motorRight1Power = 0;
@@ -148,30 +152,26 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          whattodo = 2;
          break;
        case 2:
-           // gets current position and uses formula to find rotations or distance in inches
-           positionLeft = -motorLeft1.getCurrentPosition() - resetValueLeft;
-           positionRight = motorRight1.getCurrentPosition() - resetValueRight;
-           positionLeft = (positionLeft / 2500);//(wheelDiameter*3.14159265358)
-           positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
+         // gets current position and uses formula to find rotations or distance in inches
+         positionLeft = -motorLeft1.getCurrentPosition() - resetValueLeft;
+         positionRight = motorRight1.getCurrentPosition() - resetValueRight;
+         positionLeft = (positionLeft / 2500);//(wheelDiameter*3.14159265358)
+         positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
 
          if((Math.abs(positionLeft) > normalLine) && (positionRight > normalLine))
            whattodo =3;
          break;
        case 3:
          stopMove();
-         resetValueLeft = -motorLeft1.getCurrentPosition();
-         resetValueRight = motorRight1.getCurrentPosition();
+         resetValueHeading = angles.firstAngle;
          startLeftTurn();
          whattodo = 4;
          break;
        case 4:
          // gets current position and uses formula to find rotations or distance in inches
-         positionLeft = -motorLeft1.getCurrentPosition()- resetValueLeft;
-         positionRight = motorRight1.getCurrentPosition() - resetValueRight;
+         degreesTurned = angles.firstAngle- resetValueHeading;
 
-         positionLeft = (positionLeft / 2500);//(wheelDiameter*3.14159265358)
-         positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
-         if((Math.abs(positionLeft) > normalturn) && (positionRight > normalturn))
+         if((Math.abs(degreesTurned) > normal90turn))
            whattodo = 5;
          break;
        case 5:
@@ -216,17 +216,12 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
        //servoCD.setPosition(servoCDPosition);
        // servoTail.setPosition(servoTailPosition);
 
-
-       // gets current position and uses formula to find rotations or distance in inches
-       positionLeft = -motorLeft1.getCurrentPosition();
-       positionRight = motorRight1.getCurrentPosition();
-
-       positionLeft = (positionLeft / 2500);  //(wheelDiameter*3.14159265358)
-       positionRight = (positionRight / 2500); //(wheelDiameter*3.141592653)
-
-
-
-       motorLeft1.setPower(motorLeft1Power);
+     // gets current position and uses formula to find rotations or distance in inches
+     positionLeft = -motorLeft1.getCurrentPosition();
+     positionRight = motorRight1.getCurrentPosition();
+     positionLeft = (positionLeft / 2500);  //(wheelDiameter*3.14159265358)
+     positionRight = (positionRight / 2500); //(wheelDiameter*3.141592653)
+     motorLeft1.setPower(motorLeft1Power);
    }
 
    void composeTelemetry() {
@@ -271,7 +266,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
              return formatAngle(angles.angleUnit, angles.thirdAngle);
            }
          });
-
      telemetry.addLine()
          .addData("Light1 Raw", new Func<String>() {
            @Override public String value() {
@@ -321,15 +315,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      telemetry.addLine()
          .addData("Control Count", new Func<String>() {
            @Override public String value() {
-             return String.format("%.2f", count);
+             return formatDouble(count);
            }
          })
          .addData("WhatToDo", new Func<String>() {
            @Override public String value() {
-             return String.format("%.2f",whattodo));
-           }
+             return formatDouble(whattodo);}
          });
-     ;
    }
 
    //----------------------------------------------------------------------------------------------
@@ -337,7 +329,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
    //----------------------------------------------------------------------------------------------
 
    String formatDouble(double inputValue) {
-     return String.format("%.2f", inputValue)
+     return String.format("%.2f", inputValue);
    }
 
    String formatAngle(AngleUnit angleUnit, double angle) {
@@ -347,7 +339,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
    String formatDegrees(double degrees){
      return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
    }
- }
 
    public void startLeftTurn(){
      motorLeft1Power = -normalTurnSpeed;
@@ -355,12 +346,14 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      motorRight1Power = normalTurnSpeed;
      motorRight2Power = normalTurnSpeed;
    }
+
    public void moveForward(){
      motorLeft1Power = normalSpeed;
      motorLeft2Power = normalSpeed;
      motorRight1Power = normalSpeed;
      motorRight2Power = normalSpeed;
    }
+
    public void stopMove(){
      motorLeft1Power = 0;
      motorLeft2Power = 0;
