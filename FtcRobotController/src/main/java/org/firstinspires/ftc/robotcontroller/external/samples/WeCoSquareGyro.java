@@ -54,6 +54,22 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  @Autonomous(name="WeCo: AutoSquareGyro", group="WeCo")
 // @Disabled
  public class WeCoSquareGyro extends OpMode  {
+     public enum MotorState{
+         ERROR_STATE,
+         WAIT_TO_START,
+         STOP_MOVING,
+         WAIT_FOR_STABLE,
+         DRIVE_FORWARD,
+         WAIT_DRIVE_FORWARD,
+         START_LEFT_TURN,
+         WAIT_TURN_COMPLETE,
+         ARE_WE_DONE,
+         DONE
+     }
+
+     private MotorState currentState;
+     private MotorState nextState;
+
    // Initialize HW Data Objects
    TouchSensor touchSensor1;  // Hardware Device Object
    LightSensor lightSensor1;  // Hardware Device Object
@@ -130,6 +146,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
    double count;
    double etime;
    int whattodo = 1; //0 do nothing; 1 moveforward; 2 turn
+    MotorState nextStateAfterWait;
+
 
    @Override
    public void start() {
@@ -140,10 +158,51 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
    @Override
    public void loop() {
-
-     telemetry.update();
+       telemetry.update();
+       currentState = nextState;
+       switch(nextState) {
+           case WAIT_TO_START:
+               nextState = MotorState.DRIVE_FORWARD;
+               break;
+           case DRIVE_FORWARD:
+               resetValueLeft = -motorLeft1.getCurrentPosition();
+               resetValueRight = motorRight1.getCurrentPosition();
+               MoveForward();
+               nextState = MotorState.WAIT_DRIVE_FORWARD;
+               break;
+           case WAIT_DRIVE_FORWARD:
+               if(AreWeThereYet(resetValueLeft, resetValueRight)){
+                   nextState = MotorState.STOP_MOVING;
+                   nextStateAfterWait = MotorState.START_LEFT_TURN;
+               }
+               break;
+           case START_LEFT_TURN:
+               nextState = MotorState.WAIT_TURN_COMPLETE;
+               break;
+           case WAIT_TURN_COMPLETE:
+               nextState = MotorState.STOP_MOVING;
+               nextStateAfterWait = MotorState.ARE_WE_DONE;
+               break;
+           case ARE_WE_DONE:
+               nextState = MotorState.DRIVE_FORWARD;
+               nextState = MotorState.DONE;
+               break;
+           case STOP_MOVING:
+               nextState = MotorState.WAIT_FOR_STABLE;
+               break;
+           case WAIT_FOR_STABLE:
+               nextState = nextStateAfterWait;
+               break;
+           case DONE:
+               break;
+           case ERROR_STATE:
+               break;
+           default:
+               break;
+       }
      if(touchSensor1.isPressed())
            whattodo = 6;
+
      switch (whattodo) {
        case 1:
          resetValueLeft = -motorLeft1.getCurrentPosition();
@@ -190,7 +249,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          stopMove();
          break;
        default:
-         whattodo = 0;
+         whattodo = MOTOR_STATE.ERROR_STATE;
          break;
 
      }
@@ -347,12 +406,23 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      motorRight2Power = normalTurnSpeed;
    }
 
-   public void moveForward(){
-     motorLeft1Power = normalSpeed;
-     motorLeft2Power = normalSpeed;
-     motorRight1Power = normalSpeed;
-     motorRight2Power = normalSpeed;
-   }
+    public void MoveForward(){
+        motorLeft1Power = normalSpeed;
+        motorLeft2Power = normalSpeed;
+        motorRight1Power = normalSpeed;
+        motorRight2Power = normalSpeed;
+    }
+
+     public boolean AreWeThereYet(int resetValueLeft, int resetValueRight){
+         positionLeft = -motorLeft1.getCurrentPosition() - resetValueLeft;
+         positionRight = motorRight1.getCurrentPosition() - resetValueRight;
+         positionLeft = ((double)positionLeft / 2500.0);//(wheelDiameter*3.14159265358)
+         positionRight = ((double)positionRight / 2500.0); //(wheelDiameter*3.14159265358)
+
+         if((Math.abs(positionLeft) > normalLine) && (positionRight > normalLine))
+             return true;
+         return false;
+     }
 
    public void stopMove(){
      motorLeft1Power = 0;
