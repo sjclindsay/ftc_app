@@ -203,8 +203,10 @@ public class WeCoSquareGyro extends OpMode  {
                 }
                 break;
             case DONE:
+                StopMove();
                 break;
             case ERROR_STATE:
+                StopMove();
                 break;
             default:
                 break;
