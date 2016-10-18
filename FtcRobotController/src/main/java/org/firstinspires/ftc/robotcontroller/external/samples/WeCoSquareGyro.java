@@ -66,7 +66,13 @@ public class WeCoSquareGyro extends OpMode  {
         ARE_WE_DONE,
         DONE
     }
-
+    //Drive Control Values
+    static final float normalTurnSpeed = (float) 0.10;
+    static final float normalSpeed = (float) 0.25;
+    static final float normalLine = 1;
+    static final double normal90turn = 60;
+    static final double WheelPositionDivisior = 2500.0;
+    static final double ACCLERATION_STABILITY = 0.1; //This is in m/s^2
     private MotorState currentState;
     private MotorState nextState;
     private MotorState nextStateAfterWait;
@@ -79,17 +85,12 @@ public class WeCoSquareGyro extends OpMode  {
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
+    Acceleration prevGravity;
 
     DcMotor motorLeft1;
     DcMotor motorLeft2;
-    DcMotor motorRight1 ;
-    DcMotor motorRight2 ;
-
-    //Drive Control Values
-    static final float normalTurnSpeed = (float) 0.10;
-    static final float normalSpeed = (float) 0.25;
-    static final float normalLine = 1;
-    static final double normal90turn = 60;
+    DcMotor motorRight1;
+    DcMotor motorRight2;
 
     int resetValueLeft = 0;
     int resetValueRight = 0;
@@ -103,7 +104,6 @@ public class WeCoSquareGyro extends OpMode  {
     float motorLeft2Power = 0;
     float motorRight1Power = 0;
     float motorRight2Power = 0;
-    static final double WheelPositionDivisior = 2500.0;
 
     public WeCoSquareGyro() {
     }
@@ -380,27 +380,46 @@ public class WeCoSquareGyro extends OpMode  {
     public boolean AreWeThereYet(int resetValueLeft, int resetValueRight){
         positionLeft = -motorLeft1.getCurrentPosition() - resetValueLeft;
         positionRight = motorRight1.getCurrentPosition() - resetValueRight;
-        positionLeft = ((double)positionLeft / WheelPositionDivisior);//(wheelDiameter*3.14159265358)
-        positionRight = ((double)positionRight / WheelPositionDivisior); //(wheelDiameter*3.14159265358)
+        positionLeft = positionLeft / WheelPositionDivisior;//(wheelDiameter*3.14159265358)
+        positionRight = positionRight / WheelPositionDivisior; //(wheelDiameter*3.14159265358)
 
-        if((Math.abs(positionLeft) > normalLine) && (positionRight > normalLine))
-            return true;
-        return false;
+        return (Math.abs(positionLeft) > normalLine) && (positionRight > normalLine);
     }
 
     public boolean AreWeTurnedYet(double resetValueHeading) {
         degreesTurned = angles.firstAngle - resetValueHeading;
 
-        if((Math.abs(degreesTurned) > normal90turn))
-            return true;
-        return false;
+        return Math.abs(degreesTurned) > normal90turn;
     }
 
+    // Save some stack! This is a functio that is called alot...
+    private double xDiff;
+    private double yDiff;
     public boolean AreWeStableYet(){
-        return True;
+        gravity = imu.getGravity();
+
+        if(prevGravity == null){ //First time we call this function or we are starting a test
+            prevGravity = gravity;
+            return false;
+        }
+
+        xDiff = Math.abs(gravity.xAccel - prevGravity.xAccel);
+        yDiff = Math.abs(gravity.yAccel - prevGravity.yAccel);
+
+        if((xDiff < ACCLERATION_STABILITY) && (yDiff < ACCLERATION_STABILITY)){
+            prevGravity = null;
+            return true;
+        }
+
+        prevGravity = gravity;
+        return false;
     }
 
     @Override
     public void stop() {
+        motorLeft1.setPower(0);
+        motorLeft2.setPower(0);
+        motorRight1.setPower(0);
+        motorRight2.setPower(0);
     }
 }
