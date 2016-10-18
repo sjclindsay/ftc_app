@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -46,14 +47,19 @@ import java.util.Date;
  * <p>
  *Enables control of the robot via the gamepad
  */
-public class ServoOp extends OpMode {
 
-  Servo servo1 ;
+@TeleOp(name="WeCo: ServoOp", group="WeCo")
+//@Disabled
+public class ServoOp extends OpMode {
+    Servo servoLeftRight;
+    Servo servoPushButton;
+
 
     final static double servoMinRange = 0.0 ;
     final static double servoMaxRange = 1.0 ;
     double servoDelta = 0.25 ;
-    double servoPosition ;
+    double servoLeftRightPosition;
+    double servoPositionPushButon;
     boolean BbuttonOn= false;
     ElapsedTime BbuttonTimmer = new ElapsedTime();
     boolean AbuttonOn= false;
@@ -63,14 +69,21 @@ public class ServoOp extends OpMode {
 
     @Override
   public void init() {
-      servo1 = hardwareMap.servo.get("servo_1") ;
-
-      servoPosition = 0.5 ;
+        servoLeftRight = hardwareMap.servo.get("servo_1") ;
+        servoPushButton = hardwareMap.servo.get("servo_2");
 
   }
 
+    public void start() {
+        servoLeftRightPosition = 0.5 ;
+        servoPositionPushButon = 0.0;
+
+    }
+    
   @Override
   public void loop() {
+
+    gamepad2.right_stick_y;
 
     if (gamepad2.a || gamepad2.b) {
 
@@ -126,10 +139,3 @@ public class ServoOp extends OpMode {
   }
 }
 
-/*
-    if (gamepad1.a || gamepad1.b) {
-      gamepad = "Gamepad a or b is pressed" ;
-    } else {
-      gamepad = "Gamepad is not pressed" ;
-    }
- */
