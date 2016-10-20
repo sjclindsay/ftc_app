@@ -62,7 +62,7 @@ public class ServoOp extends OpMode {
     double servoPositionPushButon;
     boolean BbuttonOn= false;
     ElapsedTime BbuttonTimmer = new ElapsedTime();
-    boolean AbuttonOn= false;
+    boolean RTriggerOn= false;
     ElapsedTime AbuttonTimmer = new ElapsedTime();
     double buttonResetTime = 0.25 ;
 
@@ -77,60 +77,27 @@ public class ServoOp extends OpMode {
     public void start() {
         servoLeftRightPosition = 0.5 ;
         servoPositionPushButon = 0.0;
-
     }
-    
+
   @Override
   public void loop() {
 
-    gamepad2.right_stick_y;
+      servoPositionPushButon += gamepad2.right_trigger/100;
+      if(gamepad2.right_trigger == 0.0) {
+          servoPositionPushButon = 0.0;
+      }
 
-    if (gamepad2.a || gamepad2.b) {
+      servoLeftRightPosition += -gamepad2.right_stick_y;
 
-        if (gamepad2.a && !AbuttonOn) {
+      //DbgLog.msg("=====servoPosition====="+String.format("%f", servoPositionClipped)) ;
+      servoPositionPushButon = Range.clip(servoPositionPushButon, servoMinRange, servoMaxRange) ;
+      servoLeftRightPosition = Range.clip(servoLeftRightPosition, servoMinRange, servoMaxRange) ;
+      servoPushButton.setPosition(servoPositionPushButon);
+      servoLeftRight.setPosition(servoLeftRightPosition);
 
-            servoPosition = servoPosition + servoDelta;
-            DbgLog.msg("=====Decrease arm position=====");
-            AbuttonOn = true;
-            AbuttonTimmer.reset();
-
-        }
-        if (AbuttonOn == true && (AbuttonTimmer.time() > buttonResetTime)) {
-            AbuttonOn = false;
-            DbgLog.msg("=====Reset AbuttonOn=====");
-        }
-
-
-        //DbgLog.msg("=====servoPosition====="+String.format("%f", servoPositionClipped)) ;
-
-        if (gamepad2.b && !BbuttonOn) {
-
-            servoPosition = servoPosition - servoDelta;
-            DbgLog.msg("=====Decrease arm position=====" + String.format("%f", servoPosition));
-            BbuttonOn = true;
-            BbuttonTimmer.reset();
-
-        }
-        if (BbuttonOn == true && (BbuttonTimmer.time() > buttonResetTime)) {
-            BbuttonOn = false;
-            DbgLog.msg("=====Reset BbuttonOn=====");
-        }
-
-
-        if ((gamepad2.a == false) && (gamepad2.b == false)) {
-            DbgLog.msg("=====Not Pressed=====");
-        }
-    } else if ((gamepad2.left_trigger > 0) || (gamepad2.right_trigger > 0)) {
-            servoPosition = servoPosition + (gamepad2.left_trigger / 100) - (gamepad2.right_trigger / 100);
-    }
-
-    servoPosition = Range.clip(servoPosition, servoMinRange, servoMaxRange) ;
-
-    servo1.setPosition(servoPosition);
-
-    telemetry.addData("Left Trigger", "Left Trigger is at " + String.format("%.2f", gamepad2.left_trigger));
-    telemetry.addData("Right Trigger", "Right Trigger is at " + String.format("%.2f", gamepad2.right_trigger));
-    telemetry.addData("Servo Position", "Servo is at " + String.format("%f", servoPosition)) ;
+      telemetry.addData("Left Trigger", "Left Trigger is at " + String.format("%.2f", gamepad2.left_trigger));
+      telemetry.addData("Right Trigger", "Right Trigger is at " + String.format("%.2f", gamepad2.right_trigger));
+      telemetry.addData("Servo Position", "Servo is at " + String.format("%f", servoPositionPushButon)) ;
 
   }
   @Override
