@@ -83,13 +83,13 @@ public class ServoOp extends OpMode {
   @Override
   public void loop() {
 
-    gamepad2.right_stick_y;
+    //gamepad2.right_stick_y;
 
     if (gamepad2.a || gamepad2.b) {
 
         if (gamepad2.a && !AbuttonOn) {
 
-            servoPosition = servoPosition + servoDelta;
+            //servoPosition = servoPosition + servoDelta;
             DbgLog.msg("=====Decrease arm position=====");
             AbuttonOn = true;
             AbuttonTimmer.reset();
@@ -105,8 +105,8 @@ public class ServoOp extends OpMode {
 
         if (gamepad2.b && !BbuttonOn) {
 
-            servoPosition = servoPosition - servoDelta;
-            DbgLog.msg("=====Decrease arm position=====" + String.format("%f", servoPosition));
+            //servoPosition = servoPosition - servoDelta;
+           // DbgLog.msg("=====Decrease arm position=====" + String.format("%f", servoPosition));
             BbuttonOn = true;
             BbuttonTimmer.reset();
 
@@ -121,16 +121,16 @@ public class ServoOp extends OpMode {
             DbgLog.msg("=====Not Pressed=====");
         }
     } else if ((gamepad2.left_trigger > 0) || (gamepad2.right_trigger > 0)) {
-            servoPosition = servoPosition + (gamepad2.left_trigger / 100) - (gamepad2.right_trigger / 100);
+           // servoPosition = servoPosition + (gamepad2.left_trigger / 100) - (gamepad2.right_trigger / 100);
     }
 
-    servoPosition = Range.clip(servoPosition, servoMinRange, servoMaxRange) ;
+    //servoPosition = Range.clip(servoPosition, servoMinRange, servoMaxRange) ;
 
-    servo1.setPosition(servoPosition);
+    //servo1.setPosition(servoPosition);
 
     telemetry.addData("Left Trigger", "Left Trigger is at " + String.format("%.2f", gamepad2.left_trigger));
     telemetry.addData("Right Trigger", "Right Trigger is at " + String.format("%.2f", gamepad2.right_trigger));
-    telemetry.addData("Servo Position", "Servo is at " + String.format("%f", servoPosition)) ;
+   // telemetry.addData("Servo Position", "Servo is at " + String.format("%f", servoPosition)) ;
 
   }
   @Override
