@@ -31,8 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import android.provider.Settings;
+
 import com.qualcomm.hardware.adafruit.BNO055IMU;
-import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -104,6 +105,10 @@ public class WeCoSquareGyro extends OpMode  {
     float motorLeft2Power = 0;
     float motorRight1Power = 0;
     float motorRight2Power = 0;
+    PIDController motorPID;
+    Orientation startOrientation;
+
+    private Orientation startingHeading;
 
     public WeCoSquareGyro() {
     }
@@ -165,10 +170,11 @@ public class WeCoSquareGyro extends OpMode  {
             case DRIVE_FORWARD:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
-                MoveForward();
+                startingHeading = MoveForward();
                 nextState = MotorState.WAIT_DRIVE_FORWARD;
                 break;
             case WAIT_DRIVE_FORWARD:
+                StabilizeMeOnCurrentHeading(startingHeading);
                 if (AreWeThereYet(resetValueLeft, resetValueRight)) {
                     nextState = MotorState.STOP_MOVING;
                     nextStateAfterWait = MotorState.START_LEFT_TURN;
@@ -360,12 +366,16 @@ public class WeCoSquareGyro extends OpMode  {
         motorRight1Power = normalTurnSpeed;
         motorRight2Power = normalTurnSpeed;
     }
-
-    public void MoveForward(){
+    // Returning the current Heading before we start moving... We want to continue on this path
+    public Orientation MoveForward(){
         motorLeft1Power = normalSpeed;
         motorLeft2Power = normalSpeed;
         motorRight1Power = normalSpeed;
         motorRight2Power = normalSpeed;
+
+        startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        motorPID = new PIDController(startOrientation.firstAngle);
+        return startOrientation;
     }
 
     public void StopMove(){
@@ -417,6 +427,31 @@ public class WeCoSquareGyro extends OpMode  {
         return false;
     }
 
+    //Change this if value between readings bounces to much
+    private static final float SIGNIFICANT_HEADING_DIFF = 0;
+    float diffFromStartHeading;
+    float currentHeading;
+    float headingCorrectorLeft;
+    float headingCorrectorRight;
+    private final float CORRECTOR = 10;
+
+    private void StabilizeMeOnCurrentHeading(Orientation startingHeading){
+        currentHeading = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
+        diffFromStartHeading = startingHeading.firstAngle - currentHeading;
+        if(true) {
+            headingCorrectorLeft = (diffFromStartHeading < -SIGNIFICANT_HEADING_DIFF) ? -1 * (-diffFromStartHeading / 180) * CORRECTOR : -1 * (-diffFromStartHeading / 180) * CORRECTOR ;
+            headingCorrectorRight = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
+        } else { //PID controller
+            float correction = motorPID.Update(currentHeading);
+            headingCorrectorLeft = (correction < -SIGNIFICANT_HEADING_DIFF) ? -1 * correction : -1 * correction;
+            headingCorrectorRight = (correction > SIGNIFICANT_HEADING_DIFF) ? correction : correction;
+        }
+        motorLeft1Power = normalSpeed + headingCorrectorLeft; // normalSpeed is between 0 and 1
+        motorLeft2Power = normalSpeed + headingCorrectorLeft;
+        motorRight1Power = normalSpeed + headingCorrectorRight;
+        motorRight2Power = normalSpeed + headingCorrectorRight;
+    }
+
     @Override
     public void stop() {
         motorLeft1.setPower(0);
@@ -424,4 +459,52 @@ public class WeCoSquareGyro extends OpMode  {
         motorRight1.setPower(0);
         motorRight2.setPower(0);
     }
+
+    class PIDController{
+        private PIDController() {}
+        public PIDController(float setPoint){
+            setPoint_ = setPoint;
+            lastError_ = 0;
+            lastTime_ = System.currentTimeMillis();
+            errorSum_ = 0;
+
+            kp_ = 1;
+            ki_ = (float)0.1;
+            kd_ = (float)0.01;
+        }
+
+        public PIDController(float setPoint, float kp, float ki, float kd){
+            setPoint_ = setPoint;
+            lastError_ = 0;
+            lastTime_ = System.currentTimeMillis();
+            errorSum_ = 0;
+
+            kp_ = kp;
+            ki_ = ki;
+            kd_ = kd;
+        }
+
+        private float lastError_;
+        private float setPoint_;
+        private float errorSum_;
+        private float kp_;
+        private float ki_;
+        private float kd_;
+        private long lastTime_;
+
+        public float Update(float newInput){
+            long time = System.currentTimeMillis();
+            long period = time - lastTime_;
+            float error  = setPoint_ - newInput;
+            errorSum_ += (error * period);
+            double derError = (error - lastError_) / period;
+
+            float output = (float)(kp_ * error) + (float)(ki_ * errorSum_) + (float)(kd_ * derError);
+
+            lastError_ = error;
+            lastTime_ = time;
+            return output;
+        }
+    }
 }
+
