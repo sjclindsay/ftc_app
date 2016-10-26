@@ -50,6 +50,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -69,13 +70,13 @@ public class ServoOp extends OpMode {
     Servo servoPushButton;
     Servo servoUpDown;
     private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
-    private static double SERVOUPDOWN_STARTPOSITION = 0.8;
-    private static double SERVOPUSHBUTTON_STARTPOSITION = 0.0;
+    private static double SERVOUPDOWN_STARTPOSITION = 0.2;
+    private static double SERVOPUSHBUTTON_STARTPOSITION = 1.0;
     // bPrevState and bCurrState represent the previous and current state of the button.
     private static boolean bPrevState = false;
     private static boolean bCurrState = false;
     // bLedOn represents the state of the LED.
-    private boolean bLedOn = true;
+    private boolean bLedOn = false;
 
 
     final static double servoMinRange = 0.0 ;
@@ -93,9 +94,10 @@ public class ServoOp extends OpMode {
     ColorSensor sensorRGB;
     DeviceInterfaceModule cdim;
 
+
     // we assume that the LED pin of the RGB sensor is connected to
     // digital port 5 (zero indexed).
-    static final int LED_CHANNEL = 5;
+    static final int LED_CHANNEL = 0;
 
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
@@ -132,6 +134,74 @@ public class ServoOp extends OpMode {
 
         // turn the LED on in the beginning, just so user will know that the sensor is active.
         cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
+        servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
+        servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
+        servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
+        telemetry.addLine()
+                .addData(" Right Trigger", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%.2f", gamepad2.right_trigger);
+                    }
+                });
+        telemetry.addLine()
+                .addData("Stick_x", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%.2f", gamepad2.right_stick_x);
+                    }
+                })
+                .addData("Stick_y", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%.2f", gamepad2.right_stick_y);
+                    }
+                });
+        telemetry.addLine()
+                .addData("Servo LT/RT", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%.2f", servoLeftRightPosition);
+                    }
+                })
+                .addData("Servo Up/Dn", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%.2f", servoUpDownPosition);
+                    }
+                });
+        telemetry.addLine()
+                .addData("LED", bLedOn ? "On" : "Off")
+                .addData("Hue", hsvValues[0]);
+        telemetry.addLine()
+                .addData("Red ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%d",sensorRGB.red());
+                    }
+                })
+                .addData("Green ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%d", sensorRGB.green());
+                    }
+                });
+        telemetry.addLine()
+                .addData("Blue ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%d",sensorRGB.blue());
+                    }
+                })
+                .addData("Clear ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.format("%d", sensorRGB.alpha());
+                    }
+                });
+        telemetry.addLine()
+            .addData("X",String.valueOf(gamepad2.x))
+        ;
     }
 
     public void start() {
@@ -144,68 +214,35 @@ public class ServoOp extends OpMode {
   @Override
   public void loop() {
 
-      setupLED(gamepad2.x);
+
+      bCurrState = gamepad2.x;
+      // check for button-press state transitions.
+      if ((bCurrState == true) && (bCurrState != bPrevState))  {
+
+          // button is transitioning to a pressed state. Toggle the LED.
+          bLedOn = !bLedOn;
+          cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
+      }
+      // update previous state variable.
+      bPrevState = bCurrState;
 
       // convert the RGB values to HSV values.
       Color.RGBToHSV((sensorRGB.red() * 255) / 800, (sensorRGB.green() * 255) / 800, (sensorRGB.blue() * 255) / 800, hsvValues);
 
       if(gamepad2.right_trigger > 0.0) {
-          servoPositionPushButon += gamepad2.right_trigger/100;
+          servoPositionPushButon -= gamepad2.right_trigger/10;
       } else {
-          servoPositionPushButon = 0.0;
+          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
       }
 
-      servoLeftRightPosition += gamepad2.right_stick_x;
-      servoUpDownPosition += -gamepad2.right_stick_y;
+      servoLeftRightPosition += (gamepad2.right_stick_x/200);
+      servoUpDownPosition += (-gamepad2.right_stick_y/200);
       servoPositionPushButon = Range.clip(servoPositionPushButon, servoMinRange, servoMaxRange) ;
 
       servoLeftRight.setPosition(servoLeftRightPosition);
       servoUpDown.setPosition(servoUpDownPosition);
       servoPushButton.setPosition(servoPositionPushButon);
 
-      telemetry.addLine()
-              .addData(" Right Trigger", new Func<String>() {
-                  @Override
-                  public String value() {
-                      return String.format("%.2f", gamepad2.right_trigger);
-                  }
-              });
-      telemetry.addLine()
-              .addData("Stick_x", new Func<String>() {
-                  @Override
-                  public String value() {
-                      return String.format("%.2f", gamepad2.right_stick_x);
-                  }
-              })
-              .addData("Stick_y", new Func<String>() {
-                  @Override
-                  public String value() {
-                      return String.format("%.2f", gamepad2.right_stick_y);
-                  }
-              });
-      telemetry.addLine()
-              .addData("Servo LT/RT", new Func<String>() {
-                  @Override
-                  public String value() {
-                      return String.format("%.2f", servoLeftRightPosition);
-                  }
-              })
-              .addData("Servo Up/Dn", new Func<String>() {
-                  @Override
-                  public String value() {
-                      return String.format("%.2f", servoUpDownPosition);
-                  }
-              });
-      telemetry.addLine()
-              .addData("LED", bLedOn ? "On" : "Off")
-              .addData("Hue", hsvValues[0]);
-      telemetry.addLine()
-              .addData("Red  ", sensorRGB.red())
-              .addData("Green", sensorRGB.green());
-      telemetry.addLine()
-              .addData("Blue ", sensorRGB.blue())
-              .addData("Clear", sensorRGB.alpha());
-      ;
       telemetry.update();
 
 
@@ -214,17 +251,5 @@ public class ServoOp extends OpMode {
   public void stop() {
 
   }
-    void setupLED(boolean buttonState) {
-
-        // check for button-press state transitions.
-        if ((bCurrState == true) && (bCurrState != bPrevState))  {
-
-            // button is transitioning to a pressed state. Toggle the LED.
-            bLedOn = !bLedOn;
-            cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
-        }
-        // update previous state variable.
-        bPrevState = bCurrState;
-    }
 }
 

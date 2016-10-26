@@ -100,7 +100,7 @@ public class SensorAdafruitRGB extends LinearOpMode {
     boolean bCurrState = false;
 
     // bLedOn represents the state of the LED.
-    boolean bLedOn = true;
+    boolean bLedOn = false;
 
     // get a reference to our DeviceInterfaceModule object.
     cdim = hardwareMap.deviceInterfaceModule.get("dim");
@@ -142,6 +142,7 @@ public class SensorAdafruitRGB extends LinearOpMode {
 
       // send the info back to driver station using telemetry function.
       telemetry.addData("LED", bLedOn ? "On" : "Off");
+      telemetry.addData("Gamepad1.x: ", String.valueOf(gamepad1.x));
       telemetry.addData("Clear", sensorRGB.alpha());
       telemetry.addData("Red  ", sensorRGB.red());
       telemetry.addData("Green", sensorRGB.green());
