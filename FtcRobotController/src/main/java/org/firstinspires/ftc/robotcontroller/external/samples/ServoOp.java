@@ -72,12 +72,6 @@ public class ServoOp extends OpMode {
     private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
     private static double SERVOUPDOWN_STARTPOSITION = 0.2;
     private static double SERVOPUSHBUTTON_STARTPOSITION = 1.0;
-    // bPrevState and bCurrState represent the previous and current state of the button.
-    private static boolean bPrevState = false;
-    private static boolean bCurrState = false;
-    // bLedOn represents the state of the LED.
-    private boolean bLedOn = false;
-
 
     final static double servoMinRange = 0.0 ;
     final static double servoMaxRange = 1.0 ;
@@ -85,6 +79,12 @@ public class ServoOp extends OpMode {
     double servoLeftRightPosition;
     double servoUpDownPosition;
     double servoPositionPushButon;
+
+    // bPrevState and bCurrState represent the previous and current state of the button.
+    private static boolean bPrevState = false;
+    private static boolean bCurrState = false;
+    // bLedOn represents the state of the LED.
+    private boolean bLedOn = false;
     boolean BbuttonOn= false;
     ElapsedTime BbuttonTimmer = new ElapsedTime();
     boolean AbuttonOn= false;
@@ -93,8 +93,6 @@ public class ServoOp extends OpMode {
 
     ColorSensor sensorRGB;
     DeviceInterfaceModule cdim;
-
-
     // we assume that the LED pin of the RGB sensor is connected to
     // digital port 5 (zero indexed).
     static final int LED_CHANNEL = 0;
