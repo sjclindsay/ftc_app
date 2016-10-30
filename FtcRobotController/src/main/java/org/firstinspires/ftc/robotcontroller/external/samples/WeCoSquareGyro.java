@@ -265,7 +265,7 @@ public class WeCoSquareGyro extends OpMode  {
                         return formatDouble(headingCorrectorLeft);
                     }
                 })
-                .addData("headingCorrectorRight", new Func<String>() {
+                .addData("headingCorrectorRight ", new Func<String>() {
                     @Override
                     public String value() {
                         return formatDouble(headingCorrectorRight);
