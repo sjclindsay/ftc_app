@@ -69,7 +69,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      Servo servoUpDown;
      private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
      private static double SERVOUPDOWN_STARTPOSITION = 0.2;
-     private static double SERVOPUSHBUTTON_STARTPOSITION = 1.0;
+     private static double SERVOPUSHBUTTON_STARTPOSITION = 0.0;
 
      final static double servoMinRange = 0.0;
      final static double servoMaxRange = 1.0;
@@ -160,7 +160,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      public void start() {
 
          motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
-         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
+         motorLeft2 = hardwareMap.dcMotor.get( "motorLeft2");
          motorRight1 = hardwareMap.dcMotor.get("motorRight1");
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
          motorLeft1.setDirection(DcMotor.Direction.REVERSE);
@@ -180,9 +180,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void loop() {
          //sets motor power
-         motorScalar = getMotorScalar(gamepad2.dpad_up, gamepad2.dpad_down, motorScalar);
+         motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
          motorLeft1power = controlmotor(gamepad1.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
-         motorRight1power = controlmotor(gamepad2.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
+         motorRight1power = controlmotor(gamepad1.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
          motorLeft2power = motorLeft1power;
          motorRight2power = motorRight1power;
 
@@ -202,9 +202,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
         controlColorSensor();
 
          //Gimble Control
-         servoPositionPushButon = controlButtonPusher(gamepad2.right_trigger);
+         servoPositionPushButon = controlButtonPusher(gamepad2.right_trigger, servoPositionPushButon);
          servoLeftRightPosition = controlGimble(gamepad2.right_stick_x, servoLeftRightPosition, 200);
          servoUpDownPosition = controlGimble(-gamepad2.right_stick_y, servoUpDownPosition, 200);
+
+         servoLeftRight.setPosition(servoLeftRightPosition);
+         servoUpDown.setPosition(servoUpDownPosition);
+         servoPushButton.setPosition(servoPositionPushButon);
 
          telemetry.update();
      }
@@ -283,10 +287,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          return motorPower;
      }
 
-     private double controlButtonPusher(double triggerPosition) {
-         double pushedPosition = SERVOPUSHBUTTON_STARTPOSITION;
+     private double controlButtonPusher(double triggerPosition,double pushedPosition) {
          if(triggerPosition > 0.0) {
-             pushedPosition -= triggerPosition/10;
+             pushedPosition += triggerPosition/10;
          } else {
              pushedPosition = SERVOPUSHBUTTON_STARTPOSITION;
          }
@@ -384,12 +387,19 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                          return String.format("%.2f", servoLeftRightPosition);
                      }
                  })
-                 .addData("Servo Up/Dn", new Func<String>() {
+                 .addData("Up/Dn", new Func<String>() {
                      @Override
                      public String value() {
                          return String.format("%.2f", servoUpDownPosition);
                      }
-                 });
+                 })
+                 .addData("Button", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", servoPositionPushButon);
+                     }
+                 })
+         ;
          telemetry.addLine()
                  .addData("LED", bLedOn ? "On" : "Off")
                  .addData("Hue", hsvValues[0]);
@@ -422,6 +432,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          telemetry.addLine()
                  .addData("X", String.valueOf(gamepad2.x))
          ;
+         /*
          telemetry.addLine()
                  .addData("Phone Gyro Azmith ", new Func<String>() {
                      @Override
@@ -440,6 +451,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      public String value() {
                          return String.format("%.2f", Math.round(Math.toDegrees(roll)));
                      }
-                 });
+                 })
+                 */
+         ;
      }
  }
