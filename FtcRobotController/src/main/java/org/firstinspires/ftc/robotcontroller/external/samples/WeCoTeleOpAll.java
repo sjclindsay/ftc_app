@@ -111,7 +111,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      //Setup Motor Spinner
      private DcMotor motorSpinner;
-     private double motorSpinPower = 0.0;
+     private double motorSpinnerPower = 0.0;
      //Setup Motor values
      private DcMotor motorLeft1;
      private DcMotor motorLeft2;
@@ -159,6 +159,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      public void start() {
 
          motorSpinner = hardwareMap.dcMotor.get("motorSpinP2");
+         motorSpinner.setDirection(DcMotor.Direction.REVERSE);
+
          motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
          motorLeft2 = hardwareMap.dcMotor.get( "motorLeft2");
          motorRight1 = hardwareMap.dcMotor.get("motorRight1");
@@ -179,6 +181,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      @Override
      public void loop() {
+         //Set Spinner power
+         motorSpinnerPower = setMotorSpinnerPower(gamepad1.right_trigger);
+
          //sets motor power
          motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
          motorLeft1power = controlmotor(gamepad1.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
@@ -245,6 +250,10 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          }
      }
 
+     private double setMotorSpinnerPower(double triggerValue) {
+         triggerValue = Range.clip(triggerValue, motorPowerMin, motorPowerMax);
+         return triggerValue;
+     }
      private float getMotorScalar(boolean scaleUp, boolean scaleDown, float Scalar) {
 
          if (!scaleUp && !scaleDown) {
