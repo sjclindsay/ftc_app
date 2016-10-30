@@ -260,6 +260,30 @@ public class WeCoSquareGyro extends OpMode  {
                 });
 
         telemetry.addLine()
+                .addData("headingCorrectorLeft", new Func<String>() {
+                    @Override public String value() {
+                        return formatDouble(headingCorrectorLeft);
+                    }
+                })
+                .addData("headingCorrectorRight", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatDouble(headingCorrectorRight);
+                    }
+                });
+        telemetry.addLine()
+                .addData("currentHeading", new Func<String>() {
+                    @Override public String value() {
+                        return formatDouble(currentHeading);
+                    }
+                })
+                .addData("diffFromStartHeading", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatDouble(diffFromStartHeading);
+                    }
+                });
+        telemetry.addLine()
                 .addData("heading", new Func<String>() {
                     @Override
                     public String value() {
@@ -439,7 +463,7 @@ public class WeCoSquareGyro extends OpMode  {
         currentHeading = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
         diffFromStartHeading = startingHeading.firstAngle - currentHeading;
         if(true) {
-            headingCorrectorLeft = (diffFromStartHeading < -SIGNIFICANT_HEADING_DIFF) ? -1 * (-diffFromStartHeading / 180) * CORRECTOR : -1 * (-diffFromStartHeading / 180) * CORRECTOR ;
+            headingCorrectorLeft = (diffFromStartHeading < -SIGNIFICANT_HEADING_DIFF) ? -1 * (diffFromStartHeading / 180) * CORRECTOR : -1 * (diffFromStartHeading / 180) * CORRECTOR ;
             headingCorrectorRight = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
             float correction = motorPID.Update(currentHeading);
