@@ -56,17 +56,17 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  @TeleOp(name="WeCo: TeleOpAll", group="WeCo")
  //@Disabled
  public class WeCoTeleOpAll extends OpMode implements SensorEventListener {
-     public enum TurnDir {
+     private enum TurnDir {
          LEFT,RIGHT
      }
-     public enum ScaleStatus {
+     private enum ScaleStatus {
          OFF, UP, DOWN
      }
 
      //Servo Setup
-     Servo servoLeftRight;
-     Servo servoPushButton;
-     Servo servoUpDown;
+     private Servo servoLeftRight;
+     private Servo servoPushButton;
+     private Servo servoUpDown;
      private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
      private static double SERVOUPDOWN_STARTPOSITION = 0.2;
      private static double SERVOPUSHBUTTON_STARTPOSITION = 0.0;
@@ -74,13 +74,12 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      final static double servoMinRange = 0.0;
      final static double servoMaxRange = 1.0;
      double servoDelta = 0.25;
-     double servoLeftRightPosition;
-     double servoUpDownPosition;
-     double servoPositionPushButon;
+     private double servoLeftRightPosition;
+     private double servoUpDownPosition;
+     private double servoPositionPushButon;
 
      // bPrevState and bCurrState represent the previous and current state of the button.
      private static boolean bPrevState = false;
-     private static boolean bCurrState = false;
      // bLedOn represents the state of the LED.
      private boolean bLedOn = false;
      boolean BbuttonOn = false;
@@ -88,13 +87,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      boolean AbuttonOn = false;
      ElapsedTime AbuttonTimmer = new ElapsedTime();
      double buttonResetTime = 0.25;
-     ColorSensor sensorRGB;
-     DeviceInterfaceModule cdim;
+     private ColorSensor sensorRGB;
+     private DeviceInterfaceModule cdim;
      // we assume that the LED pin of the RGB sensor is connected to
      // digital port 5 (zero indexed).
-     static final int LED_CHANNEL = 0;
+     private static final int LED_CHANNEL = 0;
      // hsvValues is an array that will hold the hue, saturation, and value information.
-     float hsvValues[] = {0F, 0F, 0F};
+     private float hsvValues[] = {0F, 0F, 0F};
      // values is a reference to the hsvValues array.
      final float values[] = hsvValues;
 
@@ -107,26 +106,30 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private float roll = 0.0f;
      private String startDate;
      private SensorManager mSensorManager;
-     Sensor accelerometer;
-     Sensor magnetometer;
+     private Sensor accelerometer;
+     private Sensor magnetometer;
 
+     //Setup Motor Spinner
+     private DcMotor motorSpinner;
+     private double motorSpinPower = 0.0;
      //Setup Motor values
-     DcMotor motorLeft1;
-     DcMotor motorLeft2;
-     DcMotor motorRight1;
-     DcMotor motorRight2;
+     private DcMotor motorLeft1;
+     private DcMotor motorLeft2;
+     private DcMotor motorRight1;
+     private DcMotor motorRight2;
 
-     double motorLeft1power;
-     double motorLeft2power;
-     double motorRight1power;
-     double motorRight2power;
-     float motorPowerMin = -1;
-     float motorPowerMax = 1;
-     float motorScalar = 1;
+     private double motorLeft1power;
+     private double motorLeft2power;
+     private double motorRight1power;
+     private double motorRight2power;
+     private float motorPowerMin = -1;
+     private float motorPowerMax = 1;
+     private float motorScalar = 1;
+     private ScaleStatus dpadPosition = ScaleStatus.OFF;
      int scaleNum = 0;
-     float wheelDiameter = 4;
-     double positionLeft;
-     double positionRight;
+     private float wheelDiameter = 4;
+     private double positionLeft;
+     private double positionRight;
 
      @Override
      public void init() {
@@ -139,10 +142,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
 
          // Init Color sensor
-         // hsvValues is an array that will hold the hue, saturation, and value information.
-         float hsvValues[] = {0F, 0F, 0F};
-         // values is a reference to the hsvValues array.
-         final float values[] = hsvValues;
          cdim = hardwareMap.deviceInterfaceModule.get("dim");
          // set the digital channel to output mode.
          // remember, the Adafruit sensor is actually two devices.
@@ -159,6 +158,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void start() {
 
+         motorSpinner = hardwareMap.dcMotor.get("motorSpinP2");
          motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
          motorLeft2 = hardwareMap.dcMotor.get( "motorLeft2");
          motorRight1 = hardwareMap.dcMotor.get("motorRight1");
@@ -199,7 +199,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
 
          // Sensor Control
-        controlColorSensor();
+        controlColorSensor(gamepad2.x);
 
          //Gimble Control
          servoPositionPushButon = controlButtonPusher(gamepad2.right_trigger, servoPositionPushButon);
@@ -246,18 +246,17 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      }
 
      private float getMotorScalar(boolean scaleUp, boolean scaleDown, float Scalar) {
-         ScaleStatus dpadPosition = ScaleStatus.OFF;
 
-         if (scaleUp == false && scaleDown == false) {
+         if (!scaleUp && !scaleDown) {
              dpadPosition = ScaleStatus.OFF;
          }
 
-         if (gamepad1.dpad_up == true && dpadPosition.equals("Off")) {
+         if (scaleUp && dpadPosition == ScaleStatus.OFF) {
              Scalar = Scalar / 2;
              dpadPosition = ScaleStatus.UP;
          }
 
-         if (gamepad1.dpad_down == true && dpadPosition.equals("Off")) {
+         if (scaleDown && dpadPosition == ScaleStatus.OFF) {
              Scalar = Scalar * 2;
              dpadPosition = ScaleStatus.DOWN;
          }
@@ -297,10 +296,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          return pushedPosition;
      }
 
-     public void controlColorSensor() {
-         bCurrState = gamepad2.x;
+     private void controlColorSensor(boolean bCurrState) {
          // check for button-press state transitions.
-         if ((bCurrState == true) && (bCurrState != bPrevState))  {
+         if (bCurrState && bCurrState != bPrevState)  {
              // button is transitioning to a pressed state. Toggle the LED.
              bLedOn = !bLedOn;
              cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
@@ -311,7 +309,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          Color.RGBToHSV((sensorRGB.red() * 255) / 800, (sensorRGB.green() * 255) / 800, (sensorRGB.blue() * 255) / 800, hsvValues);
      }
 
-     public void SetupTelemetry() {
+     private void SetupTelemetry() {
          telemetry.addLine()
                  .addData("MotorLT1Power", new Func<String>() {
                      @Override
@@ -398,8 +396,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      public String value() {
                          return String.format("%.2f", servoPositionPushButon);
                      }
-                 })
-         ;
+                 });
          telemetry.addLine()
                  .addData("LED", bLedOn ? "On" : "Off")
                  .addData("Hue", hsvValues[0]);
