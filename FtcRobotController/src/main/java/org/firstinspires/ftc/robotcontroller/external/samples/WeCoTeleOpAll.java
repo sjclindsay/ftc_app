@@ -182,12 +182,12 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void loop() {
          //Set Spinner power
-         motorSpinnerPower = setMotorSpinnerPower(gamepad1.right_trigger);
+         motorSpinnerPower = setMotorSpinnerPower(gamepad1.left_trigger, gamepad1.left_bumper);
 
          //sets motor power
          motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
-         motorLeft1power = controlmotor(gamepad1.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
-         motorRight1power = controlmotor(gamepad1.left_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
+         motorLeft1power = controlmotor(gamepad1.right_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
+         motorRight1power = controlmotor(gamepad1.right_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
          motorLeft2power = motorLeft1power;
          motorRight2power = motorRight1power;
 
@@ -196,6 +196,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorLeft2.setPower(motorLeft2power);
          motorRight1.setPower(motorRight1power);
          motorRight2.setPower(motorRight2power);
+         motorSpinner.setPower(motorSpinnerPower);
 
          // gets current position and uses formula to find rotations or distance in inches
          positionLeft = -motorLeft1.getCurrentPosition();
@@ -220,6 +221,12 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      @Override
      public void stop() {
+         cdim.setDigitalChannelState(LED_CHANNEL, false);
+         //motorLeft1.setPower(0);
+         //motorLeft2.setPower(0);
+         //motorRight1.setPower(0);
+         //motorRight2.setPower(0);
+         //motorSpinner.setPower(0);
          mSensorManager.unregisterListener(this);
      }
 
@@ -250,7 +257,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          }
      }
 
-     private double setMotorSpinnerPower(double triggerValue) {
+     private double setMotorSpinnerPower(double triggerValue, boolean bumperValue) {
+         triggerValue = bumperValue ? -1 * triggerValue : triggerValue;
          triggerValue = Range.clip(triggerValue, motorPowerMin, motorPowerMax);
          return triggerValue;
      }
@@ -436,8 +444,21 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
-                 .addData("X", String.valueOf(gamepad2.x))
-         ;
+                 .addData("X", String.valueOf(gamepad2.x));
+
+         telemetry.addLine()
+                 .addData("Spinner Motor ", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", motorSpinnerPower);
+                     }
+                 })
+                 .addData("Spinner Trigger", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad1.left_trigger);
+                     }
+                 });
          /*
          telemetry.addLine()
                  .addData("Phone Gyro Azmith ", new Func<String>() {

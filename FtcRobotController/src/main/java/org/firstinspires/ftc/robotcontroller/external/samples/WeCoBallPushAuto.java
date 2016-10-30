@@ -31,8 +31,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import android.provider.Settings;
-
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -52,18 +50,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@Autonomous(name="WeCo: AutoSquareGyro", group="WeCo")
+@Autonomous(name="WeCo: WeCoBallPushAuto", group="WeCo")
 // @Disabled
-public class WeCoSquareGyro extends OpMode  {
+public class WeCoBallPushAuto extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
         WAIT_TO_START,
         STOP_MOVING,
         WAIT_FOR_STABLE,
-        DRIVE_FORWARD,
+        DRIVE_FORWARD_TO_BALL,
         WAIT_DRIVE_FORWARD,
-        START_LEFT_TURN,
-        WAIT_TURN_COMPLETE,
+        SENSE_BALL,
+        PUSH_OFF_BALL,
         ARE_WE_DONE,
         DONE
     }
@@ -110,7 +108,7 @@ public class WeCoSquareGyro extends OpMode  {
 
     private float startingHeading;
 
-    public WeCoSquareGyro() {
+    public WeCoBallPushAuto() {
     }
 
     @Override
@@ -165,9 +163,9 @@ public class WeCoSquareGyro extends OpMode  {
         currentState = nextState;
         switch(nextState) {
             case WAIT_TO_START:
-                nextState = MotorState.DRIVE_FORWARD;
+                nextState = MotorState.DRIVE_FORWARD_TO_BALL;
                 break;
-            case DRIVE_FORWARD:
+            case DRIVE_FORWARD_TO_BALL:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
                 startingHeading = MoveForward();
@@ -177,27 +175,16 @@ public class WeCoSquareGyro extends OpMode  {
                 StabilizeMeOnCurrentHeading(startingHeading);
                 if (AreWeThereYet(resetValueLeft, resetValueRight)) {
                     nextState = MotorState.STOP_MOVING;
-                    nextStateAfterWait = MotorState.START_LEFT_TURN;
+                    nextStateAfterWait = MotorState.SENSE_BALL;
                 }
                 break;
-            case START_LEFT_TURN:
-                resetValueHeading = angles.firstAngle;
-                StartLeftTurn();
-                nextState = MotorState.WAIT_TURN_COMPLETE;
+            case SENSE_BALL:
+                //turn untill light sensor is solid
+                nextState = MotorState.PUSH_OFF_BALL;
                 break;
-            case WAIT_TURN_COMPLETE:
-                if (AreWeTurnedYet(resetValueHeading)) {
-                    nextState = MotorState.STOP_MOVING;
-                    nextStateAfterWait = MotorState.ARE_WE_DONE;
-                }
-                break;
-            case ARE_WE_DONE:
-                count++;
-                if (count == 4) {
-                    nextState = MotorState.DONE;
-                } else {
-                    nextState = MotorState.DRIVE_FORWARD;
-                }
+            case PUSH_OFF_BALL:
+                //go until z axis is stabilized
+                nextState = MotorState.DONE;
                 break;
             case STOP_MOVING:
                 StopMove();
@@ -401,6 +388,8 @@ public class WeCoSquareGyro extends OpMode  {
         motorPID = new PIDController(startOrientation);
         return startOrientation;
     }
+
+
 
     public void StopMove(){
         motorLeft1Power = 0;
