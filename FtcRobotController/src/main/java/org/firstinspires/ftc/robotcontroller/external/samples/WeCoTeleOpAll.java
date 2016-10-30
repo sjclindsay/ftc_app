@@ -53,7 +53,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
  import org.firstinspires.ftc.robotcore.external.Func;
 
- @TeleOp(name="WeCo: TeleOpGyro", group="WeCo")
+ @TeleOp(name="WeCo: TeleOpAll", group="WeCo")
  //@Disabled
  public class WeCoTeleOpAll extends OpMode implements SensorEventListener {
      public enum TurnDir {
@@ -205,6 +205,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoPositionPushButon = controlButtonPusher(gamepad2.right_trigger);
          servoLeftRightPosition = controlGimble(gamepad2.right_stick_x, servoLeftRightPosition, 200);
          servoUpDownPosition = controlGimble(-gamepad2.right_stick_y, servoUpDownPosition, 200);
+
+         telemetry.update();
      }
 
      @Override
@@ -352,18 +354,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      public String value() {
                          return String.format("%f ", motorScalar);
                      }
-                 })
-                 .addData("Dpad Down:", new Func<String>() {
-                     @Override
-                     public String value() {
-                         return String.format("%f", gamepad2.dpad_down);
-                     }
-                 })
-                 .addData("Dpad Up:", new Func<String>() {
-                     @Override
-                     public String value() {
-                         return String.format("%f", gamepad2.dpad_up);
-                     }
                  });
          ;
 
@@ -378,7 +368,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                  .addData("Stick_x", new Func<String>() {
                      @Override
                      public String value() {
-                         return String.format("%.2f", gamepad2.right_stick_x);
+                        return String.format("%.2f", gamepad2.right_stick_x);
                      }
                  })
                  .addData("Stick_y", new Func<String>() {
