@@ -1,4 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import android.widget.DigitalClock;
 
