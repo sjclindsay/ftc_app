@@ -35,7 +35,6 @@ import android.provider.Settings;
 
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
@@ -53,8 +52,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
- @Autonomous(name="WeCo: AutoSquareGyro", group="WeCo")
- @Disabled
+@Autonomous(name="WeCo: AutoSquareGyro", group="WeCo")
+// @Disabled
 public class WeCoSquareGyro extends OpMode  {
     public enum MotorState{
         ERROR_STATE,

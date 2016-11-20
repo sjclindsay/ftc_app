@@ -40,7 +40,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples.OldOpModes;
  import com.qualcomm.robotcore.util.Range;
 
  @Autonomous(name="WeCo: AutoSquareOp2", group="WeCo")
-@Disabled
+// @Disabled
  public class WeCoAutoSquareOp2Skip extends OpMode  {
    // Initialize HW Data Objects
      TouchSensor touchSensor1;  // Hardware Device Object

@@ -59,7 +59,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannelController;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
 */
 @TeleOp(name = "Sensor: DIM DIO", group = "Sensor")
-//@Disabled
+@Disabled
 public class SensorDIO extends LinearOpMode {
 
 final int BLUE_LED_CHANNEL = 0;

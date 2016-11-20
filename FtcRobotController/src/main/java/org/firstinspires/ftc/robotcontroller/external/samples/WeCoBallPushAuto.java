@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
 
@@ -76,22 +75,8 @@ public class WeCoBallPushAuto extends OpMode  {
     private MotorState currentState;
     private MotorState nextState;
     private MotorState nextStateAfterWait;
-    //Servo Setup
-    private Servo servoLeftRight;
-    private Servo servoPushButton;
-    private Servo servoUpDown;
-    private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
-    private static double SERVOUPDOWN_STARTPOSITION = 0.2;
-    private static double SERVOPUSHBUTTON_STARTPOSITION = 0.0;
-
-    final static double servoMinRange = 0.0;
-    final static double servoMaxRange = 1.0;
-    double servoDelta = 0.25;
-    private double servoLeftRightPosition;
-    private double servoUpDownPosition;
-    private double servoPositionPushButon;
     // Initialize HW Data Objects
-    TouchSensor touchSensor;  // Hardware Device Object
+    TouchSensor touchSensor1;  // Hardware Device Object
     LightSensor lightSensor1;  // Hardware Device Object
     // The IMU sensor object
     BNO055IMU imu;
@@ -129,24 +114,12 @@ public class WeCoBallPushAuto extends OpMode  {
     @Override
     public void init() {
         // get a reference to our Hardware objects
-<<<<<<< HEAD
         touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
         lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
-=======
-        touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
-        lightSensor1 = hardwareMap.lightSensor.get("lightSensor1");
->>>>>>> origin/Base2016_SBD
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
         motorRight2 = hardwareMap.dcMotor.get("motorRight2");
-        // Init Servo Gimble
-        servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
-        servoUpDown = hardwareMap.servo.get("servoUpDownP2");
-        servoPushButton = hardwareMap.servo.get("servoButtonP3");
-        servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
-        servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
-        servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
 
         //Setup Hardware
         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
@@ -187,9 +160,6 @@ public class WeCoBallPushAuto extends OpMode  {
     @Override
     public void loop() {
         telemetry.update();
-        servoLeftRight.setPosition(servoLeftRightPosition);
-        servoUpDown.setPosition(servoUpDownPosition);
-        servoPushButton.setPosition(servoPositionPushButon);
         currentState = nextState;
         switch(nextState) {
             case WAIT_TO_START:
@@ -209,20 +179,12 @@ public class WeCoBallPushAuto extends OpMode  {
                 }
                 break;
             case SENSE_BALL:
-                MoveForward();
                 //turn untill light sensor is solid
-                if (touchSensor.isPressed()){
-
-                telemetry.addData("Touch", "Is Pressed");
                 nextState = MotorState.PUSH_OFF_BALL;
-            }
                 break;
             case PUSH_OFF_BALL:
                 //go until z axis is stabilized
-                if (touchsensor() == false) {
-                    nextState = MotorState.DONE;
-                    telemetry.addData("Touch", "Is Not Pressed");
-                }
+                nextState = MotorState.DONE;
                 break;
             case STOP_MOVING:
                 StopMove();
@@ -457,15 +419,7 @@ public class WeCoBallPushAuto extends OpMode  {
 
     // Save some stack! This is a functio that is called alot...
     private double xDiff;
-    private double yDiff;{}
-    public boolean touchsensor(){
-        if (touchSensor.isPressed()){
-            return true;
-        }
-       else {
-            return false;
-        }
-    }
+    private double yDiff;
     public boolean AreWeStableYet(){
         gravity = imu.getGravity();
 

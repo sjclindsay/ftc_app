@@ -43,7 +43,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.ftcrobotcontroller.R;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
- import com.qualcomm.robotcore.hardware.CRServo;
  import com.qualcomm.robotcore.hardware.ColorSensor;
  import com.qualcomm.robotcore.hardware.DcMotor;
  import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
@@ -65,14 +64,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          OFF, UP, DOWN
      }
 
-     //Setup Tape Measure
-     private CRServo servoTapeRight;
-     private CRServo servoTapeLeft;
-     private static double SERVOTAPERIGHT_STARTPOSITION = 0.0;
-     private static double SERVOTAPERCLEFT_STARTPOSITION = 0.0;
-     private double servoTapeRightSpeed;
-     private double servoTapeLeftSpeed;
-
      //Servo Setup
      private Servo servoLeftRight;
      private Servo servoPushButton;
@@ -87,8 +78,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private double servoLeftRightPosition;
      private double servoUpDownPosition;
      private double servoPositionPushButon;
-     private double servoTapeLeftPosition;
-     private double servoTapeRightPosition;
 
      // bPrevState and bCurrState represent the previous and current state of the button.
      private static boolean bPrevState = false;
@@ -151,10 +140,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      @Override
      public void init() {
-         //Init Servo Tape
-         servoTapeLeft = hardwareMap.crservo.get("servoTapeLeft");
-         servoTapeRight = hardwareMap.crservo.get("servoTapeRight");
-
          // Init Servo Gimble
          servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
          servoUpDown = hardwareMap.servo.get("servoUpDownP2");
@@ -162,7 +147,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
-
 
          // Init Color sensor
          cdim = hardwareMap.deviceInterfaceModule.get("dim");
@@ -175,7 +159,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          // turn the LED on in the beginning, just so user will know that the sensor is active.
          cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
          SetupTelemetry();
-
      }
 
 
@@ -191,11 +174,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
          motorRight1.setDirection(DcMotor.Direction.REVERSE);
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
-<<<<<<< HEAD
          touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
-=======
-         touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
->>>>>>> origin/Base2016_SBD
 
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
@@ -209,17 +188,10 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoPushButton.setPosition(servoPositionPushButon);
          servoUpDown.setPosition(servoUpDownPosition);
 
-         servoTapeLeft.setPower(SERVOTAPERCLEFT_STARTPOSITION);
-         servoTapeRight.setPower(SERVOTAPERIGHT_STARTPOSITION);
      }
 
      @Override
      public void loop() {
-         //Tape Extend
-         servoTapeLeftPosition = setServoTapeExtension(gamepad1.left_trigger, gamepad1.left_bumper);
-         servoTapeRightPosition = setServoTapeExtension(gamepad1.right_trigger, gamepad1.right_bumper);
-
-
          //Set Spinner power
          motorSpinnerPower = setMotorSpinnerPower(gamepad2.left_trigger, gamepad2.left_bumper, 1);
          motorSpinnerPower += setMotorSpinnerPower(gamepad2.right_trigger, gamepad2.right_bumper, 2);
@@ -256,13 +228,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoUpDown.setPosition(servoUpDownPosition);
          servoPushButton.setPosition(servoPositionPushButon);
 
-<<<<<<< HEAD
-=======
-         servoTapeLeft.setPower(servoTapeLeftPosition);
-         servoTapeRight.setPower(servoTapeRightPosition);
-
-
->>>>>>> origin/Base2016_SBD
          if (touchSensor.isPressed())
              telemetry.addData("Touch", "Is Pressed");
          else
@@ -279,30 +244,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight1.setPower(0.0);
          motorRight2.setPower(0.0);
          motorSpinner.setPower(0.0);
-<<<<<<< HEAD
 
-=======
-         servoTapeRight.setPower(0.0);
-         servoTapeLeft.setPower(0.0);
->>>>>>> origin/Base2016_SBD
          servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
          servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
          servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
          mSensorManager.unregisterListener(this);
      }
 
-     public double setServoTapeExtension(double trigger, boolean bumper) {
-         double position;
-         if(trigger > 0.0) {
-             position = 1.0;
-         }else if(bumper){
-             position = -1.0;
-         } else {
-             position =0.0;
-         }
-         return( position);
-
-     }
      public void onAccuracyChanged(Sensor sensor, int accuracy) {
          // not sure if needed, placeholder just in case
      }
@@ -524,10 +472,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
-<<<<<<< HEAD
-=======
-                 .addData("LED", bLedOn ? "On" : "Off")
->>>>>>> origin/Base2016_SBD
                  .addData("Hue", hsvValues[0]);
          telemetry.addLine()
                  .addData("Red ", new Func<String>() {
@@ -557,6 +501,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                  });
          telemetry.addLine()
                  .addData("X", String.valueOf(gamepad2.x));
+
          telemetry.addLine()
                 .addData("Right Bumper", new Func<String>() {
                     @Override
@@ -609,8 +554,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      public String value() {
                          return String.format("%.2f", Math.round(Math.toDegrees(roll)));
                      }
-                 });
+                 })
                  */
-
+         ;
      }
  }

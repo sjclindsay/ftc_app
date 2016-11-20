@@ -47,7 +47,7 @@ package  org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.util.Range;
 
  @TeleOp(name="WeCo: TeleOpGyro", group="WeCo")
- @Disabled
+ //@Disabled
  public class WeCoTeleOpGyro extends OpMode implements SensorEventListener {
 
    // orientation values

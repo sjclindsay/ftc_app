@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="WeCo: Auto Square", group="WeCo")
-@Disabled
+//@Disabled
 public class AutoSquareOp extends OpMode {
 
 
