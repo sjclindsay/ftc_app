@@ -51,16 +51,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@Autonomous(name="WeCo: WeCoBallPushAuto", group="WeCo")
+@Autonomous(name="WeCo: WeCoButtonPushAuto", group="WeCo")
 // @Disabled
-public class WeCoBallPushAuto extends OpMode  {
+public class WeCoButtonPushAuto extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
         WAIT_TO_START,
         STOP_MOVING,
         WAIT_FOR_STABLE,
-        DRIVE_FORWARD_TO_BALL,
+        DRIVE_FORWARD,
         WAIT_DRIVE_FORWARD,
+        START_TURN,
+        CHECK_TURN,
         SENSE_BALL,
         PUSH_OFF_BALL,
         ARE_WE_DONE,
@@ -123,19 +125,14 @@ public class WeCoBallPushAuto extends OpMode  {
 
     private float startingHeading;
 
-    public WeCoBallPushAuto() {
+    public WeCoButtonPushAuto() {
     }
 
     @Override
     public void init() {
         // get a reference to our Hardware objects
-<<<<<<< HEAD
-        touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
-        lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
-=======
         touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
         lightSensor1 = hardwareMap.lightSensor.get("lightSensor1");
->>>>>>> origin/Base2016_SBD
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
@@ -193,9 +190,12 @@ public class WeCoBallPushAuto extends OpMode  {
         currentState = nextState;
         switch(nextState) {
             case WAIT_TO_START:
-                nextState = MotorState.DRIVE_FORWARD_TO_BALL;
+                nextState = MotorState.START_TURN;
                 break;
-            case DRIVE_FORWARD_TO_BALL:
+            case START_TURN:
+                nextState = MotorState.CHECK_TURN;
+                break;
+            case DRIVE_FORWARD:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
                 startingHeading = MoveForward();
@@ -205,7 +205,6 @@ public class WeCoBallPushAuto extends OpMode  {
                 StabilizeMeOnCurrentHeading(startingHeading);
                 if (AreWeThereYet(resetValueLeft, resetValueRight)) {
                     nextState = MotorState.STOP_MOVING;
-                    nextStateAfterWait = MotorState.SENSE_BALL;
                 }
                 break;
             case SENSE_BALL:
@@ -487,7 +486,7 @@ public class WeCoBallPushAuto extends OpMode  {
     }
 
     //Change this if value between readings bounces to much
-    private static final float SIGNIFICANT_HEADING_DIFF = 5;
+    private static final float SIGNIFICANT_HEADING_DIFF = 0;
     float diffFromStartHeading;
     float currentHeading;
     float headingCorrectorLeft;

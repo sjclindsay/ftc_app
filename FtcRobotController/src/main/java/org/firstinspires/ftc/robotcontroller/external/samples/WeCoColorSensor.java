@@ -41,7 +41,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.util.Range;
 
  @Autonomous(name="WeCo: ColorSensor", group="WeCo")
-// @Disabled
+@Disabled
  public class WeCoColorSensor extends OpMode  {
    // Initialize HW Data Objects
    TouchSensor touchSensor1;  // Hardware Device Object

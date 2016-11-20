@@ -31,16 +31,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
- import android.app.Activity;
  import android.content.Context;
  import android.graphics.Color;
  import android.hardware.Sensor;
  import android.hardware.SensorEvent;
  import android.hardware.SensorEventListener;
  import android.hardware.SensorManager;
- import android.view.View;
 
- import com.qualcomm.ftcrobotcontroller.R;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  import com.qualcomm.robotcore.hardware.CRServo;
@@ -57,7 +54,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
  @TeleOp(name="WeCo: TeleOpAll", group="WeCo")
  //@Disabled
- public class WeCoTeleOpAll extends OpMode implements SensorEventListener {
+ public class WeCoTeleOpAllSkip extends OpMode implements SensorEventListener {
      private enum TurnDir {
          LEFT,RIGHT
      }
@@ -191,11 +188,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
          motorRight1.setDirection(DcMotor.Direction.REVERSE);
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
-<<<<<<< HEAD
-         touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
-=======
          touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
->>>>>>> origin/Base2016_SBD
 
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
@@ -256,13 +249,10 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoUpDown.setPosition(servoUpDownPosition);
          servoPushButton.setPosition(servoPositionPushButon);
 
-<<<<<<< HEAD
-=======
          servoTapeLeft.setPower(servoTapeLeftPosition);
          servoTapeRight.setPower(servoTapeRightPosition);
 
 
->>>>>>> origin/Base2016_SBD
          if (touchSensor.isPressed())
              telemetry.addData("Touch", "Is Pressed");
          else
@@ -279,12 +269,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight1.setPower(0.0);
          motorRight2.setPower(0.0);
          motorSpinner.setPower(0.0);
-<<<<<<< HEAD
-
-=======
          servoTapeRight.setPower(0.0);
          servoTapeLeft.setPower(0.0);
->>>>>>> origin/Base2016_SBD
          servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
          servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
          servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
@@ -400,7 +386,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      }
 
      private void SetupTelemetry() {
-
          telemetry.addLine()
                  .addData("MotorLT1Power", new Func<String>() {
                      @Override
@@ -524,10 +509,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
-<<<<<<< HEAD
-=======
                  .addData("LED", bLedOn ? "On" : "Off")
->>>>>>> origin/Base2016_SBD
                  .addData("Hue", hsvValues[0]);
          telemetry.addLine()
                  .addData("Red ", new Func<String>() {
