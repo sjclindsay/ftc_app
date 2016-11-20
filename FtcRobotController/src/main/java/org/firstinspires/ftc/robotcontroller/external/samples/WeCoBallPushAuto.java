@@ -114,8 +114,8 @@ public class WeCoBallPushAuto extends OpMode  {
     @Override
     public void init() {
         // get a reference to our Hardware objects
-        touchSensor1 = hardwareMap.touchSensor.get("touchSensor1");
-        lightSensor1 = hardwareMap.lightSensor.get("lightSensor1");
+        touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
+        lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
@@ -441,7 +441,7 @@ public class WeCoBallPushAuto extends OpMode  {
     }
 
     //Change this if value between readings bounces to much
-    private static final float SIGNIFICANT_HEADING_DIFF = 0;
+    private static final float SIGNIFICANT_HEADING_DIFF = 5;
     float diffFromStartHeading;
     float currentHeading;
     float headingCorrectorLeft;

@@ -188,7 +188,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
          motorRight1.setDirection(DcMotor.Direction.REVERSE);
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
-         touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
+         touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
 
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
