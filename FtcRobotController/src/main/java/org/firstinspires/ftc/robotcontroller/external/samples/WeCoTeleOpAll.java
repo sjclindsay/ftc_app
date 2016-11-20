@@ -48,6 +48,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
  import com.qualcomm.robotcore.hardware.DigitalChannelController;
  import com.qualcomm.robotcore.hardware.Servo;
+ import com.qualcomm.robotcore.hardware.TouchSensor;
  import com.qualcomm.robotcore.util.ElapsedTime;
  import com.qualcomm.robotcore.util.Range;
 
@@ -117,6 +118,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private DcMotor motorLeft2;
      private DcMotor motorRight1;
      private DcMotor motorRight2;
+     private TouchSensor touchSensor;
 
      private double motorLeft1power;
      private double motorLeft2power;
@@ -130,6 +132,11 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private float wheelDiameter = 4;
      private double positionLeft;
      private double positionRight;
+     private boolean prevLeftTriggerState = false;
+     private boolean prevRightTriggerState = false;
+     private boolean prevLeftBumperState = false;
+     private boolean prevRightBumperState = false;
+
 
      @Override
      public void init() {
@@ -165,8 +172,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorLeft2 = hardwareMap.dcMotor.get( "motorLeft2");
          motorRight1 = hardwareMap.dcMotor.get("motorRight1");
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
-         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
-         motorLeft2.setDirection(DcMotor.Direction.REVERSE);
+         motorRight1.setDirection(DcMotor.Direction.REVERSE);
+         motorRight2.setDirection(DcMotor.Direction.REVERSE);
+         touchSensor = hardwareMap.touchSensor.get("touchSensorP2");
 
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
@@ -176,18 +184,22 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
          magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+         servoLeftRight.setPosition(servoLeftRightPosition);
+         servoPushButton.setPosition(servoPositionPushButon);
+         servoUpDown.setPosition(servoUpDownPosition);
 
      }
 
      @Override
      public void loop() {
          //Set Spinner power
-         motorSpinnerPower = setMotorSpinnerPower(gamepad1.left_trigger, gamepad1.left_bumper);
+         motorSpinnerPower = setMotorSpinnerPower(gamepad2.left_trigger, gamepad2.left_bumper, 1);
+         motorSpinnerPower += setMotorSpinnerPower(gamepad2.right_trigger, gamepad2.right_bumper, 2);
 
          //sets motor power
          motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
-         motorLeft1power = controlmotor(gamepad1.right_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
-         motorRight1power = controlmotor(gamepad1.right_stick_x, -gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
+         motorLeft1power = controlmotor(gamepad1.right_stick_x, gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
+         motorRight1power = controlmotor(gamepad1.right_stick_x, gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
          motorLeft2power = motorLeft1power;
          motorRight2power = motorRight1power;
 
@@ -208,13 +220,18 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
         controlColorSensor(gamepad2.x);
 
          //Gimble Control
-         servoPositionPushButon = controlButtonPusher(gamepad2.right_trigger, servoPositionPushButon);
-         servoLeftRightPosition = controlGimble(gamepad2.right_stick_x, servoLeftRightPosition, 200);
+         servoPositionPushButon = controlButtonPusher(gamepad2.a, servoPositionPushButon);
+         servoLeftRightPosition = controlGimble(-gamepad2.right_stick_x, servoLeftRightPosition, 200);
          servoUpDownPosition = controlGimble(-gamepad2.right_stick_y, servoUpDownPosition, 200);
 
          servoLeftRight.setPosition(servoLeftRightPosition);
          servoUpDown.setPosition(servoUpDownPosition);
          servoPushButton.setPosition(servoPositionPushButon);
+
+         if (touchSensor.isPressed())
+             telemetry.addData("Touch", "Is Pressed");
+         else
+             telemetry.addData("Touch", "Is Not Pressed");
 
          telemetry.update();
      }
@@ -222,11 +239,15 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void stop() {
          cdim.setDigitalChannelState(LED_CHANNEL, false);
-         //motorLeft1.setPower(0);
-         //motorLeft2.setPower(0);
-         //motorRight1.setPower(0);
-         //motorRight2.setPower(0);
-         //motorSpinner.setPower(0);
+         motorLeft1.setPower(0.0);
+         motorLeft2.setPower(0.0);
+         motorRight1.setPower(0.0);
+         motorRight2.setPower(0.0);
+         motorSpinner.setPower(0.0);
+
+         servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
+         servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
+         servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
          mSensorManager.unregisterListener(this);
      }
 
@@ -257,8 +278,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          }
      }
 
-     private double setMotorSpinnerPower(double triggerValue, boolean bumperValue) {
-         triggerValue = bumperValue ? -1 * triggerValue : triggerValue;
+     private double setMotorSpinnerPower(double triggerValue, boolean bumperValue,  int scale) {
+         triggerValue = bumperValue ? -1 * triggerValue/scale : triggerValue/scale;
          triggerValue = Range.clip(triggerValue, motorPowerMin, motorPowerMax);
          return triggerValue;
      }
@@ -303,9 +324,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          return motorPower;
      }
 
-     private double controlButtonPusher(double triggerPosition,double pushedPosition) {
-         if(triggerPosition > 0.0) {
-             pushedPosition += triggerPosition/10;
+     private double controlButtonPusher(boolean triggerPosition,double pushedPosition) {
+         if(triggerPosition) {
+             pushedPosition += 0.1;
          } else {
              pushedPosition = SERVOPUSHBUTTON_STARTPOSITION;
          }
@@ -354,6 +375,26 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
+                 .addData("Control Scalar:", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%f ", motorScalar);
+                     }
+                 });
+         telemetry.addLine()
+                 .addData("GamePad1 RT Stick_x", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad1.right_stick_x);
+                     }
+                 })
+                 .addData("LT Stick_y", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad1.left_stick_y);
+                     }
+                 });
+         telemetry.addLine()
                  .addData("Distance LT:", new Func<String>() {
                      @Override
                      public String value() {
@@ -367,32 +408,21 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
-                 .addData("Control Scalar:", new Func<String>() {
+                 .addData("Spinner Motor Power", new Func<String>() {
                      @Override
                      public String value() {
-                         return String.format("%f ", motorScalar);
-                     }
-                 });
-         ;
-
-         telemetry.addLine()
-                 .addData(" Right Trigger", new Func<String>() {
-                     @Override
-                     public String value() {
-                         return String.format("%.2f", gamepad2.right_trigger);
+                         return String.format("%.2f", motorSpinnerPower);
                      }
                  });
          telemetry.addLine()
-                 .addData("Stick_x", new Func<String>() {
+                 .addData("GamePad1 Trig RT",  new Func<String>() {
                      @Override
-                     public String value() {
-                        return String.format("%.2f", gamepad2.right_stick_x);
-                     }
+                     public String value() {return String.format("%.2f", gamepad1.right_trigger) ; }
                  })
-                 .addData("Stick_y", new Func<String>() {
+                 .addData("LT", new Func<String>() {
                      @Override
                      public String value() {
-                         return String.format("%.2f", gamepad2.right_stick_y);
+                         return String.format("%.2f", gamepad1.left_trigger);
                      }
                  });
          telemetry.addLine()
@@ -415,7 +445,32 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
-                 .addData("LED", bLedOn ? "On" : "Off")
+                 .addData("GamePad2 Stick_x", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad2.right_stick_x);
+                     }
+                 })
+                 .addData("Stick_y", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad2.right_stick_y);
+                     }
+                 });
+         telemetry.addLine()
+                 .addData(" GamePad2 Trig RT", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad2.right_trigger);
+                     }
+                 })
+                 .addData(" LT", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", gamepad2.left_trigger);
+                     }
+                 });
+         telemetry.addLine()
                  .addData("Hue", hsvValues[0]);
          telemetry.addLine()
                  .addData("Red ", new Func<String>() {
@@ -447,18 +502,38 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                  .addData("X", String.valueOf(gamepad2.x));
 
          telemetry.addLine()
-                 .addData("Spinner Motor ", new Func<String>() {
+                .addData("Right Bumper", new Func<String>() {
+                    @Override
+                    public String value() {return String.valueOf( gamepad1.right_bumper) ; }
+                })
+                 .addData("Trigger", new Func<String>() {
                      @Override
-                     public String value() {
-                         return String.format("%.2f", motorSpinnerPower);
-                     }
-                 })
-                 .addData("Spinner Trigger", new Func<String>() {
-                     @Override
-                     public String value() {
-                         return String.format("%.2f", gamepad1.left_trigger);
-                     }
+                     public String value() {return String.format("%.2f", gamepad1.right_trigger) ; }
                  });
+         telemetry.addLine()
+                 .addData("Left Bumper", new Func<String>() {
+                     @Override
+                     public String value() {return String.valueOf(gamepad1.left_bumper) ; }
+                 })
+                 .addData("Trigger", new Func<String>() {
+                    @Override
+                    public String value() {return String.format("%.2f", gamepad1.left_trigger) ; }
+                });
+/*         telemetry.addLine()
+                 .addData("Gyro Z", new Func<String>() {
+                     @Override
+                     public String value() {return String.valueOf( gamepad1.right_bumper) ; }
+                 })
+                 .addData("Left Trigger", new Func<String>() {
+                     @Override
+                     public String value() {return String.format("%.2f", gamepad1.left_trigger) ; }
+                 })
+                 .addData("Left Bumper", new Func<String>() {
+                     @Override
+                     public String value() {return String.format("%.2f", gamepad1.left_bumper) ; }
+                 });
+ */
+
          /*
          telemetry.addLine()
                  .addData("Phone Gyro Azmith ", new Func<String>() {
