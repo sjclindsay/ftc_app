@@ -173,6 +173,9 @@ public class WeCoBallPushAuto extends OpMode  {
                 break;
             case WAIT_DRIVE_FORWARD:
                 StabilizeMeOnCurrentHeading(startingHeading);
+                if(touchSensor1.isPressed()) {
+                    nextState = MotorState.SENSE_BALL;
+                }
                 //if (AreWeThereYet(resetValueLeft, resetValueRight)) {
                 //    nextState = MotorState.STOP_MOVING;
                 //    nextStateAfterWait = MotorState.SENSE_BALL;
@@ -453,13 +456,14 @@ public class WeCoBallPushAuto extends OpMode  {
             headingCorrectorRight = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
             float correction = motorPID.Update(currentHeading);
-            headingCorrectorLeft = (correction < -SIGNIFICANT_HEADING_DIFF) ? -1 * correction : -1 * correction;
-            headingCorrectorRight = (correction > SIGNIFICANT_HEADING_DIFF) ? correction : correction;
+            headingCorrectorLeft = correction;
+            //headingCorrectorLeft = (correction < -SIGNIFICANT_HEADING_DIFF) ? -1 * correction : -1 * correction;
+            //headingCorrectorRight = (correction > SIGNIFICANT_HEADING_DIFF) ? correction : correction;
         }
-        motorLeft1Power = normalSpeed + headingCorrectorLeft; // normalSpeed is between 0 and 1
-        motorLeft2Power = normalSpeed + headingCorrectorLeft;
-        motorRight1Power = normalSpeed + headingCorrectorRight;
-        motorRight2Power = normalSpeed + headingCorrectorRight;
+        motorLeft1Power = normalSpeed - headingCorrectorLeft; // normalSpeed is between 0 and 1
+        motorLeft2Power = normalSpeed - headingCorrectorLeft;
+        motorRight1Power = normalSpeed + headingCorrectorLeft;
+        motorRight2Power = normalSpeed + headingCorrectorLeft;
     }
 
     @Override
@@ -478,7 +482,7 @@ public class WeCoBallPushAuto extends OpMode  {
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = (float)0.0001;
+            kp_ = (float)0.0001 ;
             ki_ = (float)0;
             kd_ = (float)0;
         }
