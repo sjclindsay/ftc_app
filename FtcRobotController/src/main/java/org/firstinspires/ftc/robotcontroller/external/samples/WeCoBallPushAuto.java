@@ -66,8 +66,8 @@ public class WeCoBallPushAuto extends OpMode  {
         DONE
     }
     //Drive Control Values
-    static final float normalTurnSpeed = (float) 0.10;
-    static final float normalSpeed = (float) 0.25;
+    static final float normalTurnSpeed = (float) 0.05;
+    static final float normalSpeed = (float) 0.15;
     static final float normalLine = 1;
     static final double normal90turn = 60;
     static final double WheelPositionDivisior = 2500.0;
@@ -173,10 +173,10 @@ public class WeCoBallPushAuto extends OpMode  {
                 break;
             case WAIT_DRIVE_FORWARD:
                 StabilizeMeOnCurrentHeading(startingHeading);
-                if (AreWeThereYet(resetValueLeft, resetValueRight)) {
-                    nextState = MotorState.STOP_MOVING;
-                    nextStateAfterWait = MotorState.SENSE_BALL;
-                }
+                //if (AreWeThereYet(resetValueLeft, resetValueRight)) {
+                //    nextState = MotorState.STOP_MOVING;
+                //    nextStateAfterWait = MotorState.SENSE_BALL;
+                //}
                 break;
             case SENSE_BALL:
                 //turn untill light sensor is solid
@@ -392,10 +392,7 @@ public class WeCoBallPushAuto extends OpMode  {
 
 
     public void StopMove(){
-        motorLeft1Power = 0;
-        motorLeft2Power = 0;
-        motorRight1Power = 0;
-        motorRight2Power = 0;
+
     }
 
     public float MotorPosition(DcMotor motor, float resetValue) {
@@ -441,17 +438,17 @@ public class WeCoBallPushAuto extends OpMode  {
     }
 
     //Change this if value between readings bounces to much
-    private static final float SIGNIFICANT_HEADING_DIFF = 5;
+    private static final float SIGNIFICANT_HEADING_DIFF = 15;
     float diffFromStartHeading;
     float currentHeading;
     float headingCorrectorLeft;
     float headingCorrectorRight;
-    private final float CORRECTOR = 10;
+    private final float CORRECTOR = (float)0.1;
 
     private void StabilizeMeOnCurrentHeading(float startingHeading){
         currentHeading = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
         diffFromStartHeading = startingHeading - currentHeading;
-        if(true) {
+        if(false) {
             headingCorrectorLeft = (diffFromStartHeading < -SIGNIFICANT_HEADING_DIFF) ? -1 * ( diffFromStartHeading / 180) * CORRECTOR : -1 * ( diffFromStartHeading / 180) * CORRECTOR ;
             headingCorrectorRight = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
@@ -481,9 +478,9 @@ public class WeCoBallPushAuto extends OpMode  {
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = 1;
-            ki_ = (float)0.1;
-            kd_ = (float)0.01;
+            kp_ = (float)0.0001;
+            ki_ = (float)0;
+            kd_ = (float)0;
         }
 
         public PIDController(float setPoint, float kp, float ki, float kd){
@@ -510,7 +507,7 @@ public class WeCoBallPushAuto extends OpMode  {
             long period = time - lastTime_;
             float error  = setPoint_ - newInput;
             errorSum_ += (error * period);
-            double derError = (error - lastError_) / period;
+            double derError = 0;//(error - lastError_) / period;
 
             float output = (float)(kp_ * error) + (float)(ki_ * errorSum_) + (float)(kd_ * derError);
 

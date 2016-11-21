@@ -70,14 +70,14 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private Servo servoUpDown;
      private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
      private static double SERVOUPDOWN_STARTPOSITION = 0.2;
-     private static double SERVOPUSHBUTTON_STARTPOSITION = 0.0;
+     private static double SERVOPUSHBUTTON_STARTPOSITION = 0.1;
 
      final static double servoMinRange = 0.0;
      final static double servoMaxRange = 1.0;
      double servoDelta = 0.25;
-     private double servoLeftRightPosition;
-     private double servoUpDownPosition;
-     private double servoPositionPushButon;
+     private double servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
+     private double servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
+     private double servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
 
      // bPrevState and bCurrState represent the previous and current state of the button.
      private static boolean bPrevState = false;
@@ -141,9 +141,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void init() {
          // Init Servo Gimble
-         servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
-         servoUpDown = hardwareMap.servo.get("servoUpDownP2");
-         servoPushButton = hardwareMap.servo.get("servoButtonP3");
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
@@ -238,16 +235,22 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      @Override
      public void stop() {
-         cdim.setDigitalChannelState(LED_CHANNEL, false);
-         motorLeft1.setPower(0.0);
-         motorLeft2.setPower(0.0);
-         motorRight1.setPower(0.0);
-         motorRight2.setPower(0.0);
-         motorSpinner.setPower(0.0);
+         servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
+         servoUpDown = hardwareMap.servo.get("servoUpDownP2");
+         servoPushButton = hardwareMap.servo.get("servoButtonP3");
+         //servoLeftRight.setPosition(0.0);
+         //servoPushButton.setPosition(0.0);
+         //servoUpDown.setPosition(0.0);
+         //cdim.setDigitalChannelState(LED_CHANNEL, false);
+         //motorLeft1.setPower(0.0);
+         //motorLeft2.setPower(0.0);
+         //motorRight1.setPower(0.0);
+         //motorRight2.setPower(0.0);
+         //motorSpinner.setPower(0.0);
 
-         servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
-         servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
-         servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
+         //servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
+         //servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
+         //servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
          mSensorManager.unregisterListener(this);
      }
 
@@ -330,7 +333,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          } else {
              pushedPosition = SERVOPUSHBUTTON_STARTPOSITION;
          }
-         pushedPosition = Range.clip(pushedPosition, servoMinRange, servoMaxRange) ;
+         pushedPosition = Range.clip(pushedPosition, servoMinRange, servoMaxRange/2) ;
          return pushedPosition;
      }
 
