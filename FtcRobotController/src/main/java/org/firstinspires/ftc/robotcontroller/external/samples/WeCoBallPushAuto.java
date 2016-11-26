@@ -31,12 +31,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -56,6 +58,8 @@ public class WeCoBallPushAuto extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
         WAIT_TO_START,
+        WAIT_PERIOD,
+        WAIT_START_PERIOD,
         STOP_MOVING,
         WAIT_FOR_STABLE,
         DRIVE_FORWARD_TO_BALL,
@@ -65,6 +69,7 @@ public class WeCoBallPushAuto extends OpMode  {
         ARE_WE_DONE,
         DONE
     }
+    static double startWaitPeriod = 0.0;
     //Drive Control Values
     static final float normalTurnSpeed = (float) 0.05;
     static final float normalSpeed = (float) 0.15;
@@ -99,20 +104,23 @@ public class WeCoBallPushAuto extends OpMode  {
     float motorPowerMax = 1;
     double positionLeft = 0;
     double positionRight = 0;
-    float motorLeft1Power = 0;
-    float motorLeft2Power = 0;
-    float motorRight1Power = 0;
-    float motorRight2Power = 0;
+    float motorLeftPower = 0;
+    float motorRightPower = 0;
+    double driveCorrection = 0.0;
     PIDController motorPID;
+    Orientation RobotAngles;
+    double currentHeading = 0.0;
     float startOrientation;
+    ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-    private float startingHeading;
+    private double TargetHeading;
 
     public WeCoBallPushAuto() {
     }
 
     @Override
     public void init() {
+
         // get a reference to our Hardware objects
         touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
         lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
@@ -154,35 +162,49 @@ public class WeCoBallPushAuto extends OpMode  {
     @Override
     public void start() {
         lightSensor1.enableLed(true);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
     }
 
     @Override
     public void loop() {
+
         telemetry.update();
         currentState = nextState;
+        //RobotAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
         switch(nextState) {
+            case WAIT_START_PERIOD:
+                StabilizationTimer.startTime();
+                nextState = MotorState.WAIT_PERIOD;
+                break;
+            case WAIT_PERIOD:
+                if(StabilizationTimer.time() > 500) {
+                    nextState = MotorState.WAIT_DRIVE_FORWARD;
+                }
+                break;
             case WAIT_TO_START:
                 nextState = MotorState.DRIVE_FORWARD_TO_BALL;
                 break;
             case DRIVE_FORWARD_TO_BALL:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
-                startingHeading = MoveForward();
+                TargetHeading = currentHeading;
+                MoveForward(TargetHeading);
                 nextState = MotorState.WAIT_DRIVE_FORWARD;
                 break;
             case WAIT_DRIVE_FORWARD:
-                StabilizeMeOnCurrentHeading(startingHeading);
+                driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
+                motorLeftPower = normalSpeed - (float) driveCorrection;
+                motorRightPower = normalSpeed + (float) driveCorrection;
                 if(touchSensor1.isPressed()) {
                     nextState = MotorState.SENSE_BALL;
                 }
-                //if (AreWeThereYet(resetValueLeft, resetValueRight)) {
-                //    nextState = MotorState.STOP_MOVING;
-                //    nextStateAfterWait = MotorState.SENSE_BALL;
-                //}
+                nextState = MotorState.WAIT_START_PERIOD;
+
                 break;
             case SENSE_BALL:
                 //turn untill light sensor is solid
+                StopMove();
                 nextState = MotorState.PUSH_OFF_BALL;
                 break;
             case PUSH_OFF_BALL:
@@ -209,16 +231,16 @@ public class WeCoBallPushAuto extends OpMode  {
         }
 
         //clips motor and servo power/position
-        motorLeft1Power = Range.clip(motorLeft1Power, motorPowerMin, motorPowerMax);
-        motorLeft2Power = Range.clip(motorLeft2Power, motorPowerMin, motorPowerMax);
-        motorRight1Power = Range.clip(motorRight1Power, motorPowerMin, motorPowerMax);
-        motorRight2Power = Range.clip(motorRight2Power, motorPowerMin, motorPowerMax);
+        motorLeftPower = Range.clip(motorLeftPower, motorPowerMin, motorPowerMax);
+        motorRightPower = Range.clip(motorRightPower, motorPowerMin, motorPowerMax);
 
         //sets motor and servo power/position
-        motorLeft1.setPower(motorLeft1Power);
-        motorLeft2.setPower(motorLeft2Power);
-        motorRight1.setPower(motorRight1Power);
-        motorRight2.setPower(motorRight2Power);
+        /*
+        motorLeft1.setPower(motorLeftPower);
+        motorLeft2.setPower(motorLeftPower);
+        motorRight1.setPower(motorRightPower);
+        motorRight2.setPower(motorRightPower);
+        */
     }
 
     void composeTelemetry() {
@@ -250,19 +272,19 @@ public class WeCoBallPushAuto extends OpMode  {
                 });
 
         telemetry.addLine()
-                .addData("headingCorrectorLeft  ", new Func<String>() {
-                    @Override public String value() {
-                        return formatDouble(headingCorrectorLeft);
-                    }
-                })
-                .addData("headingCorrectorRight ", new Func<String>() {
+                .addData("DriveCorrector", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatDouble(headingCorrectorRight);
+                        return formatDouble(driveCorrection);
                     }
                 });
         telemetry.addLine()
-                .addData("currentHeading ", new Func<String>() {
+                .addData("targetHeading ", new Func<String>() {
+                    @Override public String value() {
+                        return formatDouble(TargetHeading);
+                    }
+                })
+                .addData("currentHeading" , new Func<String>() {
                     @Override public String value() {
                         return formatDouble(currentHeading);
                     }
@@ -277,7 +299,7 @@ public class WeCoBallPushAuto extends OpMode  {
                 .addData("heading", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
+                        return formatAngle(angles.angleUnit, (angles.firstAngle));
                     }
                 })
                 .addData("roll", new Func<String>() {
@@ -304,25 +326,13 @@ public class WeCoBallPushAuto extends OpMode  {
         telemetry.addLine()
                 .addData("Motor Power Left1", new Func<String>() {
                     @Override public String value() {
-                        return formatDegrees(motorLeft1Power);
-                    }
-                })
-                .addData("Left2", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return formatDouble(motorLeft2Power);
+                        return formatDouble(motorLeftPower);
                     }
                 })
                 .addData("Right1", new Func<String>() {
                     @Override
                     public String value() {
-                        return formatDouble(motorRight1Power);
-                    }
-                })
-                .addData("Right2", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return formatDouble(motorRight2Power);
+                        return formatDouble(motorRightPower);
                     }
                 });
         telemetry.addLine()
@@ -375,20 +385,19 @@ public class WeCoBallPushAuto extends OpMode  {
     }
 
     public void StartLeftTurn(){
-        motorLeft1Power = -normalTurnSpeed;
-        motorLeft2Power = -normalTurnSpeed;
-        motorRight1Power = normalTurnSpeed;
-        motorRight2Power = normalTurnSpeed;
+        motorLeftPower = -normalTurnSpeed;
+        motorRightPower = normalTurnSpeed;
     }
     // Returning the current Heading before we start moving... We want to continue on this path
-    public float MoveForward(){
-        motorLeft1Power = normalSpeed;
-        motorLeft2Power = normalSpeed;
-        motorRight1Power = normalSpeed;
-        motorRight2Power = normalSpeed;
+    public float MoveForward(double TargetHeading){
+        motorLeftPower = normalSpeed;
+        motorRightPower = normalSpeed;
 
         startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
+        //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
         motorPID = new PIDController(startOrientation);
+        DbgLog.msg("Set Target" + startOrientation);
+        DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
         return startOrientation;
     }
 
@@ -442,28 +451,22 @@ public class WeCoBallPushAuto extends OpMode  {
 
     //Change this if value between readings bounces to much
     private static final float SIGNIFICANT_HEADING_DIFF = 15;
-    float diffFromStartHeading;
-    float currentHeading;
-    float headingCorrectorLeft;
-    float headingCorrectorRight;
+    double diffFromStartHeading;
     private final float CORRECTOR = (float)0.1;
 
-    private void StabilizeMeOnCurrentHeading(float startingHeading){
-        currentHeading = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
-        diffFromStartHeading = startingHeading - currentHeading;
+    private double StabilizeMeOnCurrentHeading(double currentHeading, double target_){
+        double correction = 0.0;
+        //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
+        diffFromStartHeading = target_ - currentHeading;
+        DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
         if(false) {
-            headingCorrectorLeft = (diffFromStartHeading < -SIGNIFICANT_HEADING_DIFF) ? -1 * ( diffFromStartHeading / 180) * CORRECTOR : -1 * ( diffFromStartHeading / 180) * CORRECTOR ;
-            headingCorrectorRight = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
+            correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
-            float correction = motorPID.Update(currentHeading);
-            headingCorrectorLeft = correction;
+            correction = motorPID.Update(currentHeading);
             //headingCorrectorLeft = (correction < -SIGNIFICANT_HEADING_DIFF) ? -1 * correction : -1 * correction;
             //headingCorrectorRight = (correction > SIGNIFICANT_HEADING_DIFF) ? correction : correction;
         }
-        motorLeft1Power = normalSpeed - headingCorrectorLeft; // normalSpeed is between 0 and 1
-        motorLeft2Power = normalSpeed - headingCorrectorLeft;
-        motorRight1Power = normalSpeed + headingCorrectorLeft;
-        motorRight2Power = normalSpeed + headingCorrectorLeft;
+        return(correction);
     }
 
     @Override
@@ -476,18 +479,18 @@ public class WeCoBallPushAuto extends OpMode  {
 
     class PIDController{
         private PIDController() {}
-        public PIDController(float setPoint){
+        public PIDController(double setPoint){
             setPoint_ = setPoint;
             lastError_ = 0;
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = (float)0.0001 ;
+            kp_ = (float)0.001 ;
             ki_ = (float)0;
             kd_ = (float)0;
         }
 
-        public PIDController(float setPoint, float kp, float ki, float kd){
+        public PIDController(double setPoint, double kp, double ki, double kd){
             setPoint_ = setPoint;
             lastError_ = 0;
             lastTime_ = System.currentTimeMillis();
@@ -498,22 +501,22 @@ public class WeCoBallPushAuto extends OpMode  {
             kd_ = kd;
         }
 
-        private float lastError_;
-        private float setPoint_;
-        private float errorSum_;
-        private float kp_;
-        private float ki_;
-        private float kd_;
+        private double lastError_;
+        private double setPoint_;
+        private double errorSum_;
+        private double kp_;
+        private double ki_;
+        private double kd_;
         private long lastTime_;
 
-        public float Update(float newInput){
+        public double Update(double newInput){
             long time = System.currentTimeMillis();
             long period = time - lastTime_;
-            float error  = setPoint_ - newInput;
+            double error  = setPoint_ - newInput;
             errorSum_ += (error * period);
             double derError = 0;//(error - lastError_) / period;
 
-            float output = (float)(kp_ * error) + (float)(ki_ * errorSum_) + (float)(kd_ * derError);
+            double output = (kp_ * error) + (ki_ * errorSum_) + (kd_ * derError);
 
             lastError_ = error;
             lastTime_ = time;

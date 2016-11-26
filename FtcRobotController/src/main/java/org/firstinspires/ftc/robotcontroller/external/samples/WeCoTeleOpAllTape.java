@@ -63,8 +63,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      }
 
      //Setup Tape Measure
-     private CRServo servoTapeRight;
-     private CRServo servoTapeLeft;
+     private Servo servoTapeRight;
+     private Servo servoTapeLeft;
      private static double SERVOTAPERIGHT_STARTPOSITION = 0.0;
      private static double SERVOTAPERCLEFT_STARTPOSITION = 0.0;
      private double servoTapeRightSpeed;
@@ -149,8 +149,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void init() {
          //Init Servo Tape
-         servoTapeLeft = hardwareMap.crservo.get("servoTapeLeft");
-         servoTapeRight = hardwareMap.crservo.get("servoTapeRight");
+         servoTapeLeft = hardwareMap.servo.get("servoTapeLeft");
+         servoTapeRight = hardwareMap.servo.get("servoTapeRight");
 
          // Init Servo Gimble
          servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
@@ -202,15 +202,15 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoPushButton.setPosition(servoPositionPushButon);
          servoUpDown.setPosition(servoUpDownPosition);
 
-         servoTapeLeft.setPower(SERVOTAPERCLEFT_STARTPOSITION);
-         servoTapeRight.setPower(SERVOTAPERIGHT_STARTPOSITION);
+         servoTapeLeft.setPosition(SERVOTAPERCLEFT_STARTPOSITION);
+         servoTapeRight.setPosition(SERVOTAPERIGHT_STARTPOSITION);
      }
 
      @Override
      public void loop() {
          //Tape Extend
-         servoTapeLeftPosition = setServoTapeExtension(gamepad1.left_trigger, gamepad1.left_bumper);
-         servoTapeRightPosition = setServoTapeExtension(gamepad1.right_trigger, gamepad1.right_bumper);
+         servoTapeLeftSpeed = setServoTapeExtension(gamepad1.left_trigger, gamepad1.left_bumper);
+         servoTapeRightSpeed = setServoTapeExtension(gamepad1.right_trigger, gamepad1.right_bumper);
 
 
          //Set Spinner power
@@ -249,8 +249,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoUpDown.setPosition(servoUpDownPosition);
          servoPushButton.setPosition(servoPositionPushButon);
 
-         servoTapeLeft.setPower(servoTapeLeftPosition);
-         servoTapeRight.setPower(servoTapeRightPosition);
+         servoTapeLeft.setPosition(servoTapeLeftSpeed);
+         servoTapeRight.setPosition(servoTapeRightSpeed);
 
 
          if (touchSensor.isPressed())
@@ -264,17 +264,18 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void stop() {
          cdim.setDigitalChannelState(LED_CHANNEL, false);
-         motorLeft1.setPower(0.0);
+        /* motorLeft1.setPower(0.0);
          motorLeft2.setPower(0.0);
          motorRight1.setPower(0.0);
          motorRight2.setPower(0.0);
          motorSpinner.setPower(0.0);
-         servoTapeRight.setPower(0.0);
-         servoTapeLeft.setPower(0.0);
+         servoTapeRight.setPosition(0.0);
+         servoTapeLeft.setPosition(0.0);
          servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
          servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
          servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
          mSensorManager.unregisterListener(this);
+     */
      }
 
      public double setServoTapeExtension(double trigger, boolean bumper) {
@@ -282,9 +283,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          if(trigger > 0.0) {
              position = 1.0;
          }else if(bumper){
-             position = -1.0;
+             position = 0.0;
          } else {
-             position =0.0;
+             position =0.5;
          }
          return( position);
 
@@ -557,6 +558,16 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                     @Override
                     public String value() {return String.format("%.2f", gamepad1.left_trigger) ; }
                 });
+         telemetry.addLine()
+                 .addData("Left tape power", new Func<String>() {
+                     @Override
+                     public String value() {return String.format("%.0f", servoTapeLeftSpeed) ;}
+                 })
+                 .addData("Right tape power", new Func<String>() {
+                     @Override
+                     public String value() {return String.format("%.0f", servoTapeRightSpeed) ;}
+                 }) ;
+
 /*         telemetry.addLine()
                  .addData("Gyro Z", new Func<String>() {
                      @Override

@@ -141,6 +141,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void init() {
          // Init Servo Gimble
+         servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
+         servoUpDown = hardwareMap.servo.get("servoUpDownP2");
+         servoPushButton = hardwareMap.servo.get("servoButtonP3");
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
@@ -475,6 +478,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
+                 .addData("LED", bLedOn ? "On" : "Off")
                  .addData("Hue", hsvValues[0]);
          telemetry.addLine()
                  .addData("Red ", new Func<String>() {
