@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -52,9 +53,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.util.Locale;
 
-@Autonomous(name="WeCo: WeCoBallPushAuto", group="WeCo")
+@Autonomous(name="WeCo: WeCoBallPushAutoSkip", group="WeCo")
 // @Disabled
-public class WeCoBallPushAuto extends OpMode  {
+public class WeCoBallPushAutoSkip extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
         WAIT_TO_START,
@@ -81,6 +82,16 @@ public class WeCoBallPushAuto extends OpMode  {
     private MotorState nextState;
     private MotorState nextStateAfterWait;
     // Initialize HW Data Objects
+    private Servo servoLeftRight;
+    private Servo servoPushButton;
+    private Servo servoUpDown;
+    private Servo servoTapeLeft;
+    private Servo servoTapeRight;
+
+    private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
+    private static double SERVOUPDOWN_STARTPOSITION = 0.2;
+    private static double SERVOPUSHBUTTON_STARTPOSITION = 0.1;
+
     TouchSensor touchSensor1;  // Hardware Device Object
     LightSensor lightSensor1;  // Hardware Device Object
     // The IMU sensor object
@@ -110,12 +121,13 @@ public class WeCoBallPushAuto extends OpMode  {
     PIDController motorPID;
     Orientation RobotAngles;
     double currentHeading = 0.0;
+    double pitch = 0.0 ;
     float startOrientation;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private double TargetHeading;
 
-    public WeCoBallPushAuto() {
+    public WeCoBallPushAutoSkip() {
     }
 
     @Override
@@ -124,6 +136,12 @@ public class WeCoBallPushAuto extends OpMode  {
         // get a reference to our Hardware objects
         touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
         lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
+        servoPushButton = hardwareMap.servo.get("servoButtonP3");
+        servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
+        servoUpDown = hardwareMap.servo.get("servoUpDownP2");
+        servoTapeLeft = hardwareMap.servo.get("servoTapeLeft");
+        servoTapeRight = hardwareMap.servo.get("servoTapeRight");
+
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
@@ -133,6 +151,11 @@ public class WeCoBallPushAuto extends OpMode  {
         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
         motorLeft2.setDirection(DcMotor.Direction.REVERSE);
 
+        servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
+        servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
+        servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
+        servoTapeLeft.setPosition(0.5);
+        servoTapeRight.setPosition(0.5);
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -170,6 +193,7 @@ public class WeCoBallPushAuto extends OpMode  {
 
         telemetry.update();
         currentState = nextState;
+        pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.thirdAngle)) ;
         //RobotAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
         switch(nextState) {
@@ -199,17 +223,16 @@ public class WeCoBallPushAuto extends OpMode  {
                 if(touchSensor1.isPressed()) {
                     nextState = MotorState.SENSE_BALL;
                 }
-                nextState = MotorState.WAIT_START_PERIOD;
-
                 break;
             case SENSE_BALL:
                 //turn untill light sensor is solid
-                StopMove();
                 nextState = MotorState.PUSH_OFF_BALL;
                 break;
             case PUSH_OFF_BALL:
-                //go until z axis is stabilized
-                nextState = MotorState.DONE;
+                //go until y axis is stabilized
+                if (pitch > 2.00) {
+                    nextState = MotorState.DONE ;
+                }
                 break;
             case STOP_MOVING:
                 StopMove();
@@ -373,7 +396,7 @@ public class WeCoBallPushAuto extends OpMode  {
     // Formatting
     //----------------------------------------------------------------------------------------------
     String formatDouble(double inputValue) {
-        return String.format("%.2f", inputValue);
+        return String.format("%.4f", inputValue);
     }
 
     String formatAngle(AngleUnit angleUnit, double angle) {
@@ -389,21 +412,24 @@ public class WeCoBallPushAuto extends OpMode  {
         motorRightPower = normalTurnSpeed;
     }
     // Returning the current Heading before we start moving... We want to continue on this path
-    public float MoveForward(double TargetHeading){
+    public double MoveForward(double TargetHeading){
         motorLeftPower = normalSpeed;
         motorRightPower = normalSpeed;
 
-        startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
+        //startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
-        motorPID = new PIDController(startOrientation);
-        DbgLog.msg("Set Target" + startOrientation);
-        DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
-        return startOrientation;
+
+        motorPID = new PIDController(TargetHeading);
+        //DbgLog.msg("Set Target" + startOrientation);
+        //DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        return TargetHeading;
     }
 
 
 
     public void StopMove(){
+        motorLeftPower = (float) 0.0;
+        motorRightPower = (float) 0.0;
 
     }
 
@@ -458,7 +484,7 @@ public class WeCoBallPushAuto extends OpMode  {
         double correction = 0.0;
         //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
         diffFromStartHeading = target_ - currentHeading;
-        DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
+        //DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
         if(false) {
             correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
@@ -485,7 +511,7 @@ public class WeCoBallPushAuto extends OpMode  {
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = (float)0.001 ;
+            kp_ = (float)0.002 ;
             ki_ = (float)0;
             kd_ = (float)0;
         }
@@ -520,6 +546,7 @@ public class WeCoBallPushAuto extends OpMode  {
 
             lastError_ = error;
             lastTime_ = time;
+            DbgLog.msg("Drive Correction " + output);
             return output;
         }
     }

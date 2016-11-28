@@ -43,6 +43,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.hardware.CRServo;
  import com.qualcomm.robotcore.hardware.ColorSensor;
  import com.qualcomm.robotcore.hardware.DcMotor;
+ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
  import com.qualcomm.robotcore.hardware.DigitalChannelController;
  import com.qualcomm.robotcore.hardware.Servo;
@@ -60,6 +61,10 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      }
      private enum ScaleStatus {
          OFF, UP, DOWN
+     }
+
+     private enum DriveDirection {
+         FORWARD, BACKWARD
      }
 
      //Setup Tape Measure
@@ -128,6 +133,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private DcMotor motorRight2;
      private TouchSensor touchSensor;
 
+     private DriveDirection CurrentDirection = DriveDirection.FORWARD;
      private double motorLeft1power;
      private double motorLeft2power;
      private double motorRight1power;
@@ -218,6 +224,23 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorSpinnerPower += setMotorSpinnerPower(gamepad2.right_trigger, gamepad2.right_bumper, 2);
 
          //sets motor power
+         if(gamepad1.b) {
+             if (CurrentDirection == DriveDirection.FORWARD) {
+                 CurrentDirection = DriveDirection.BACKWARD;
+                 motorLeft1.setDirection(DcMotor.Direction.FORWARD);
+                 motorLeft2.setDirection(DcMotor.Direction.FORWARD);
+                 motorRight1.setDirection(DcMotor.Direction.REVERSE);
+                 motorRight2.setDirection(DcMotor.Direction.REVERSE);
+             } else if (CurrentDirection == DriveDirection.BACKWARD) {
+                 CurrentDirection = DriveDirection.FORWARD;
+                 motorLeft1.setDirection(DcMotor.Direction.REVERSE);
+                 motorLeft2.setDirection(DcMotor.Direction.REVERSE);
+                 motorRight1.setDirection(DcMotor.Direction.FORWARD);
+                 motorRight2.setDirection(DcMotor.Direction.FORWARD);
+             } else {
+
+             }
+         }
          motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
          motorLeft1power = controlmotor(gamepad1.right_stick_x, gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
          motorRight1power = controlmotor(gamepad1.right_stick_x, gamepad1.left_stick_y, motorScalar, TurnDir.RIGHT);
