@@ -511,7 +511,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = (float)0.002 ;
+            kp_ = (float)0.0025 ;
             ki_ = (float)0;
             kd_ = (float)0;
         }
