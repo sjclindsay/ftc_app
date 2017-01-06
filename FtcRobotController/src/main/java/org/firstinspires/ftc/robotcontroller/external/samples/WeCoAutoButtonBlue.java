@@ -35,7 +35,10 @@ import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -50,30 +53,43 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.internal.network.SetupRunnable;
 
 import java.util.Locale;
 
-@Autonomous(name="WeCo: WeCoBallPushAutoSkip", group="WeCo")
+@Autonomous(name="Blue: WeCoBallAutoButtonBlue", group="WeCo")
 // @Disabled
-public class WeCoBallPushAutoSkip extends OpMode  {
+public class WeCoAutoButtonBlue extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
         WAIT_TO_START,
         WAIT_PERIOD,
         WAIT_START_PERIOD,
-        STOP_MOVING,
         WAIT_FOR_STABLE,
-        DRIVE_FORWARD_TO_BALL,
+        DRIVE_FORWARD,
+        TURN_LEFT,
+        BACK_UP_TO_TURN,
         WAIT_DRIVE_FORWARD,
-        SENSE_BALL,
-        PUSH_OFF_BALL,
+        WALL_FOLLOW,
+        WALL_FOLLOW_PASSED_TAPE,
+        SENSE_BUTTON,
+        PUSH_BLUE_BUTTON,
+        PUSH_RED_BUTTON,
         ARE_WE_DONE,
+        NEXT_BUTTON,
+        WAIT,
+        STOP_ROBOT,
         DONE
+    }
+
+    public enum SensorColor{
+        Red,
+        Blue
     }
     static double startWaitPeriod = 0.0;
     //Drive Control Values
-    static final float normalTurnSpeed = (float) 0.05;
-    static final float normalSpeed = (float) 0.15;
+    static final float normalTurnSpeed = (float) 0.1;
+    static final float normalSpeed = (float) 0.15 ;
     static final float normalLine = 1;
     static final double normal90turn = 60;
     static final double WheelPositionDivisior = 2500.0;
@@ -87,13 +103,19 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     private Servo servoUpDown;
     private Servo servoTapeLeft;
     private Servo servoTapeRight;
+    private static final int LED_CHANNEL = 0;
+    DeviceInterfaceModule cdim;
+
+    private ColorSensor sensorRGB;
 
     private static double SERVOLEFTRIGHT_STARTPOSITION = 0.5;
     private static double SERVOUPDOWN_STARTPOSITION = 0.2;
     private static double SERVOPUSHBUTTON_STARTPOSITION = 0.1;
 
-    TouchSensor touchSensor1;  // Hardware Device Object
-    LightSensor lightSensor1;  // Hardware Device Object
+
+    TouchSensor touchSensor3;  // Hardware Device Object
+    TouchSensor touchSensor2;  // Hardware Device Object
+    LightSensor lightSensor0;  // Hardware Device Object
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -106,6 +128,9 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     DcMotor motorLeft2;
     DcMotor motorRight1;
     DcMotor motorRight2;
+    DcMotor motorTape;
+    Servo servoButtonPush1 ;
+    Servo servoButtonPush2 ;
 
     int resetValueLeft = 0;
     int resetValueRight = 0;
@@ -115,6 +140,8 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     float motorPowerMax = 1;
     double positionLeft = 0;
     double positionRight = 0;
+    double servoButtonPush1Position = 0;
+    double servoButtonPush2Position = 0;
     float motorLeftPower = 0;
     float motorRightPower = 0;
     double driveCorrection = 0.0;
@@ -124,28 +151,42 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     double pitch = 0.0 ;
     float startOrientation;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime waitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS) ;
 
     private double TargetHeading;
+    double buttonPressCount ;
 
-    public WeCoBallPushAutoSkip() {
+    public WeCoAutoButtonBlue() {
     }
 
     @Override
     public void init() {
 
         // get a reference to our Hardware objects
-        touchSensor1 = hardwareMap.touchSensor.get("touchSensorP1");
-        lightSensor1 = hardwareMap.lightSensor.get("lightSensorP0");
+        touchSensor2 = hardwareMap.touchSensor.get("touchSensorP2");
+        touchSensor3 = hardwareMap.touchSensor.get("touchSensorP3");
+        lightSensor0 = hardwareMap.lightSensor.get("lightSensorP0");
         servoPushButton = hardwareMap.servo.get("servoButtonP3");
         servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
         servoUpDown = hardwareMap.servo.get("servoUpDownP2");
-        servoTapeLeft = hardwareMap.servo.get("servoTapeLeft");
-        servoTapeRight = hardwareMap.servo.get("servoTapeRight");
+        servoButtonPush1 = hardwareMap.servo.get("servoButtonPush1") ;
+        servoButtonPush2 = hardwareMap.servo.get("servoButtonPush2") ;
+
+// get a reference to our DeviceInterfaceModule object.
+        cdim = hardwareMap.deviceInterfaceModule.get("dim");
+
+        // set the digital channel to output mode.
+        // remember, the Adafruit sensor is actually two devices.
+        // It's an I2C sensor and it's also an LED that can be turned on or off.
+        cdim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+
+        sensorRGB = hardwareMap.colorSensor.get("sensor_color");
 
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
         motorRight2 = hardwareMap.dcMotor.get("motorRight2");
+        //motorTape = hardwareMap.dcMotor.get("motorTape");
 
         //Setup Hardware
         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
@@ -172,22 +213,25 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         currentState = MotorState.WAIT_TO_START;
         nextState = MotorState.WAIT_TO_START;
         count = 0;
+        buttonPressCount = 0;
         composeTelemetry();
     }
     //Event Control Value
     double count;
+
     double etime;
 
     @Override
     public void start() {
-        lightSensor1.enableLed(true);
+        lightSensor0.enableLed(true);
         imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
         //setup gimble
         servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
         servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
         servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
-        servoTapeLeft.setPosition(0.5);
-        servoTapeRight.setPosition(0.5);
+        servoButtonPush1.setPosition(0.0);
+        servoButtonPush2.setPosition(0.0);
+        cdim.setDigitalChannelState(LED_CHANNEL,false);
     }
 
     @Override
@@ -209,9 +253,9 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                 }
                 break;
             case WAIT_TO_START:
-                nextState = MotorState.DRIVE_FORWARD_TO_BALL;
+                nextState = MotorState.DRIVE_FORWARD;
                 break;
-            case DRIVE_FORWARD_TO_BALL:
+            case DRIVE_FORWARD:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
                 TargetHeading = currentHeading;
@@ -222,29 +266,89 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                 driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
                 motorLeftPower = normalSpeed - (float) driveCorrection;
                 motorRightPower = normalSpeed + (float) driveCorrection;
-                if(touchSensor1.isPressed()) {
-                    nextState = MotorState.SENSE_BALL;
+                if(touchSensor2.isPressed()) {
+                    nextState = MotorState.BACK_UP_TO_TURN;
+                    waitTimer.reset();
                 }
                 break;
-            case SENSE_BALL:
-                //turn untill light sensor is solid
-                nextState = MotorState.PUSH_OFF_BALL;
-                break;
-            case PUSH_OFF_BALL:
-                //go until y axis is stabilized
-                if (pitch > 2.00) {
-                    nextState = MotorState.DONE ;
+            case BACK_UP_TO_TURN:
+                motorLeftPower = -normalTurnSpeed;
+                motorRightPower = normalSpeed;
+                //BackUp();
+                if (!touchSensor2.isPressed() && waitTimer.time() >= 125) {
+                    nextState = MotorState.TURN_LEFT ;
+                        waitTimer.reset();
+                        TargetHeading = currentHeading;
                 }
                 break;
-            case STOP_MOVING:
+            case TURN_LEFT:
+                StartLeftTurn();
+                if(currentHeading - TargetHeading >= 6) {
+                    nextState = MotorState.WALL_FOLLOW;
+                }
+                break;
+            case WALL_FOLLOW:
+                motorLeftPower = normalSpeed ;
+                motorRightPower = normalSpeed - (float)0.03;
+                if (lightSensor0.getRawLightDetected() >= 2) {
+                    nextState = MotorState.STOP_ROBOT ;
+                    nextStateAfterWait = MotorState.SENSE_BUTTON ;
+                }
+                break;
+            case WALL_FOLLOW_PASSED_TAPE:
+                motorLeftPower = normalSpeed ;
+                motorRightPower = normalSpeed - (float)0.03;
+                if (lightSensor0.getRawLightDetected() < 1.8) {
+                    nextState = MotorState.ERROR_STATE ;
+                }
+                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                break;
+
+            case SENSE_BUTTON:
+                if (SenseBeaconColor(SensorColor.Blue)) {
+                    cdim.setDigitalChannelState(LED_CHANNEL,true);
+                    nextState = MotorState.PUSH_BLUE_BUTTON;
+                } else if (SenseBeaconColor(SensorColor.Red)) {
+                    nextState = MotorState.PUSH_RED_BUTTON;
+                }
+                break;
+            case PUSH_BLUE_BUTTON:
+                servoButtonPush1Position = 0.5 ;
+                nextState = MotorState.WAIT ;
+                nextStateAfterWait = MotorState.ARE_WE_DONE ;
+                waitTimer.reset();
+                break;
+            case PUSH_RED_BUTTON:
+                servoButtonPush2Position = 0.5 ;
+                nextState = MotorState.WAIT ;
+                nextStateAfterWait = MotorState.ARE_WE_DONE ;
+                waitTimer.reset();
+                break;
+            case ARE_WE_DONE:
+                ResetServoPushers();
+                if (buttonPressCount == 0) {
+                    buttonPressCount += 1 ;
+                    nextState = MotorState.WAIT ;
+                    nextStateAfterWait = MotorState.WALL_FOLLOW ;
+                } else {
+                    nextState = MotorState.WAIT ;
+                    nextStateAfterWait = MotorState.DONE;
+                }
+                break;
+            case NEXT_BUTTON:
+                // not used
+                motorLeftPower = normalSpeed ;
+                motorRightPower = normalSpeed - (float)0.05 ;
+                nextStateAfterWait = MotorState.WALL_FOLLOW;
+                break;
+            case WAIT:
+                if (waitTimer.time() >= 250) {
+                    nextState = nextStateAfterWait ;
+                }
+                break;
+            case STOP_ROBOT:
                 StopMove();
-                nextState = MotorState.WAIT_FOR_STABLE;
-                break;
-            case WAIT_FOR_STABLE:
-                if(AreWeStableYet()) {
-                    nextState = nextStateAfterWait;
-                }
-                break;
+                nextState = nextStateAfterWait;
             case DONE:
                 StopMove();
                 break;
@@ -265,6 +369,9 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         motorLeft2.setPower(motorLeftPower);
         motorRight1.setPower(motorRightPower);
         motorRight2.setPower(motorRightPower);
+
+        servoButtonPush1.setPosition(servoButtonPush1Position);
+        servoButtonPush2.setPosition(servoButtonPush2Position);
 
     }
 
@@ -295,7 +402,25 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                         return imu.getCalibrationStatus().toString();
                     }
                 });
+        telemetry.addLine()
+                .addData("Touch3", new Func<String>() {
+                    @Override public String value() {
+                        if (touchSensor3.isPressed())
+                            return "Is Pressed";
+                        else {
+                            return "Not Pressed";
+                        }
+                    }})
+                    .addData("Touch2", new Func<String>() {
+                                @Override public String value() {
+                                    if ( touchSensor2.isPressed())
+                                        return "Is Pressed";
+                                    else {
+                                        return "Not Pressed";
+                                    }
+                                }
 
+                            });
         telemetry.addLine()
                 .addData("DriveCorrector", new Func<String>() {
                     @Override
@@ -340,12 +465,12 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         telemetry.addLine()
                 .addData("Light1 Raw", new Func<String>() {
                     @Override public String value() {
-                        return formatDouble(lightSensor1.getRawLightDetected());
+                        return formatDouble(lightSensor0.getRawLightDetected());
                     }
                 })
                 .addData("Normal", new Func<String>() {
                     @Override public String value() {
-                        return formatDouble(lightSensor1.getLightDetected());
+                        return formatDouble(lightSensor0.getLightDetected());
                     }
                 });
         telemetry.addLine()
@@ -375,7 +500,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         telemetry.addLine()
                 .addData("Control Count", new Func<String>() {
                     @Override public String value() {
-                        return formatDouble(count);
+                        return formatDouble(buttonPressCount);
                     }
                 });
         telemetry.addLine()
@@ -386,6 +511,23 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                     }
                 });
         telemetry.addLine()
+                .addData("ColorBlue", new Func<String>() {
+                    @Override
+                    public String value() {return formatInt(sensorRGB.blue());
+                    }
+                })
+                .addData("ColorRed", new Func<String>() {
+                    @Override
+                    public String value() {return formatInt(sensorRGB.red());
+                    }
+                });
+        telemetry.addLine()
+                .addData("currentState", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return currentState.name();
+                    }
+                })
                 .addData("nextState", new Func<String>() {
                     @Override
                     public String value() {
@@ -397,6 +539,10 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     //----------------------------------------------------------------------------------------------
     // Formatting
     //----------------------------------------------------------------------------------------------
+    String formatInt(int inputValue) {
+        return String.format("%d", inputValue);
+    }
+
     String formatDouble(double inputValue) {
         return String.format("%.4f", inputValue);
     }
@@ -410,9 +556,15 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     }
 
     public void StartLeftTurn(){
-        motorLeftPower = -normalTurnSpeed;
+        motorLeftPower = (float)0;
         motorRightPower = normalTurnSpeed;
     }
+
+    public void BackUp(){
+        motorLeftPower = -normalSpeed;
+        motorRightPower = -normalSpeed;
+    }
+
     // Returning the current Heading before we start moving... We want to continue on this path
     public double MoveForward(double TargetHeading){
         motorLeftPower = normalSpeed;
@@ -432,9 +584,22 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     public void StopMove(){
         motorLeftPower = (float) 0.0;
         motorRightPower = (float) 0.0;
-
     }
 
+    public void ResetServoPushers(){
+        servoButtonPush1Position = 0;
+        servoButtonPush2Position = 0;
+    }
+
+    public boolean SenseBeaconColor(SensorColor BeaconColor) {
+        if (BeaconColor == SensorColor.Blue) {
+            return sensorRGB.blue() >= 260 ;
+        }
+        if (BeaconColor == SensorColor.Red) {
+            return sensorRGB.red() >= 200 ;
+        }
+        return false ;
+    }
     public float MotorPosition(DcMotor motor, float resetValue) {
         return(motor.getCurrentPosition() - resetValue) ;
     }
@@ -548,7 +713,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
 
             lastError_ = error;
             lastTime_ = time;
-            DbgLog.msg("Drive Correction " + output);
+            //DbgLog.msg("Drive Correction " + output);
             return output;
         }
     }

@@ -50,14 +50,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Locale;
 
-@Autonomous(name="WeCo: WeCoBallPushAutoSkip", group="WeCo")
+@Autonomous(name="WeCo: WeCoBallPushAutoSkipWait", group="WeCo")
 // @Disabled
-public class WeCoBallPushAutoSkip extends OpMode  {
+public class WeCoBallPushAutoSkipWait extends OpMode  {
     public enum MotorState{
         ERROR_STATE,
+        WAIT_TO_GO,
         WAIT_TO_START,
         WAIT_PERIOD,
         WAIT_START_PERIOD,
@@ -127,7 +129,9 @@ public class WeCoBallPushAutoSkip extends OpMode  {
 
     private double TargetHeading;
 
-    public WeCoBallPushAutoSkip() {
+    ElapsedTime elapsedTime = new ElapsedTime();
+
+    public WeCoBallPushAutoSkipWait() {
     }
 
     @Override
@@ -151,10 +155,14 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
         motorLeft2.setDirection(DcMotor.Direction.REVERSE);
 
-
+        servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
+        servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
+        servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
+        servoTapeLeft.setPosition(0.5);
+        servoTapeRight.setPosition(0.5);
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
+        // provide positional inf
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -182,16 +190,12 @@ public class WeCoBallPushAutoSkip extends OpMode  {
     public void start() {
         lightSensor1.enableLed(true);
         imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
-        //setup gimble
-        servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
-        servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
-        servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
-        servoTapeLeft.setPosition(0.5);
-        servoTapeRight.setPosition(0.5);
     }
 
     @Override
     public void loop() {
+
+        etime = elapsedTime.time();
 
         telemetry.update();
         currentState = nextState;
@@ -204,7 +208,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                 nextState = MotorState.WAIT_PERIOD;
                 break;
             case WAIT_PERIOD:
-                if(StabilizationTimer.time() > 500) {
+                if(StabilizationTimer.time() > 15000) {
                     nextState = MotorState.WAIT_DRIVE_FORWARD;
                 }
                 break;
@@ -222,8 +226,8 @@ public class WeCoBallPushAutoSkip extends OpMode  {
                 driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
                 motorLeftPower = normalSpeed - (float) driveCorrection;
                 motorRightPower = normalSpeed + (float) driveCorrection;
-                if(touchSensor1.isPressed()) {
-                    nextState = MotorState.SENSE_BALL;
+                if(pitch > 2.00) {
+                    nextState = MotorState.DONE;
                 }
                 break;
             case SENSE_BALL:

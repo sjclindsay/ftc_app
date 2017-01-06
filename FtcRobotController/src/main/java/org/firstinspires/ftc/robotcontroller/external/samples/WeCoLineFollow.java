@@ -50,7 +50,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.util.Range;
 
  @Autonomous(name="WeCo: Line Follow", group="WeCo")
- //@Disabled
+ @Disabled
  public class WeCoLineFollow extends OpMode  {
 
    // orientation values

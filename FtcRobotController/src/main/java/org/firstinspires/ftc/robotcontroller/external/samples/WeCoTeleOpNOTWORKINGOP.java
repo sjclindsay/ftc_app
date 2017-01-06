@@ -40,10 +40,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
- import com.qualcomm.robotcore.hardware.CRServo;
  import com.qualcomm.robotcore.hardware.ColorSensor;
  import com.qualcomm.robotcore.hardware.DcMotor;
- import com.qualcomm.robotcore.hardware.DcMotorSimple;
  import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
  import com.qualcomm.robotcore.hardware.DigitalChannelController;
  import com.qualcomm.robotcore.hardware.Servo;
@@ -53,9 +51,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
  import org.firstinspires.ftc.robotcore.external.Func;
 
- @TeleOp(name="WeCo: TeleOpAllTape", group="WeCo")
+ @TeleOp(name="WeCo: TeleOpAllNOTWORKINGOP", group="WeCo")
  //@Disabled
- public class WeCoTeleOpAllTape extends OpMode implements SensorEventListener {
+ public class WeCoTeleOpNOTWORKINGOP extends OpMode implements SensorEventListener {
      private enum TurnDir {
          LEFT,RIGHT
      }
@@ -127,9 +125,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private DcMotor motorSpinner;
      private double motorSpinnerPower = 0.0;
      //Setup Motor values
-     private DcMotor motorLeft1;
+//     private DcMotor motorLeft1;
      private DcMotor motorLeft2;
-     private DcMotor motorRight1;
+ //    private DcMotor motorRight1;
      private DcMotor motorRight2;
      private TouchSensor touchSensor;
 
@@ -185,14 +183,14 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      @Override
      public void start() {
 
-         motorSpinner = hardwareMap.dcMotor.get("motorSpinP2");
-         motorSpinner.setDirection(DcMotor.Direction.REVERSE);
+         //motorSpinner = hardwareMap.dcMotor.get("motorSpinP2");
+         //motorSpinner.setDirection(DcMotor.Direction.REVERSE);
 
-         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
+         //motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
          motorLeft2 = hardwareMap.dcMotor.get( "motorLeft2");
-         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
+        // motorRight1 = hardwareMap.dcMotor.get("motorRight1");
          motorRight2 = hardwareMap.dcMotor.get("motorRight2");
-         motorRight1.setDirection(DcMotor.Direction.REVERSE);
+         //motorRight1.setDirection(DcMotor.Direction.REVERSE);
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
          servoTapeLeft.setDirection(Servo.Direction.REVERSE);
          touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
@@ -228,15 +226,15 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          if(gamepad1.b) {
              if (CurrentDirection == DriveDirection.FORWARD) {
                  CurrentDirection = DriveDirection.BACKWARD;
-                 motorLeft1.setDirection(DcMotor.Direction.FORWARD);
+                 //motorLeft1.setDirection(DcMotor.Direction.FORWARD);
                  motorLeft2.setDirection(DcMotor.Direction.FORWARD);
-                 motorRight1.setDirection(DcMotor.Direction.REVERSE);
+                // motorRight1.setDirection(DcMotor.Direction.REVERSE);
                  motorRight2.setDirection(DcMotor.Direction.REVERSE);
              } else if (CurrentDirection == DriveDirection.BACKWARD) {
                  CurrentDirection = DriveDirection.FORWARD;
-                 motorLeft1.setDirection(DcMotor.Direction.REVERSE);
+                // motorLeft1.setDirection(DcMotor.Direction.REVERSE);
                  motorLeft2.setDirection(DcMotor.Direction.REVERSE);
-                 motorRight1.setDirection(DcMotor.Direction.FORWARD);
+                // motorRight1.setDirection(DcMotor.Direction.FORWARD);
                  motorRight2.setDirection(DcMotor.Direction.FORWARD);
              } else {
 
@@ -249,16 +247,16 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2power = motorRight1power;
 
          //sets motor and servo power/position
-         motorLeft1.setPower(motorLeft1power);
+         //motorLeft1.setPower(motorLeft1power);
          motorLeft2.setPower(motorLeft2power);
-         motorRight1.setPower(motorRight1power);
+         //motorRight1.setPower(motorRight1power);
          motorRight2.setPower(motorRight2power);
          motorSpinner.setPower(motorSpinnerPower);
 
          // gets current position and uses formula to find rotations or distance in inches
-         positionLeft = -motorLeft1.getCurrentPosition();
+        // positionLeft = -motorLeft1.getCurrentPosition();
          positionLeft = (positionLeft / 2500);//(wheelDiameter*3.14159265358)
-         positionRight = motorRight1.getCurrentPosition();
+        /// positionRight = motorRight1.getCurrentPosition();
          positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
 
          // Sensor Control
