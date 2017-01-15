@@ -265,10 +265,11 @@ public class BlueAutoButtons extends OpMode  {
             case WAIT_TO_START:
                 nextState = MotorState.DRIVE_FORWARD;
                 break;
-            case DRIVE_FORWARD:
+            case DRIVE_FORWARD: //Not really anymore :) this turns 40-45 degress. trying something better than trying to align on the wall.
+                // Now just put bck of bot flat on the wall.
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
-                TargetHeading = currentHeading;
+                TargetHeading = currentHeading -40;
                 MoveForward(TargetHeading);
                 nextState = MotorState.WAIT_DRIVE_FORWARD;
                 break;
@@ -812,7 +813,8 @@ public class BlueAutoButtons extends OpMode  {
             lastTime_ = System.currentTimeMillis();
             errorSum_ = 0;
 
-            kp_ = (float)0.0025 ;
+            //kp_ = (float)0.0025 ;
+            kp_ = (float)0.0015 ;
             ki_ = (float)0;
             kd_ = (float)0;
         }
