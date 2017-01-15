@@ -120,6 +120,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private DcMotor motorRight2;
      private TouchSensor touchSensor;
 
+     private DcMotor motorTape;
+     private double motorTapePower = 0.0;
+
      private double motorLeft1power;
      private double motorLeft2power;
      private double motorRight1power;
@@ -176,6 +179,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
          touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
 
+         motorTape = hardwareMap.dcMotor.get("motorTape");
+
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
@@ -196,6 +201,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorSpinnerPower = setMotorSpinnerPower(gamepad2.left_trigger, gamepad2.left_bumper, 1);
          motorSpinnerPower += setMotorSpinnerPower(gamepad2.right_trigger, gamepad2.right_bumper, 2);
 
+         motorTapePower = SetMotorTapePower(gamepad2.dpad_left, gamepad2.dpad_right);
+         motorTape.setPower(motorTapePower);
          //sets motor power
          motorScalar = getMotorScalar(gamepad1.dpad_up, gamepad1.dpad_down, motorScalar);
          motorLeft1power = controlmotor(gamepad1.right_stick_x, gamepad1.left_stick_y, motorScalar, TurnDir.LEFT);
@@ -306,6 +313,16 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          }
          Scalar = Range.clip(Scalar, 1, 8) ;
          return Scalar;
+     }
+
+     private double SetMotorTapePower(boolean pullIn, boolean pushOut)
+     {
+         if(pullIn)
+             return -0.5;
+         else if(pushOut)
+             return 0.5;
+         else
+             return 0;
      }
 
      private double controlGimble(double Stick, double Position, double Scale) {
