@@ -68,11 +68,13 @@ public class BlueAutoButtons extends OpMode  {
         WAIT_FOR_STABLE,
         DRIVE_FORWARD,
         TURN_LEFT,
+        TURN_LEFT_BACK,
         TURN_RIGHT,
         TURN_RIGHT_BACK,
         BACK_UP_TO_TURN,
         BACK_UP_SENSE_BUTTON,
         BACK_UP_TO_VORTEX,
+        WAIT_DRIVE_VORTEX,
         WAIT_DRIVE_FORWARD,
         WALL_FOLLOW,
         WALL_FOLLOW_BACK_TOUCH,
@@ -94,7 +96,9 @@ public class BlueAutoButtons extends OpMode  {
     static double startWaitPeriod = 0.0;
     //Drive Control Values
     static final float normalTurnSpeed = (float) 0.1;
+    private float parkSpeedDelta = (float) 0.03;
     static final float normalSpeed = (float) 0.15 ;
+    private int leftTurnCount = 0;
     static final float normalLine = 1;
     static final double normal90turn = 60;
     static final double WheelPositionDivisior = 2500.0;
@@ -281,10 +285,15 @@ public class BlueAutoButtons extends OpMode  {
                 StartPivotLeft();
                 //BackUp();
                 if (touchSensor3.isPressed()) {
-                    nextState = MotorState.TURN_LEFT ;
+                    nextState = MotorState.TURN_LEFT_BACK ;
                         waitTimer.reset();
                         TargetHeading = currentHeading;
                 }
+                break;
+            case TURN_LEFT_BACK:
+                TurnLeftBack();
+                if(!touchSensor3.isPressed())
+                    nextState = MotorState.WALL_FOLLOW ;
                 break;
             case TURN_RIGHT:
                 if(touchSensor3.isPressed() && touchSensor2.isPressed()) {
@@ -292,11 +301,12 @@ public class BlueAutoButtons extends OpMode  {
                     nextState = MotorState.BACK_UP_SENSE_BUTTON;
                     StopMove();
                 } else if(touchSensor2.isPressed()){
-                    StartRightTurnBackwards();
                     nextState = MotorState.TURN_LEFT;
+                    waitTimer.reset();
                 }
                 break;
             case TURN_RIGHT_BACK:
+
                 if(touchSensor3.isPressed() && touchSensor2.isPressed()) {
                     //if(currentHeading - TargetHeading >= 6) {
                     nextState = MotorState.BACK_UP_SENSE_BUTTON;
@@ -315,13 +325,12 @@ public class BlueAutoButtons extends OpMode  {
                 } if(!touchSensor2.isPressed()) {
                     StartRightTurn();
                     nextState = MotorState.TURN_RIGHT;
-                } else if(touchSensor2.isPressed()) {
-                //if(currentHeading - TargetHeading >= 6) {
-                    nextState = MotorState.BACK_UP_SENSE_BUTTON;
-                    StopMove();
+                    parkSpeedDelta =- (float) 0.01;
+                    leftTurnCount++;
                 } else if(waitTimer.time() > 250) {
                     StartRightTurnBackwards();
                     nextState=MotorState.TURN_RIGHT_BACK;
+                    leftTurnCount++;
                 }
                 break;
             case WALL_FOLLOW_BACK_TOUCH:
@@ -365,7 +374,7 @@ public class BlueAutoButtons extends OpMode  {
                     StopMove();
                     nextState = MotorState.SENSE_BUTTON;
                     DbgLog.msg("Sensed Button");
-                } else if(lightSensor0.getRawLightDetected() >=2.0 ) {
+                } else if(lightSensor0.getRawLightDetected() >=- 2.0 ) {
                     nextState = MotorState.STOP_ROBOT ;
                     nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 } else if(waitTimer.time()>500){
@@ -375,11 +384,22 @@ public class BlueAutoButtons extends OpMode  {
                 }
                 break;
             case BACK_UP_TO_VORTEX:
-                if(pitch>2.0) {
+                resetValueLeft = -motorLeft1.getCurrentPosition();
+                resetValueRight = motorRight1.getCurrentPosition();
+                TargetHeading = currentHeading +5;
+                MoveBackward(TargetHeading);
+                nextState = MotorState.WAIT_DRIVE_VORTEX;
+                break;
+            case WAIT_DRIVE_VORTEX:
+                driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
+                motorLeftPower = normalSpeed - (float) driveCorrection;
+                motorRightPower = normalSpeed + (float) driveCorrection;
+                if(pitch< -10.0) {
                     StopMove();
                     nextState = MotorState.DONE;
                 }
                 break;
+            //TODO Check return to Votex
             case PUSH_FRONT_BUTTON:
                 cdim.setDigitalChannelState(LED_CHANNEL,true);
                 servoSideButtonPushPosition = 0.5 ;
@@ -644,8 +664,8 @@ public class BlueAutoButtons extends OpMode  {
         motorRightPower = normalTurnSpeed;
     }
     public void StartLefttTurnGentle(){
-        motorLeftPower = (float) 0.07;
-        motorRightPower = (float) 0.12;
+        motorLeftPower = normalTurnSpeed - parkSpeedDelta;
+        motorRightPower = normalTurnSpeed + parkSpeedDelta;
     }
     public void StartRightTurn() {
         motorLeftPower = (float) 0.12;
@@ -661,8 +681,26 @@ public class BlueAutoButtons extends OpMode  {
         motorRightPower = -normalTurnSpeed;
     }
 
+    public void TurnLeftBack(){
+        motorLeftPower = -normalTurnSpeed ;
+        motorRightPower = -normalSpeed ;
+    }
+
     // Returning the current Heading before we start moving... We want to continue on this path
     public double MoveForward(double TargetHeading){
+        motorLeftPower = normalSpeed;
+        motorRightPower = normalSpeed;
+
+        //startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
+        //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
+
+        motorPID = new PIDController(TargetHeading);
+        //DbgLog.msg("Set Target" + startOrientation);
+        //DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        return TargetHeading;
+    }
+
+    public double MoveBackward(double TargetHeading){
         motorLeftPower = normalSpeed;
         motorRightPower = normalSpeed;
 

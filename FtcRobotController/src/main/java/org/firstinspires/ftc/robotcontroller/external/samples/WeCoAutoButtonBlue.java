@@ -278,7 +278,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
                 }
                 break;
             case BACK_UP_TO_TURN:
-                StartPivotLeft();
+                BackUp();
                 //BackUp();
                 if (!touchSensor2.isPressed() && waitTimer.time() >= 125) {
                     nextState = MotorState.TURN_LEFT ;
@@ -288,7 +288,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
                 break;
             case TURN_LEFT:
                 StartLeftTurn();
-                if(currentHeading - TargetHeading >= 6) {
+                if(touchSensor3.isPressed()) {
                     nextState = MotorState.WALL_FOLLOW;
                 }
                 break;
@@ -590,12 +590,12 @@ public class WeCoAutoButtonBlue extends OpMode  {
         motorRightPower = -(normalSpeed - (float)0.03);
     }
 
-    public void StartPivotLeft () {
-        motorLeftPower = -normalTurnSpeed;
+    public void Backwards () {
+        motorLeftPower = normalSpeed;
         motorRightPower = normalSpeed;
     }
     public void StartLeftTurn(){
-        motorLeftPower = (float)0;
+        motorLeftPower = -normalTurnSpeed;
         motorRightPower = normalTurnSpeed;
     }
 
