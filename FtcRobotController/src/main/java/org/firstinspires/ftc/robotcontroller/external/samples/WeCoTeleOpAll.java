@@ -318,9 +318,9 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private double SetMotorTapePower(boolean pullIn, boolean pushOut)
      {
          if(pullIn)
-             return -0.5;
+             return -0.9;
          else if(pushOut)
-             return 0.5;
+             return 0.9;
          else
              return 0;
      }

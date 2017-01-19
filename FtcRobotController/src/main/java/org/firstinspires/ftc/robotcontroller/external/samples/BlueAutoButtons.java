@@ -237,7 +237,7 @@ public class BlueAutoButtons extends OpMode  {
         servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
         servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
 
-        servoSideButtonPush.setPosition(0.0);
+        servoSideButtonPush.setPosition(0.5);
         cdim.setDigitalChannelState(LED_CHANNEL,false);
     }
 
@@ -293,7 +293,7 @@ public class BlueAutoButtons extends OpMode  {
                 break;
             case TURN_LEFT_BACK:
                 TurnLeftBack();
-                if(!touchSensor3.isPressed())
+                if(!touchSensor3.isPressed() || waitTimer.time() > 1000 )
                     nextState = MotorState.WALL_FOLLOW ;
                 break;
             case TURN_RIGHT:
@@ -387,14 +387,14 @@ public class BlueAutoButtons extends OpMode  {
             case BACK_UP_TO_VORTEX:
                 resetValueLeft = -motorLeft1.getCurrentPosition();
                 resetValueRight = motorRight1.getCurrentPosition();
-                TargetHeading = currentHeading +5;
+                TargetHeading = currentHeading + 15;
                 MoveBackward(TargetHeading);
                 nextState = MotorState.WAIT_DRIVE_VORTEX;
                 break;
             case WAIT_DRIVE_VORTEX:
                 driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
-                motorLeftPower = normalSpeed - (float) driveCorrection;
-                motorRightPower = normalSpeed + (float) driveCorrection;
+                motorLeftPower = -normalSpeed - (float) driveCorrection;
+                motorRightPower = -normalSpeed + (float) driveCorrection;
                 if(pitch< -10.0) {
                     StopMove();
                     nextState = MotorState.DONE;
@@ -403,13 +403,13 @@ public class BlueAutoButtons extends OpMode  {
             //TODO Check return to Votex
             case PUSH_FRONT_BUTTON:
                 cdim.setDigitalChannelState(LED_CHANNEL,true);
-                servoSideButtonPushPosition = 0.5 ;
+                servoSideButtonPushPosition = 0 ;
                 nextState = MotorState.WAIT ;
                 nextStateAfterWait = MotorState.ARE_WE_DONE ;
                 waitTimer.reset();
                 break;
             case PUSH_BACK_BUTTON:
-                servoSideButtonPushPosition = -0.5 ;
+                servoSideButtonPushPosition = 1 ;
                 nextState = MotorState.WAIT ;
                 nextStateAfterWait = MotorState.ARE_WE_DONE ;
                 waitTimer.reset();
@@ -433,7 +433,7 @@ public class BlueAutoButtons extends OpMode  {
                 nextStateAfterWait = MotorState.WALL_FOLLOW;
                 break;
             case WAIT:
-                if (waitTimer.time() >= 250) {
+                if (waitTimer.time() >= 1000) {
                     nextState = nextStateAfterWait ;
                 }
                 break;
@@ -702,8 +702,8 @@ public class BlueAutoButtons extends OpMode  {
     }
 
     public double MoveBackward(double TargetHeading){
-        motorLeftPower = normalSpeed;
-        motorRightPower = normalSpeed;
+        motorLeftPower = -normalSpeed;
+        motorRightPower = -normalSpeed;
 
         //startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
@@ -720,7 +720,7 @@ public class BlueAutoButtons extends OpMode  {
     }
 
     public void ResetServoPushers(){
-        servoSideButtonPushPosition = 0;
+        servoSideButtonPushPosition = 0.5 ;
     }
 
     public boolean SenseBeaconColor(SensorColor BeaconColor) {
