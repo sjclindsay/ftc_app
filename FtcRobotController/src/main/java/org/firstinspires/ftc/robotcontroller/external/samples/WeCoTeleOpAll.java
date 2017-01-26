@@ -72,6 +72,11 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
      private static double SERVOUPDOWN_STARTPOSITION = 0.2;
      private static double SERVOPUSHBUTTON_STARTPOSITION = 0.1;
 
+     Servo servoSideButtonPush ;
+
+     double servoSideButtonPushPosition = 0;
+
+
      final static double servoMinRange = 0.0;
      final static double servoMaxRange = 1.0;
      double servoDelta = 0.25;
@@ -147,9 +152,12 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
          servoUpDown = hardwareMap.servo.get("servoUpDownP2");
          servoPushButton = hardwareMap.servo.get("servoButtonP3");
+
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
+
+         servoSideButtonPush = hardwareMap.servo.get("servoSideButtonPush") ;
 
          // Init Color sensor
          cdim = hardwareMap.deviceInterfaceModule.get("dim");
@@ -179,11 +187,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          motorRight2.setDirection(DcMotor.Direction.REVERSE);
          touchSensor = hardwareMap.touchSensor.get("touchSensorP1");
 
-         motorTape = hardwareMap.dcMotor.get("motorTape");
+         motorTape = hardwareMap.dcMotor.get("motorSideButton");
 
          servoLeftRightPosition = SERVOLEFTRIGHT_STARTPOSITION;
          servoUpDownPosition = SERVOUPDOWN_STARTPOSITION;
          servoPositionPushButon = SERVOPUSHBUTTON_STARTPOSITION;
+         servoSideButtonPush.setPosition(0.5);
+
 
          mSensorManager = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
          accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -192,6 +202,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoLeftRight.setPosition(servoLeftRightPosition);
          servoPushButton.setPosition(servoPositionPushButon);
          servoUpDown.setPosition(servoUpDownPosition);
+         servoSideButtonPush.setPosition(0.5);
 
      }
 
@@ -224,12 +235,22 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          positionRight = (positionRight / 2500); //(wheelDiameter*3.14159265358)
 
          // Sensor Control
-        controlColorSensor(gamepad2.x);
+        //controlColorSensor(gamepad2.x);
 
          //Gimble Control
          servoPositionPushButon = controlButtonPusher(gamepad2.a, servoPositionPushButon);
-         servoLeftRightPosition = controlGimble(-gamepad2.right_stick_x, servoLeftRightPosition, 200);
-         servoUpDownPosition = controlGimble(-gamepad2.right_stick_y, servoUpDownPosition, 200);
+         servoLeftRightPosition = controlGimble(-gamepad2.left_stick_x, servoLeftRightPosition, 200);
+         servoUpDownPosition = controlGimble(-gamepad2.left_stick_y, servoUpDownPosition, 200);
+
+         //SidebuttonPush
+         if (gamepad2.x) {
+             servoSideButtonPush.setPosition(1);
+             servoSideButtonPushPosition = 1;
+         }
+         if (gamepad2.b) {
+             servoSideButtonPush.setPosition(0);
+             servoSideButtonPushPosition = 0;
+         }
 
          servoLeftRight.setPosition(servoLeftRightPosition);
          servoUpDown.setPosition(servoUpDownPosition);
@@ -248,6 +269,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
          servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
          servoUpDown = hardwareMap.servo.get("servoUpDownP2");
          servoPushButton = hardwareMap.servo.get("servoButtonP3");
+         servoSideButtonPush.setPosition(0.5);
          //servoLeftRight.setPosition(0.0);
          //servoPushButton.setPosition(0.0);
          //servoUpDown.setPosition(0.0);
@@ -432,6 +454,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                      }
                  });
          telemetry.addLine()
+                 .addData("Side Button Position", new Func<String>() {
+                     @Override
+                     public String value() {
+                         return String.format("%.2f", servoSideButtonPushPosition);
+                     }
+                 });
+         telemetry.addLine()
                  .addData("Spinner Motor Power", new Func<String>() {
                      @Override
                      public String value() {
@@ -472,13 +501,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
                  .addData("GamePad2 Stick_x", new Func<String>() {
                      @Override
                      public String value() {
-                         return String.format("%.2f", gamepad2.right_stick_x);
+                         return String.format("%.2f", gamepad2.left_stick_x);
                      }
                  })
                  .addData("Stick_y", new Func<String>() {
                      @Override
                      public String value() {
-                         return String.format("%.2f", gamepad2.right_stick_y);
+                         return String.format("%.2f", gamepad2.left_stick_y);
                      }
                  });
          telemetry.addLine()

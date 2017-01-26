@@ -77,8 +77,11 @@ public class BlueAutoButtons extends OpMode  {
         WAIT_DRIVE_VORTEX,
         WAIT_DRIVE_FORWARD,
         WALL_FOLLOW,
+        WALL_FOLLOW_BACK,
+        WALL_FOLLOW_TAPE,
         WALL_FOLLOW_BACK_TOUCH,
         WALL_FOLLOW_PASSED_TAPE,
+        WALL_FOLLOW_PAST_TAPE_BACK,
         SENSE_BUTTON,
         PUSH_FRONT_BUTTON,
         PUSH_BACK_BUTTON,
@@ -97,7 +100,8 @@ public class BlueAutoButtons extends OpMode  {
     //Drive Control Values
     static final float normalTurnSpeed = (float) 0.1;
     private float parkSpeedDelta = (float) 0.03;
-    static final float normalSpeed = (float) 0.15 ;
+    static final float normalSpeed = (float) 0.13 ;
+    static final float sideSpeed = (float) 0.6;
     private int leftTurnCount = 0;
     static final float normalLine = 1;
     static final double normal90turn = 60;
@@ -137,7 +141,7 @@ public class BlueAutoButtons extends OpMode  {
     DcMotor motorLeft2;
     DcMotor motorRight1;
     DcMotor motorRight2;
-    DcMotor motorTape;
+    DcMotor motorSideButton;
     Servo servoSideButtonPush ;
 
     int resetValueLeft = 0;
@@ -148,9 +152,11 @@ public class BlueAutoButtons extends OpMode  {
     float motorPowerMax = 1;
     double positionLeft = 0;
     double positionRight = 0;
-    double servoSideButtonPushPosition = 0;
+    double sideButtonPushPosition ;
+    float SideCurrentPosition = 0;
     float motorLeftPower = 0;
     float motorRightPower = 0;
+    float motorSideButtonPower = 0;
     double driveCorrection = 0.0;
     PIDController motorPID;
     Orientation RobotAngles;
@@ -193,7 +199,7 @@ public class BlueAutoButtons extends OpMode  {
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
         motorRight1 = hardwareMap.dcMotor.get("motorRight1");
         motorRight2 = hardwareMap.dcMotor.get("motorRight2");
-        //motorTape = hardwareMap.dcMotor.get("motorTape");
+        motorSideButton = hardwareMap.dcMotor.get("motorSideButton");
 
         //Setup Hardware
         motorLeft1.setDirection(DcMotor.Direction.REVERSE);
@@ -252,6 +258,7 @@ public class BlueAutoButtons extends OpMode  {
         pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.thirdAngle)) ;
         //RobotAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
+        sideButtonPushPosition = motorSideButton.getCurrentPosition() ;
         switch(currentState) {
             case WAIT_START_PERIOD:
                 StabilizationTimer.startTime();
@@ -343,15 +350,37 @@ public class BlueAutoButtons extends OpMode  {
             case WALL_FOLLOW:
                 StartWallFollow();
                 //DbgLog.msg("InWallFollowState");
-                if (lightSensor0.getRawLightDetected() >= 2) {
+                if (lightSensor0.getRawLightDetected() >= 2.0) {
                     nextState = MotorState.STOP_ROBOT ;
-                    nextStateAfterWait = MotorState.SENSE_BUTTON ;
+                    if (buttonPressCount >= 1) {
+                        nextStateAfterWait = MotorState.SENSE_BUTTON ;
+                    } else {
+                        nextStateAfterWait = MotorState.ARE_WE_DONE ;
+                    }
                 }
+                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                break;
+            case WALL_FOLLOW_BACK:
+                StartWallFollowBackwards();
+                //DbgLog.msg("InWallFollowState");
+                if (lightSensor0.getRawLightDetected() >= 2.0) {
+                    nextState = MotorState.STOP_ROBOT ;
+                    if (buttonPressCount == 2)
+                        nextStateAfterWait = MotorState.SENSE_BUTTON ;
+                }
+                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_PASSED_TAPE:
                 StartWallFollow();
-                if (lightSensor0.getRawLightDetected() < 1.8) {
+                if (lightSensor0.getRawLightDetected() < 2.0) {
                     nextState = MotorState.WALL_FOLLOW ;
+                }
+                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                break;
+            case WALL_FOLLOW_PAST_TAPE_BACK:
+                StartWallFollowBackwards();
+                if (lightSensor0.getRawLightDetected() < 1.8) {
+                    nextState = MotorState.WALL_FOLLOW_BACK ;
                 }
                 DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
                 break;
@@ -359,9 +388,13 @@ public class BlueAutoButtons extends OpMode  {
             case SENSE_BUTTON:
                 if (SenseBeaconColor(SensorColor.Blue)) {
                     cdim.setLED(0x0,true);
+                    waitTimer.reset();
+                    SideCurrentPosition = motorSideButton.getCurrentPosition();
                     nextState = MotorState.PUSH_FRONT_BUTTON;
                 } else if (SenseBeaconColor(SensorColor.Red)) {
+                    SideCurrentPosition = motorSideButton.getCurrentPosition();
                     cdim.setLED(0x1,true);
+                    waitTimer.reset();
                     nextState = MotorState.PUSH_BACK_BUTTON;
                 } else {
                     DbgLog.msg("ERROR: Light not Sensed backup");
@@ -375,7 +408,7 @@ public class BlueAutoButtons extends OpMode  {
                     StopMove();
                     nextState = MotorState.SENSE_BUTTON;
                     DbgLog.msg("Sensed Button");
-                } else if(lightSensor0.getRawLightDetected() >=- 2.0 ) {
+                } else if(lightSensor0.getRawLightDetected() >= 2.0 ) {
                     nextState = MotorState.STOP_ROBOT ;
                     nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 } else if(waitTimer.time()>500){
@@ -395,24 +428,29 @@ public class BlueAutoButtons extends OpMode  {
                 driveCorrection = StabilizeMeOnCurrentHeading(currentHeading,TargetHeading);
                 motorLeftPower = -normalSpeed - (float) driveCorrection;
                 motorRightPower = -normalSpeed + (float) driveCorrection;
-                if(pitch< -10.0) {
+                if (pitch <= -3 ) {
                     StopMove();
                     nextState = MotorState.DONE;
                 }
+
                 break;
             //TODO Check return to Votex
             case PUSH_FRONT_BUTTON:
                 cdim.setDigitalChannelState(LED_CHANNEL,true);
-                servoSideButtonPushPosition = 0 ;
-                nextState = MotorState.WAIT ;
-                nextStateAfterWait = MotorState.ARE_WE_DONE ;
-                waitTimer.reset();
+                motorSideButtonPower = (float) 0.5;
+                if((motorSideButton.getCurrentPosition() - SideCurrentPosition > 200) || (waitTimer.time() >= 2000)) {
+                    motorSideButtonPower = (float) 0.0;
+                    nextState = MotorState.ARE_WE_DONE;
+                }
                 break;
             case PUSH_BACK_BUTTON:
-                servoSideButtonPushPosition = 1 ;
+                motorSideButtonPower = (float) -0.5;
+                if((motorSideButton.getCurrentPosition() - SideCurrentPosition < -200) || (waitTimer.time() >= 2000)) {
+                    motorSideButtonPower = (float) 0.0;
+                    nextState = MotorState.ARE_WE_DONE;
+                }
                 nextState = MotorState.WAIT ;
                 nextStateAfterWait = MotorState.ARE_WE_DONE ;
-                waitTimer.reset();
                 break;
             case ARE_WE_DONE:
                 ResetServoPushers();
@@ -420,10 +458,13 @@ public class BlueAutoButtons extends OpMode  {
                     buttonPressCount += 1 ;
                     nextState = MotorState.WAIT ;
                     nextStateAfterWait = MotorState.WALL_FOLLOW_PASSED_TAPE ;
-                } else {
-                    nextState = MotorState.BACK_UP_TO_VORTEX ;
+                } else if (buttonPressCount == 1){
+                    nextState = MotorState.WALL_FOLLOW_PAST_TAPE_BACK ;
                     StartWallFollowBackwards();
+                    buttonPressCount += 1 ;
                     nextStateAfterWait = MotorState.DONE;
+                } else if (buttonPressCount == 2) {
+                    nextState = MotorState.BACK_UP_TO_VORTEX ;
                 }
                 break;
             case NEXT_BUTTON:
@@ -451,9 +492,13 @@ public class BlueAutoButtons extends OpMode  {
                 break;
         }
 
+
+
+
         //clips motor and servo power/position
         motorLeftPower = Range.clip(motorLeftPower, motorPowerMin, motorPowerMax);
         motorRightPower = Range.clip(motorRightPower, motorPowerMin, motorPowerMax);
+        motorSideButtonPower = Range.clip(motorSideButtonPower, motorPowerMin, motorPowerMax);
 
         //sets motor and servo power/position
         //DbgLog.msg("LeftPower "+motorLeftPower+"RightPower "+motorRightPower);
@@ -461,8 +506,10 @@ public class BlueAutoButtons extends OpMode  {
         motorLeft2.setPower(motorLeftPower);
         motorRight1.setPower(motorRightPower);
         motorRight2.setPower(motorRightPower);
+        motorSideButton.setPower(motorSideButtonPower);
 
-        servoSideButtonPush.setPosition(servoSideButtonPushPosition);
+
+
 
     }
 
@@ -589,6 +636,18 @@ public class BlueAutoButtons extends OpMode  {
                     }
                 });
         telemetry.addLine()
+                .addData("Side Button", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatDouble(sideButtonPushPosition);
+                    }
+                })
+                .addData("Wait Time ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatDouble(waitTimer.time());
+                    }});
+        telemetry.addLine()
                 .addData("Control Count", new Func<String>() {
                     @Override public String value() {
                         return formatDouble(buttonPressCount);
@@ -652,8 +711,8 @@ public class BlueAutoButtons extends OpMode  {
         motorRightPower = normalSpeed - (float)0.03;
     }
     public void StartWallFollowBackwards() {
-        motorLeftPower = -normalSpeed ;
-        motorRightPower = -(normalSpeed - (float)0.05);
+        motorLeftPower = -(normalSpeed );
+        motorRightPower = -(normalSpeed - (float)0.03);
     }
 
     public void StartPivotLeft ()   {
@@ -720,15 +779,19 @@ public class BlueAutoButtons extends OpMode  {
     }
 
     public void ResetServoPushers(){
-        servoSideButtonPushPosition = 0.5 ;
+        motorSideButtonPower = 0 ;
     }
 
     public boolean SenseBeaconColor(SensorColor BeaconColor) {
         if (BeaconColor == SensorColor.Blue) {
-            return sensorRGB.blue() >= 200 ;
+            if (sensorRGB.blue() > sensorRGB.red()) {
+                return true;
+            }
         }
         if (BeaconColor == SensorColor.Red) {
-            return sensorRGB.red() >= 120 ;
+            if (sensorRGB.red() > sensorRGB.blue()) {
+                return true ;
+            }
         }
         return false ;
     }

@@ -139,8 +139,6 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         servoPushButton = hardwareMap.servo.get("servoButtonP3");
         servoLeftRight = hardwareMap.servo.get("servoLeftRightP1");
         servoUpDown = hardwareMap.servo.get("servoUpDownP2");
-        servoTapeLeft = hardwareMap.servo.get("servoTapeLeft");
-        servoTapeRight = hardwareMap.servo.get("servoTapeRight");
 
         motorLeft1 = hardwareMap.dcMotor.get("motorLeft1");
         motorLeft2 = hardwareMap.dcMotor.get("motorLeft2");
@@ -186,8 +184,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
         servoPushButton.setPosition(SERVOPUSHBUTTON_STARTPOSITION);
         servoLeftRight.setPosition(SERVOLEFTRIGHT_STARTPOSITION);
         servoUpDown.setPosition(SERVOUPDOWN_STARTPOSITION);
-        servoTapeLeft.setPosition(0.5);
-        servoTapeRight.setPosition(0.5);
+
     }
 
     @Override
