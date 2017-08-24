@@ -6,6 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
@@ -41,6 +47,8 @@ public class HardwareOmniBot
     public ColorSensor colorSensor = null;
     public BNO055IMU imu = null;
     public BNO055IMU.Parameters parameters = null;
+    public float currentHeading = (float) 0.0;
+    public Acceleration gravity = null;
 
 
     public static final double MID_SERVO       =  0.5 ;
@@ -124,7 +132,7 @@ public class HardwareOmniBot
      * @param periodMs  Length of wait cycle in mSec.
      */
     public void waitForTick(long periodMs) {
-
+        Orientation angles = null;
         long  remaining = periodMs - (long)period.milliseconds();
 
         // sleep for the remaining portion of the regular cycle period.
@@ -138,6 +146,9 @@ public class HardwareOmniBot
 
         // Reset the cycle clock for the next pass.
         period.reset();
+        angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
+        gravity = imu.getGravity();
     }
 }
 
