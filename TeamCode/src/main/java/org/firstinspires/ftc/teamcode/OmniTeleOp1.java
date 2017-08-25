@@ -28,10 +28,8 @@ public class OmniTeleOp1 extends OpMode {
     float motorLeft2power = 0;
     float motorRight1power = 0;
     float motorRight2power = 0;
+    float leftStickY = 0 ;
     HardwareOmniBot OmniBot ;
-
-    float motorPowerMin = -1 ;
-    float motorPowerMax = 1 ;
 
     @Override
     public void init() {
@@ -46,19 +44,16 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void loop() {
-        gamepad1.left_stick_y = -gamepad1.left_stick_y ;
+        leftStickY = -gamepad1.left_stick_y ;
 
-        motorLeft1power = gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x;
-        motorLeft2power = gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.right_stick_x;
-        motorRight1power = gamepad1.left_stick_y - gamepad1.left_stick_x - gamepad1.right_stick_x;
-        motorRight2power = gamepad1.left_stick_y + gamepad1.left_stick_x - gamepad1.right_stick_x;
-
-        motorLeft1power = Range.clip(motorLeft1power, motorPowerMin, motorPowerMax);
-        motorLeft2power = Range.clip(motorLeft2power, motorPowerMin, motorPowerMax);
-        motorRight1power = Range.clip(motorRight1power, motorPowerMin, motorPowerMax);
-        motorRight2power = Range.clip(motorRight2power, motorPowerMin, motorPowerMax);
+        motorLeft1power = leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x;
+        motorLeft2power = leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x;
+        motorRight1power = leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x;
+        motorRight2power = leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x;
 
         OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+
+        OmniBot.waitForTick(40);
     }
 
     @Override

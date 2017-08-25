@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -42,9 +43,10 @@ public class HardwareOmniBot
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
-    protected DcMotor  armMotor    = null;
-    protected Servo    leftClaw    = null;
-    protected Servo    rightClaw   = null;
+    protected float motorPowerMin = -1 ;
+    protected float motorPowerMax = 1 ;
+    protected  float gamePad1LeftStickMagnitude = 0 ;
+    protected  float getGamePad1LeftStickAngle = 0 ;
     protected ColorSensor colorSensor = null;
     protected BNO055IMU imu = null;
     protected BNO055IMU.Parameters parameters = null;
@@ -75,7 +77,7 @@ public class HardwareOmniBot
         Motor01  = hwMap.dcMotor.get("drive_wheel_01");
         Motor10  = hwMap.dcMotor.get("drive_wheel_10");
         Motor11  = hwMap.dcMotor.get("drive_wheel_11");
-       // armMotor    = hwMap.dcMotor.get("left_arm");
+
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
@@ -104,7 +106,6 @@ public class HardwareOmniBot
         Motor01.setPower(0);
         Motor10.setPower(0);
         Motor11.setPower(0);
-        //armMotor.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -112,13 +113,7 @@ public class HardwareOmniBot
         Motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor10.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor11.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Define and initialize ALL installed servos.
-        //leftClaw = hwMap.servo.get("left_hand");
-        //rightClaw = hwMap.servo.get("right_hand");
-        //leftClaw.setPosition(MID_SERVO);
-        //rightClaw.setPosition(MID_SERVO);
     }
 
     public void start() {
@@ -126,6 +121,50 @@ public class HardwareOmniBot
     }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
+
+
+        motorPower00 = Range.clip(motorPower00, motorPowerMin, motorPowerMax);
+        motorPower01 = Range.clip(motorPower01, motorPowerMin, motorPowerMax);
+        motorPower10 = Range.clip(motorPower10, motorPowerMin, motorPowerMax);
+        motorPower11 = Range.clip(motorPower11, motorPowerMin, motorPowerMax);
+
+        Motor00.setPower(motorPower00);
+        Motor01.setPower(motorPower01);
+        Motor10.setPower(motorPower10);
+        Motor11.setPower(motorPower11);
+    }
+
+    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickx, double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
+        gamePad1LeftStickMagnitude = (float) Math.pow((padLeftStickX*padLeftStickX +padLeftStickY*padLeftStickY), 0.5) ;
+        if (padLeftStickX == padLeftStickY) {
+            motorPower00 = 0 ;
+            motorPower11 = 0 ;
+        } else {
+            motorPower00 = gamePad1LeftStickMagnitude*((padLeftStickY+padLeftStickX)/(Math.abs(padLeftStickY+padLeftStickX)));
+            motorPower11 = gamePad1LeftStickMagnitude*((padLeftStickY+padLeftStickX)/(Math.abs(padLeftStickY+padLeftStickX)));
+        }
+        if (padLeftStickX == -padLeftStickY) {
+            motorPower01 = 0 ;
+            motorPower10 = 0 ;
+        } else {
+            motorPower01 = gamePad1LeftStickMagnitude*((padLeftStickY-padLeftStickX)/(Math.abs(padLeftStickY-padLeftStickX)));
+            motorPower10 = gamePad1LeftStickMagnitude*((padLeftStickY-padLeftStickX)/(Math.abs(padLeftStickY-padLeftStickX)));
+        }
+
+        motorPower00 = motorPower00 + padRightStickx ;
+        motorPower01 = motorPower01 + padRightStickx ;
+        motorPower10 = motorPower10 + padRightStickx ;
+        motorPower11 = motorPower11 + padRightStickx ;
+
+        if (motorPower00 > 1 ) {
+
+        }
+
+        motorPower00 = Range.clip(motorPower00, motorPowerMin, motorPowerMax);
+        motorPower01 = Range.clip(motorPower01, motorPowerMin, motorPowerMax);
+        motorPower10 = Range.clip(motorPower10, motorPowerMin, motorPowerMax);
+        motorPower11 = Range.clip(motorPower11, motorPowerMin, motorPowerMax);
+
         Motor00.setPower(motorPower00);
         Motor01.setPower(motorPower01);
         Motor10.setPower(motorPower10);
