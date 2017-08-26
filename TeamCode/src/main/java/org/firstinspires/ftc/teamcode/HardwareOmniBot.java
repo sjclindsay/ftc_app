@@ -4,18 +4,22 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.FormatHelper;
+
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
+import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
 /**
  * This is NOT an opmode.
@@ -31,9 +35,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  * Motor channel:  01 drive motor:        "drive_wheel_01"
  * Motor channel:  10 drive motor:        "drive_wheel_10"
  * Motor channel:  00 drive motor:        "drive_wheel_00"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
+
  */
 
 public class HardwareOmniBot
@@ -48,15 +50,9 @@ public class HardwareOmniBot
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
     protected ColorSensor colorSensor = null;
-    protected BNO055IMU imu = null;
-    protected BNO055IMU.Parameters parameters = null;
+    protected HardwareGyro gyroScope = null;
     public float currentHeading = (float) 0.0;
     public Acceleration gravity = null;
-
-
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -69,6 +65,7 @@ public class HardwareOmniBot
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
+
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -81,25 +78,8 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        /*parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        */
-        // parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        //imu = hwMap.get(BNO055IMU.class, "imu");
-        //imu.initialize(parameters);
-
+        gyroScope = new HardwareGyro();
+        gyroScope.init(hwMap);
 
         // Set all motors to zero power
         Motor00.setPower(0);
@@ -117,7 +97,7 @@ public class HardwareOmniBot
     }
 
     public void start() {
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
+        gyroScope.start();
     }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
@@ -179,6 +159,37 @@ public class HardwareOmniBot
         Motor10.setPower(motorPower10);
         Motor11.setPower(motorPower11);
     }
+
+    public void getTelemetry(Telemetry telemetry) {
+
+        telemetry.addLine()
+            .addData("Motor Power 00", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(Motor00.getPower());
+                }
+            })
+            .addData("Motor Power 01", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(Motor01.getPower());
+                }
+            });
+        telemetry.addLine()
+            .addData("Motor Power 10", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(Motor10.getPower());
+                }
+            })
+            .addData("Motor Power 11", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(Motor11.getPower());
+                }
+            });
+    }
+
     /***
      *
      * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
@@ -189,7 +200,6 @@ public class HardwareOmniBot
      */
 
     public void waitForTick(long periodMs) {
-        Orientation angles = null;
         long  remaining = periodMs - (long)period.milliseconds();
 
         // sleep for the remaining portion of the regular cycle period.
@@ -203,9 +213,7 @@ public class HardwareOmniBot
 
         // Reset the cycle clock for the next pass.
         period.reset();
-        //angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        //currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
-        //gravity = imu.getGravity();
+
     }
     public double maxPowerIdentifier (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
         double power1 = Math.max(motorPower00,motorPower01) ;
