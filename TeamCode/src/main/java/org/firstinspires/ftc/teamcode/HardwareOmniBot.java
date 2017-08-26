@@ -46,7 +46,7 @@ public class HardwareOmniBot
     protected float motorPowerMin = -1 ;
     protected float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
-    protected  float getGamePad1LeftStickAngle = 0 ;
+    protected  double maxPower = 1;
     protected ColorSensor colorSensor = null;
     protected BNO055IMU imu = null;
     protected BNO055IMU.Parameters parameters = null;
@@ -134,16 +134,21 @@ public class HardwareOmniBot
         Motor11.setPower(motorPower11);
     }
 
-    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickx, double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
+    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickx) {
+        double motorPower00  ;
+        double motorPower01 ;
+        double motorPower10 ;
+        double motorPower11 ;
+
         gamePad1LeftStickMagnitude = (float) Math.pow((padLeftStickX*padLeftStickX +padLeftStickY*padLeftStickY), 0.5) ;
-        if (padLeftStickX == padLeftStickY) {
-            motorPower00 = 0 ;
+        if (padLeftStickX == -padLeftStickY) {
+            motorPower00= 0 ;
             motorPower11 = 0 ;
         } else {
             motorPower00 = gamePad1LeftStickMagnitude*((padLeftStickY+padLeftStickX)/(Math.abs(padLeftStickY+padLeftStickX)));
             motorPower11 = gamePad1LeftStickMagnitude*((padLeftStickY+padLeftStickX)/(Math.abs(padLeftStickY+padLeftStickX)));
         }
-        if (padLeftStickX == -padLeftStickY) {
+        if (padLeftStickX == padLeftStickY) {
             motorPower01 = 0 ;
             motorPower10 = 0 ;
         } else {
@@ -151,13 +156,17 @@ public class HardwareOmniBot
             motorPower10 = gamePad1LeftStickMagnitude*((padLeftStickY-padLeftStickX)/(Math.abs(padLeftStickY-padLeftStickX)));
         }
 
-        motorPower00 = motorPower00 + padRightStickx ;
-        motorPower01 = motorPower01 + padRightStickx ;
+        motorPower00 = motorPower00 - padRightStickx ;
+        motorPower01 = motorPower01 - padRightStickx ;
         motorPower10 = motorPower10 + padRightStickx ;
         motorPower11 = motorPower11 + padRightStickx ;
 
-        if (motorPower00 > 1 ) {
-
+        if (motorPower00 > 1 || motorPower01 > 1 || motorPower10 > 1 || motorPower11 > 1) {
+            maxPower = maxPowerIdentifier(motorPower00, motorPower01, motorPower10, motorPower11) ;
+            motorPower00 = motorPower00/maxPower ;
+            motorPower01 = motorPower10/maxPower ;
+            motorPower10 = motorPower10/maxPower ;
+            motorPower11 = motorPower11/maxPower ;
         }
 
         motorPower00 = Range.clip(motorPower00, motorPowerMin, motorPowerMax);
@@ -197,6 +206,12 @@ public class HardwareOmniBot
         //angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         //currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.firstAngle));
         //gravity = imu.getGravity();
+    }
+    public double maxPowerIdentifier (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
+        double power1 = Math.max(motorPower00,motorPower01) ;
+        double power2 = Math.max(motorPower10,motorPower11) ;
+        double maxPower = Math.max(power1,power2) ;
+        return maxPower ;
     }
 }
 

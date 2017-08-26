@@ -29,6 +29,8 @@ public class OmniTeleOp1 extends OpMode {
     float motorRight1power = 0;
     float motorRight2power = 0;
     float leftStickY = 0 ;
+    boolean controller1 = true;
+    boolean controller2 = false ;
     HardwareOmniBot OmniBot ;
 
     @Override
@@ -46,12 +48,23 @@ public class OmniTeleOp1 extends OpMode {
     public void loop() {
         leftStickY = -gamepad1.left_stick_y ;
 
-        motorLeft1power = leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x;
-        motorLeft2power = leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x;
-        motorRight1power = leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x;
-        motorRight2power = leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x;
+        if (gamepad1.a || controller1) {
+            controller1 = true ;
+            controller2 = false ;
 
-        OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+            motorLeft1power = leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x;
+            motorLeft2power = leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x;
+            motorRight1power = leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x;
+            motorRight2power = leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x;
+
+            OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+
+        }
+        if (gamepad2.a || controller2) {
+            controller2 = true ;
+            controller1 = false ;
+            OmniBot.complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x );
+        }
 
         OmniBot.waitForTick(40);
     }
