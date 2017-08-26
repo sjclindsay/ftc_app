@@ -76,7 +76,8 @@ public class OmniTeleOp1 extends OpMode {
         }
 
         OmniBot.waitForTick(40);
-        telemetry.update()
+        telemetry.update();
+
     }
 
     @Override
