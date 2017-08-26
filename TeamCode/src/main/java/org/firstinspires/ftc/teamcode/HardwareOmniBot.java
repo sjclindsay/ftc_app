@@ -78,8 +78,8 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
-        gyroScope = new HardwareGyro();
-        gyroScope.init(hwMap);
+        //gyroScope = new HardwareGyro();
+        //gyroScope.init(hwMap);
 
         // Set all motors to zero power
         Motor00.setPower(0);
@@ -97,7 +97,8 @@ public class HardwareOmniBot
     }
 
     public void start() {
-        gyroScope.start();
+
+        //gyroScope.start();
     }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
