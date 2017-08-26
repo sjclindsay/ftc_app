@@ -45,6 +45,7 @@ public class OmniTeleOp1 extends OpMode {
     public void init() {
         OmniBot = new HardwareOmniBot() ;
         OmniBot.init(hardwareMap);
+        composeTelemetry();
     }
 
     @Override
@@ -75,6 +76,7 @@ public class OmniTeleOp1 extends OpMode {
         }
 
         OmniBot.waitForTick(40);
+        telemetry.update()
     }
 
     @Override
