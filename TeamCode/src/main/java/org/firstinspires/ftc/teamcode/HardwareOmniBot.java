@@ -49,6 +49,7 @@ public class HardwareOmniBot
     protected float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
+    protected boolean gyroConnected = false;
     protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
     public float currentHeading = (float) 0.0;
@@ -60,7 +61,10 @@ public class HardwareOmniBot
 
     /* Constructor */
     public HardwareOmniBot(){
+    }
 
+    public HardwareOmniBot(boolean gConnected){
+        gyroConnected = true;
     }
 
     /* Initialize standard Hardware interfaces */
@@ -78,8 +82,10 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
-        //gyroScope = new HardwareGyro();
-        //gyroScope.init(hwMap);
+        if(gyroConnected) {
+            gyroScope = new HardwareGyro();
+            gyroScope.init(hwMap);
+        }
 
         // Set all motors to zero power
         Motor00.setPower(0);
@@ -97,9 +103,11 @@ public class HardwareOmniBot
     }
 
     public void start() {
-
-        //gyroScope.start();
+        if (gyroConnected) {
+            gyroScope.start();
+        }
     }
+
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
 
@@ -159,6 +167,11 @@ public class HardwareOmniBot
         Motor01.setPower(motorPower01);
         Motor10.setPower(motorPower10);
         Motor11.setPower(motorPower11);
+    }
+
+    public void gyroDrive(double Speed, double targetHeading) {
+
+
     }
 
     public void getTelemetry(Telemetry telemetry) {
