@@ -19,11 +19,13 @@ public class OmniAutoOp1 extends OpMode {
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
+
     HardwareOmniBot OmniBot ;
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot() ;
+        OmniBot = new HardwareOmniBot(autoConnectedHW) ;
         OmniBot.init(hardwareMap);
         composeTelemetry();
     }

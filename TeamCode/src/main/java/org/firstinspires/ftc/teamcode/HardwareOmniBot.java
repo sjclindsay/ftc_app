@@ -38,9 +38,17 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
  */
 
+enum robotHWconnected {
+    MotorOnly,
+    MotorGyro,
+    MotorGyroServo,
+    MotorServo
+}
+
 public class HardwareOmniBot
 {
     /* Public OpMode members. */
+    private robotHWconnected connectedHW = robotHWconnected.MotorOnly;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
@@ -50,6 +58,7 @@ public class HardwareOmniBot
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
     protected boolean gyroConnected = false;
+    protected boolean servoConnected = false;
     protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
     public float currentHeading = (float) 0.0;
@@ -63,8 +72,13 @@ public class HardwareOmniBot
     public HardwareOmniBot(){
     }
 
-    public HardwareOmniBot(boolean gConnected){
-        gyroConnected = true;
+    public HardwareOmniBot(robotHWconnected gConnected){
+        if((gConnected == robotHWconnected.MotorGyro) || (gyroConnected == robotHWconnected.MotorGyroServo){
+            gyroConnected = true;
+        }
+        if((gConnected == robotHWconnected.MotorGyroServo)||(gConnected == robotHWconnected.MotorServo)) {
+            servoConnected = true;
+        }
     }
 
     /* Initialize standard Hardware interfaces */
