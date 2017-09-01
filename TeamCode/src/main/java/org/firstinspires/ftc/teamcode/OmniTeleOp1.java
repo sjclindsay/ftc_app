@@ -14,6 +14,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.FormatHelper;
+
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
+import java.util.Locale;
 
 /**
  * Created by conno on 8/17/2017.
@@ -54,12 +62,12 @@ public class OmniTeleOp1 extends OpMode {
     @Override
     public void start() {
 
+        OmniBot.start();
     }
 
     @Override
     public void loop() {
         leftStickY = -gamepad1.left_stick_y ;
-
 
         if (gamepad1.a || controller1) {
             controller1 = true ;
@@ -80,12 +88,15 @@ public class OmniTeleOp1 extends OpMode {
         }
 
         OmniBot.waitForTick(40);
+        telemetry.update();
+
     }
 
     @Override
     public void stop() {
 
     }
+    void composeTelemetry() {
 
 
     public double dPadScale (boolean dPadUpValue, boolean dPadDownValue, float dPadScalar) {
