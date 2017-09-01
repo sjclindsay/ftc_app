@@ -69,6 +69,8 @@ public class OmniTeleOp1 extends OpMode {
     public void loop() {
         leftStickY = -gamepad1.left_stick_y ;
 
+        dPadScalar = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalar) ;
+
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
@@ -98,8 +100,10 @@ public class OmniTeleOp1 extends OpMode {
     }
     void composeTelemetry() {
 
+    }
 
-    public double dPadScale (boolean dPadUpValue, boolean dPadDownValue, float dPadScalar) {
+
+    public float dPadScale (boolean dPadUpValue, boolean dPadDownValue, float dPadScalar) {
         if (dPadUpValue && !waitForUpRelease) {
             waitForDownRelease = true ;
             dPadScalar += 1 ;

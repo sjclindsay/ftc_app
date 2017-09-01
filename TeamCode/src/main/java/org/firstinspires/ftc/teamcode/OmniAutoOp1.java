@@ -55,7 +55,6 @@ public class OmniAutoOp1 extends OpMode {
         if (gamepad2.a || controller2) {
             controller2 = true ;
             controller1 = false ;
-            OmniBot.complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x );
         }
 
         OmniBot.waitForTick(40);
