@@ -79,9 +79,6 @@ public class HardwareOmniBot
         if((gConnected == robotHWconnected.MotorGyro) || (gConnected == robotHWconnected.MotorGyroServo)){
             gyroConnected = true;
         }
-        if((gConnected == robotHWconnected.MotorGyroServo)||(gConnected == robotHWconnected.MotorServo)) {
-            servoConnected = true;
-        }
     }
 
     /* Initialize standard Hardware interfaces */
