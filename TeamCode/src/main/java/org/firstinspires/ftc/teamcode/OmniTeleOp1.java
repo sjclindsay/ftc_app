@@ -61,6 +61,7 @@ public class OmniTeleOp1 extends OpMode {
         motorLeft2power = 0;
         motorRight1power = 0;
         motorRight2power = 0;
+        composeTelemetry();
     }
 
     @Override
@@ -104,7 +105,7 @@ public class OmniTeleOp1 extends OpMode {
 
     }
     void composeTelemetry() {
-
+        OmniBot.addTelemetry(telemetry);
     }
 
 

@@ -11,6 +11,20 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
 public class OmniAutoOp1 extends OpMode {
+    public enum MotorState{
+        ERROR_STATE,
+        WAIT_TO_START,
+        WAIT_PERIOD,
+        WAIT_START_PERIOD,
+        STOP_MOVING,
+        WAIT_FOR_STABLE,
+        DRIVE_FORWARD_TO_BALL,
+        WAIT_DRIVE_FORWARD,
+        SENSE_BALL,
+        PUSH_OFF_BALL,
+        ARE_WE_DONE,
+        DONE
+    }
 
     float motorLeft1power = 0;
     float motorLeft2power = 0;

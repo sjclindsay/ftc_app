@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.FormatHelper;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -64,8 +67,9 @@ public class HardwareOmniBot
     protected boolean servoConnected = false;
     protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
-    public float currentHeading = (float) 0.0;
-    public Acceleration gravity = null;
+    protected double TargetHeading = 0.0;
+
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -75,8 +79,8 @@ public class HardwareOmniBot
     public HardwareOmniBot(){
     }
 
-    public HardwareOmniBot(robotHWconnected gConnected){
-        if((gConnected == robotHWconnected.MotorGyro) || (gConnected == robotHWconnected.MotorGyroServo)){
+    public HardwareOmniBot(robotHWconnected ConnectedParts){
+        if((ConnectedParts == robotHWconnected.MotorGyro) || (ConnectedParts == robotHWconnected.MotorGyroServo)){
             gyroConnected = true;
         }
     }
@@ -137,14 +141,32 @@ public class HardwareOmniBot
         Motor11.setPower(motorPower11);
     }
 
+    public double getcurrentHeading() {
+        return(gyroScope.currentHeadingZ);
+    }
 
-    public void gyroDrive(double Speed, double targetHeading) {
+    public void gyroDriveStaight(double Speed, double targetHeading) {
 
 
     }
 
-    public void getTelemetry(Telemetry telemetry) {
+    public void addTelemetry(Telemetry telemetry) {
 
+        if(gyroConnected){
+            gyroScope.addTelemetry(telemetry);
+            telemetry.addLine()
+                    .addData("targetHeading ", new Func<String>() {
+                        @Override public String value() {
+                            return formatDouble(TargetHeading);
+                        }
+                    })
+                    .addData("currentHeading" , new Func<String>() {
+                        @Override public String value() {
+                            return formatDouble(gyroScope.currentHeadingZ);
+                        }
+                    });
+
+        }
         telemetry.addLine()
             .addData("Motor Power 00", new Func<String>() {
                 @Override
@@ -196,6 +218,9 @@ public class HardwareOmniBot
 
         // Reset the cycle clock for the next pass.
         period.reset();
+        if(gyroConnected) {
+           gyroScope.Update();
+        }
 
     }
     public double maxPowerIdentifier (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {

@@ -4,7 +4,11 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.FormatHelper;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -28,8 +32,11 @@ public class HardwareGyro {
     /* Public OpMode members. */
     protected BNO055IMU imu = null;
     protected BNO055IMU.Parameters parameters = null;
-    public float currentHeading = (float) 0.0;
-    public Acceleration gravity = null;
+    public float currentHeadingZ = (float) 0.0;
+    public float currentHeadingY = (float) 0.0;
+    public float currentHeadingX = (float) 0.0;
+    private Orientation angles = null;
+    private Acceleration gravity = null;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -68,12 +75,53 @@ public class HardwareGyro {
         imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
     }
 
+    public void addTelemetry(Telemetry telemetry){
+        telemetry.addLine()
+                .addData("status", new Func<String>() {
+                    @Override public String value() {
+                        return imu.getSystemStatus().toShortString();
+                    }
+                })
+                .addData("calib", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return imu.getCalibrationStatus().toString();
+                    }
+                });
+        telemetry.addLine()
+                .addData("heading", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return formatedAngleZ();
+                    }
+                })
+                .addData("roll", new Func<String>() {
+                    @Override public String value() {
+                        return formatedAngleY();
+                    }
+                })
+                .addData("pitch", new Func<String>() {
+                    @Override public String value() {
+                        return formatedAngleX();
+                    }
+                });
+    }
 
     public void Update (){
-        Orientation angles = null;
-
         angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        currentHeading = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+        currentHeadingZ = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+        currentHeadingY = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
+        currentHeadingX = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.thirdAngle));
         gravity = imu.getGravity();
     }
+    public String formatedAngleZ() {
+        return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingZ);
+    }
+    public String formatedAngleY() {
+        return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingY);
+    }
+    public String formatedAngleX() {
+        return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingX);
+    }
+
 }
