@@ -59,6 +59,7 @@ public class HardwareOmniBot
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
+    protected  DcMotor MotorSweep = null;
     protected float motorPowerMin = -1 ;
     protected float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
@@ -96,6 +97,7 @@ public class HardwareOmniBot
         Motor01  = hwMap.dcMotor.get("drive_wheel_01");
         Motor10  = hwMap.dcMotor.get("drive_wheel_10");
         Motor11  = hwMap.dcMotor.get("drive_wheel_11");
+        MotorSweep = hwMap.dcMotor.get("sweeping_motor") ;
 
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -110,6 +112,7 @@ public class HardwareOmniBot
         Motor01.setPower(0);
         Motor10.setPower(0);
         Motor11.setPower(0);
+        MotorSweep.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -117,6 +120,7 @@ public class HardwareOmniBot
         Motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor10.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Motor11.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MotorSweep.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 

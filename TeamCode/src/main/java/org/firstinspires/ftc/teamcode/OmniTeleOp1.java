@@ -47,8 +47,8 @@ public class OmniTeleOp1 extends OpMode {
     protected  double maxPower = 1;
     public enum STICKHEADING {stationary, north, northEast, east, southEast,south, southWest, west, northWest}
     public STICKHEADING currentStickHeading = STICKHEADING.stationary ;
-    double stickAngle = 0 ;
-    int [] [] motorPowerMatrix = new int [2] [2] ;
+    float [] polarCoordinates = {0,0} ;
+    float stickAngle = 0 ;
 
     @Override
     public void init() {
@@ -75,7 +75,6 @@ public class OmniTeleOp1 extends OpMode {
         leftStickY = -gamepad1.left_stick_y ;
 
         dPadScalar = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalar) ;
-        currentStickHeading =  getCurrentStickHeading(-gamepad2.left_stick_y, gamepad2.left_stick_x) ;
 
         if (gamepad1.a || controller1) {
             controller1 = true ;
@@ -92,7 +91,12 @@ public class OmniTeleOp1 extends OpMode {
         if (gamepad2.a || controller2) {
             controller2 = true ;
             controller1 = false ;
-            complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x, dPadScalar, currentStickHeading);
+            complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x, dPadScalar);
+
+        if (gamepad2.left_bumper)  {
+
+        }
+
         }
 
         OmniBot.waitForTick(40);
@@ -125,8 +129,8 @@ public class OmniTeleOp1 extends OpMode {
         return dPadScalar ;
     }
 
-    public STICKHEADING getCurrentStickHeading (float padStickLeftY, float padStickLeftX) {
-        stickAngle = Math.atan(padStickLeftY/padStickLeftX) ;
+    public float [] getCurrentPolarCoordinate (float padStickLeftY, float padStickLeftX) {
+        stickAngle = (float) Math.atan( padStickLeftY/padStickLeftX) ;
 
         if (padStickLeftY < 0 && padStickLeftX > 0) {
             stickAngle += 360 ;
@@ -136,91 +140,26 @@ public class OmniTeleOp1 extends OpMode {
             stickAngle += 180 ;
         }
 
-        if (padStickLeftY == 0 && padStickLeftX == 0) {currentStickHeading = STICKHEADING.stationary ;}
-        else if (stickAngle <= 22.5 || stickAngle > 337.5 ) {currentStickHeading = STICKHEADING.east ;}
-        else if ( stickAngle <= 67.5 && stickAngle > 22.5) {currentStickHeading = STICKHEADING.northEast ;}
-        else if ( stickAngle <= 112.5 && stickAngle > 67.5) {currentStickHeading = STICKHEADING.north ;}
-        else if ( stickAngle <= 157.5 && stickAngle > 112.5) {currentStickHeading = STICKHEADING.northWest ;}
-        else if ( stickAngle <= 202.5 && stickAngle > 157.5) {currentStickHeading = STICKHEADING.west ;}
-        else if ( stickAngle <= 247.5 && stickAngle > 202.5) {currentStickHeading = STICKHEADING.southWest ;}
-        else if ( stickAngle <= 292.5 && stickAngle > 247.5) {currentStickHeading = STICKHEADING.south ;}
-        else if ( stickAngle <= 337.5 && stickAngle > 292.5) {currentStickHeading = STICKHEADING.southEast ;}
+        gamePad1LeftStickMagnitude = (float) Math.pow((padStickLeftX*padStickLeftX +padStickLeftY*padStickLeftY), 0.5) ;
+        polarCoordinates[0] = gamePad1LeftStickMagnitude ;
+        polarCoordinates[1] = stickAngle ;
 
-        return  currentStickHeading ;
+        return polarCoordinates ;
     }
 
-    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickx, double dPadScalar, STICKHEADING currentStickHeading) {
+
+
+        public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickX, double dPadScalar) {
         double motorPower00  ;
         double motorPower01 ;
         double motorPower10 ;
         double motorPower11 ;
 
-        if (currentStickHeading == STICKHEADING.stationary) {
-            motorPowerMatrix[0][0] = 0;
-            motorPowerMatrix[0][1] = 0;
-            motorPowerMatrix[1][0] = 0;
-            motorPowerMatrix[1][1] = 0;
-        } else if (currentStickHeading == STICKHEADING.north) {
-            motorPowerMatrix[0][0] = 1;
-            motorPowerMatrix[0][1] = 1;
-            motorPowerMatrix[1][0] = 1;
-            motorPowerMatrix[1][1] = 1;
-        } else if (currentStickHeading == STICKHEADING.northEast) {
-            motorPowerMatrix[0][0] = 1;
-            motorPowerMatrix[0][1] = 0;
-            motorPowerMatrix[1][0] = 0;
-            motorPowerMatrix[1][1] = 1;
-        } else if (currentStickHeading == STICKHEADING.east) {
-            motorPowerMatrix[0][0] = 1;
-            motorPowerMatrix[0][1] = -1;
-            motorPowerMatrix[1][0] = -1;
-            motorPowerMatrix[1][1] = 1;
-        } else if (currentStickHeading == STICKHEADING.southEast) {
-            motorPowerMatrix[0][0] = 0;
-            motorPowerMatrix[0][1] = -1;
-            motorPowerMatrix[1][0] = -1;
-            motorPowerMatrix[1][1] = 0;
-        } else if (currentStickHeading == STICKHEADING.south) {
-            motorPowerMatrix[0][0] = -1;
-            motorPowerMatrix[0][1] = -1;
-            motorPowerMatrix[1][0] = -1;
-            motorPowerMatrix[1][1] = -1;
-        } else if (currentStickHeading == STICKHEADING.southWest) {
-            motorPowerMatrix[0][0] = -1;
-            motorPowerMatrix[0][1] = 0;
-            motorPowerMatrix[1][0] = 0;
-            motorPowerMatrix[1][1] = -1;
-        } else if (currentStickHeading == STICKHEADING.west) {
-            motorPowerMatrix[0][0] = -1;
-            motorPowerMatrix[0][1] = 1;
-            motorPowerMatrix[1][0] = 1;
-            motorPowerMatrix[1][1] = -1;
-        } else if (currentStickHeading == STICKHEADING.northWest) {
-            motorPowerMatrix[0][0] = 0;
-            motorPowerMatrix[0][1] = 1;
-            motorPowerMatrix[1][0] = 1;
-            motorPowerMatrix[1][1] = 0;
-        }
+        motorPower00 = (padLeftStickY + padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
+        motorPower01 = (padLeftStickY - padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
+        motorPower10 = (padLeftStickY - padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
+        motorPower11 = (padLeftStickY + padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
 
-        gamePad1LeftStickMagnitude = (float) Math.pow((padLeftStickX*padLeftStickX +padLeftStickY*padLeftStickY), 0.5) ;
-
-        motorPower00 = gamePad1LeftStickMagnitude*motorPowerMatrix[0][0] ;
-        motorPower01 = gamePad1LeftStickMagnitude*motorPowerMatrix[0][1] ;
-        motorPower10 = gamePad1LeftStickMagnitude*motorPowerMatrix[1][0] ;
-        motorPower11 = gamePad1LeftStickMagnitude*motorPowerMatrix[1][1] ;
-
-        motorPower00 = motorPower00 - padRightStickx ;
-        motorPower01 = motorPower01 - padRightStickx ;
-        motorPower10 = motorPower10 + padRightStickx ;
-        motorPower11 = motorPower11 + padRightStickx ;
-
-        if (motorPower00 > 1 || motorPower01 > 1 || motorPower10 > 1 || motorPower11 > 1) {
-            maxPower = maxPowerIdentifier(motorPower00, motorPower01, motorPower10, motorPower11) ;
-            motorPower00 = motorPower00/(maxPower*dPadScalar) ;
-            motorPower01 = motorPower10/(maxPower*dPadScalar) ;
-            motorPower10 = motorPower10/(maxPower*dPadScalar) ;
-            motorPower11 = motorPower11/(maxPower*dPadScalar) ;
-        }
 
         OmniBot.setBotMovement(motorPower00, motorPower01, motorPower10, motorPower11);
     }

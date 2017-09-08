@@ -82,7 +82,7 @@ public class OmniAutoOp1 extends OpMode {
     }
     void composeTelemetry() {
 
-        OmniBot.getTelemetry(telemetry);
+        //OmniBot.getTelemetry(telemetry);
     }
 
 
