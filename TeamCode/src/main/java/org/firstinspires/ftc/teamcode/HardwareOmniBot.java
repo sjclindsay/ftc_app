@@ -72,6 +72,7 @@ public class HardwareOmniBot
     protected HardwareGyro gyroScope = null;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
+    private boolean FirstCallPIDDrive = true;
 
 
 
@@ -156,46 +157,25 @@ public class HardwareOmniBot
     public void gyroDriveStaight(double Speed, double targetHeading) {
         double correction = 0.0;
         double currentDiff = 0.0;
-
-        motorPower00 = Range.clip(Speed, motorPowerMin, motorPowerMax);
-        motorPower01 = Range.clip(-Speed, motorPowerMin, motorPowerMax);
-        motorPower10 = Range.clip(Speed, motorPowerMin, motorPowerMax);
-        motorPower11 = Range.clip(-Speed, motorPowerMin, motorPowerMax);
+        if(FirstCallPIDDrive) {
+            motorPID = new PIDController(targetHeading);
+            FirstCallPIDDrive = false;
+        }
 
         currentDiff = targetHeading - gyroScope.currentHeadingZ;
-        motorPID = new PIDController.PIDController(targetHeading);
-        correction = motorPID.Update(currentHeading);
+        correction = motorPID.Update(gyroScope.currentHeadingZ);
+
+        double motorPower00 = Range.clip(Speed+correction, motorPowerMin, motorPowerMax);
+        double motorPower01 = Range.clip(-Speed+correction, motorPowerMin, motorPowerMax);
+        double motorPower10 = Range.clip(Speed+correction, motorPowerMin, motorPowerMax);
+        double motorPower11 = Range.clip(-Speed+correction, motorPowerMin, motorPowerMax);
+
+        Motor00.setPower(motorPower00);
+        Motor01.setPower(motorPower01);
+        Motor10.setPower(motorPower10);
+        Motor11.setPower(motorPower11);
 
 
-
-    }
-
-    double correction = 0.0;
-    //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
-    diffFromStartHeading = target_ - currentHeading;
-        DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
-        if(false) {
-    correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
-    } else { //PID controller
-        correction = motorPID.Update(currentHeading);
-        //headingCorrectorLeft = (correction < -SIGNIFICANT_HEADING_DIFF) ? -1 * correction : -1 * correction;
-        //headingCorrectorRight = (correction > SIGNIFICANT_HEADING_DIFF) ? correction : correction;
-    }
-        return(correction);
-}
-
-
-    // Returning the current Heading before we start moving... We want to continue on this path
-    public float MoveForward(double TargetHeading){
-        motorLeftPower = normalSpeed;
-        motorRightPower = normalSpeed;
-
-        startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
-        //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
-        motorPID = new WeCoBallPushAuto.PIDController(startOrientation);
-        DbgLog.msg("Set Target" + startOrientation);
-        DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
-        return startOrientation;
     }
 
     public void addTelemetry(Telemetry telemetry) {
