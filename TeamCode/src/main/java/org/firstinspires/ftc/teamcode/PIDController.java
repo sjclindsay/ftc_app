@@ -27,7 +27,7 @@ public class PIDController
         lastTime_ = System.currentTimeMillis();
         errorSum_ = 0;
 
-        kp_ = (float)0.001 ;
+        kp_ = (float)0.00001 ;
         ki_ = (float)0;
         kd_ = (float)0;
     }

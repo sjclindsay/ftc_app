@@ -49,10 +49,11 @@ public class OmniTeleOp1 extends OpMode {
     public STICKHEADING currentStickHeading = STICKHEADING.stationary ;
     float [] polarCoordinates = {0,0} ;
     float stickAngle = 0 ;
+    double targetHeading = 0.0 ;
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot() ;
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyro) ;
         OmniBot.init(hardwareMap);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -93,11 +94,7 @@ public class OmniTeleOp1 extends OpMode {
             controller1 = false ;
             complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x, dPadScalar);
 
-        if (gamepad2.left_bumper)  {
-
-        }
-
-        }
+            }
 
         OmniBot.waitForTick(40);
         telemetry.update();
@@ -126,6 +123,7 @@ public class OmniTeleOp1 extends OpMode {
         } else if (!dPadDownValue && waitForDownRelease) {
             waitForDownRelease = false ;
         }
+        dPadScalar = Range.clip(dPadScalar,1, 5) ;
         return dPadScalar ;
     }
 
@@ -149,7 +147,7 @@ public class OmniTeleOp1 extends OpMode {
 
 
 
-        public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickX, double dPadScalar) {
+    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickX, double dPadScalar) {
         double motorPower00  ;
         double motorPower01 ;
         double motorPower10 ;
@@ -160,8 +158,10 @@ public class OmniTeleOp1 extends OpMode {
         motorPower10 = (padLeftStickY - padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
         motorPower11 = (padLeftStickY + padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
 
+        targetHeading -= padRightStickX ;
 
-        OmniBot.setBotMovement(motorPower00, motorPower01, motorPower10, motorPower11);
+        OmniBot.gyroDriveOmniStaight(motorPower00, motorPower01, motorPower10, motorPower11, targetHeading);
+
     }
 
     public double maxPowerIdentifier (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -30,7 +31,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class HardwareGyro {
     /* Public OpMode members. */
-    protected BNO055IMU imu = null;
+    BNO055IMU imu ;
     protected BNO055IMU.Parameters parameters = null;
     public float currentHeadingZ = (float) 0.0;
     public float currentHeadingY = (float) 0.0;
@@ -61,10 +62,10 @@ public class HardwareGyro {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
+        DbgLog.msg("gyro initialized");
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
+        // and named "imu"
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
