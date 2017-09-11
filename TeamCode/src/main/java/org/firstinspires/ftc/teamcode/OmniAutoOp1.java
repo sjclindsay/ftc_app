@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.test.MoreAsserts;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 /**
  * Created by conno on 8/17/2017.
@@ -34,13 +38,20 @@ public class OmniAutoOp1 extends OpMode {
     boolean controller1 = true;
     boolean controller2 = false ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
-
+    MotorState currentState = MotorState.ERROR_STATE;
+    MotorState nextState = MotorState.ERROR_STATE;
     HardwareOmniBot OmniBot ;
+    ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
         OmniBot.init(hardwareMap);
+
+        currentState = MotorState.WAIT_TO_START;
+        nextState = MotorState.WAIT_TO_START;
+        int count = 0;
+
         composeTelemetry();
     }
 
@@ -52,23 +63,38 @@ public class OmniAutoOp1 extends OpMode {
 
     @Override
     public void loop() {
-        leftStickY = -gamepad1.left_stick_y ;
-
-        if (gamepad1.a || controller1) {
-            controller1 = true ;
-            controller2 = false ;
-
-            motorLeft1power = leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x;
-            motorLeft2power = leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x;
-            motorRight1power = leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x;
-            motorRight2power = leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x;
-
-            OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-
+        if(currentState != nextState) {
+            RobotLog.i("Change State to " + nextState);
         }
-        if (gamepad2.a || controller2) {
-            controller2 = true ;
-            controller1 = false ;
+
+        currentState = nextState;
+        switch(nextState) {
+            case WAIT_START_PERIOD:
+                StabilizationTimer.startTime();
+                nextState = MotorState.WAIT_PERIOD;
+                break;
+            case WAIT_PERIOD:
+                if (StabilizationTimer.time() > 500) {
+                    nextState = MotorState.WAIT_DRIVE_FORWARD;
+                }
+                break;
+            case WAIT_DRIVE_FORWARD:
+                OmniBot.gyroDriveStaight(0.5, 45.0);
+                if(StabilizationTimer.seconds() > 1000) {
+                    nextState = MotorState.STOP_MOVING;
+                } else {
+                    nextState = MotorState.DRIVE_FORWARD_TO_BALL;
+                }
+                nextState = MotorState.ERROR_STATE;
+                break;
+            case STOP_MOVING:
+                OmniBot.resetFirstPIDDrive();
+                nextState = MotorState.DONE;
+                break;
+            case ERROR_STATE:
+                break;
+            default:
+                break;
         }
 
         OmniBot.waitForTick(40);
@@ -82,7 +108,7 @@ public class OmniAutoOp1 extends OpMode {
     }
     void composeTelemetry() {
 
-        //OmniBot.getTelemetry(telemetry);
+        OmniBot.addTelemetry(telemetry);
     }
 
 

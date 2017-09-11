@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.WeCoBallPushAuto;
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -151,11 +152,14 @@ public class HardwareOmniBot
         return(gyroScope.currentHeadingZ);
     }
 
+    public void resetFirstPIDDrive () { FirstCallPIDDrive = true; }
 
     public void gyroDriveStaight(double Speed, double targetHeading) {
         double correction = 0.0;
         double currentDiff = 0.0;
         if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
             motorPID = new PIDController(targetHeading);
             FirstCallPIDDrive = false;
         }
@@ -180,6 +184,8 @@ public class HardwareOmniBot
         double correction = 0.0;
         double currentDiff = 0.0;
         if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
             motorPID = new PIDController(targetHeading);
             FirstCallPIDDrive = false;
         }
