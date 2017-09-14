@@ -197,8 +197,8 @@ public class HardwareOmniBot
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading) {
-        float xValue = (float) Math.cos(direction) ;
-        float yValue = (float) Math.sin(direction) ;
+        float xValue = (float) Math.cos(direction)*magnitude ;
+        float yValue = (float) Math.sin(direction)*magnitude ;
 
         float power00 = yValue + xValue ;
         float power01 = yValue - xValue ;

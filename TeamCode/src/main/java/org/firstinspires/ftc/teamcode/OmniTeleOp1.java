@@ -45,9 +45,8 @@ public class OmniTeleOp1 extends OpMode {
     boolean waitForDownRelease = false ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
-    public enum STICKHEADING {stationary, north, northEast, east, southEast,south, southWest, west, northWest}
-    public STICKHEADING currentStickHeading = STICKHEADING.stationary ;
     float [] polarCoordinates = {0,0} ;
+    float [] currentPolarCoordinates = {0,0} ;
     float stickAngle = 0 ;
     double targetHeading = 0.0 ;
 
@@ -77,6 +76,11 @@ public class OmniTeleOp1 extends OpMode {
 
         dPadScalar = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalar) ;
 
+        currentPolarCoordinates = getCurrentPolarCoordinate(-gamepad2.left_stick_y, gamepad2.left_stick_x) ;
+        currentPolarCoordinates[0] = currentPolarCoordinates[0]/dPadScalar ;
+
+        targetHeading -= gamepad2.right_stick_x ;
+
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
@@ -92,9 +96,8 @@ public class OmniTeleOp1 extends OpMode {
         if (gamepad2.a || controller2) {
             controller2 = true ;
             controller1 = false ;
-            complexOmniBotMath(-gamepad2.left_stick_y, gamepad2.left_stick_x, gamepad2.right_stick_x, dPadScalar);
-
-            }
+            OmniBot.driveOmniBot(currentPolarCoordinates[0], currentPolarCoordinates[1], (float) targetHeading);
+        }
 
         OmniBot.waitForTick(40);
         telemetry.update();
@@ -113,13 +116,13 @@ public class OmniTeleOp1 extends OpMode {
     public float dPadScale (boolean dPadUpValue, boolean dPadDownValue, float dPadScalar) {
         if (dPadUpValue && !waitForUpRelease) {
             waitForDownRelease = true ;
-            dPadScalar += 1 ;
+            dPadScalar -= 2 ;
         } else if (!dPadUpValue && waitForUpRelease) {
             waitForUpRelease = false ;
         }
         if (dPadDownValue && !waitForDownRelease) {
             waitForDownRelease = true ;
-            dPadScalar -= 1 ;
+            dPadScalar += 2 ;
         } else if (!dPadDownValue && waitForDownRelease) {
             waitForDownRelease = false ;
         }
@@ -143,25 +146,6 @@ public class OmniTeleOp1 extends OpMode {
         polarCoordinates[1] = stickAngle ;
 
         return polarCoordinates ;
-    }
-
-
-
-    public void complexOmniBotMath (float padLeftStickY, float padLeftStickX, float padRightStickX, double dPadScalar) {
-        double motorPower00  ;
-        double motorPower01 ;
-        double motorPower10 ;
-        double motorPower11 ;
-
-        motorPower00 = (padLeftStickY + padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
-        motorPower01 = (padLeftStickY - padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
-        motorPower10 = (padLeftStickY - padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
-        motorPower11 = (padLeftStickY + padLeftStickX)/(Math.sqrt(2)*dPadScalar) ;
-
-        targetHeading -= padRightStickX ;
-
-        OmniBot.gyroDriveOmniStaight(motorPower00, motorPower01, motorPower10, motorPower11, targetHeading);
-
     }
 
     public double maxPowerIdentifier (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
