@@ -126,7 +126,7 @@ public class OmniTeleOp1 extends OpMode {
         } else if (!dPadDownValue && waitForDownRelease) {
             waitForDownRelease = false ;
         }
-        dPadScalar = Range.clip(dPadScalar,1, 5) ;
+        dPadScalar = Range.clip(dPadScalar,1, 20) ;
         return dPadScalar ;
     }
 

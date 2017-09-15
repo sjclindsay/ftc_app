@@ -72,6 +72,7 @@ public class HardwareOmniBot
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
+    private double correction = 0.0 ;
 
 
 
@@ -177,9 +178,8 @@ public class HardwareOmniBot
     }
 
     public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
-        double correction = 0.0;
         double currentDiff = 0.0;
-        if(FirstCallPIDDrive) {
+        if (FirstCallPIDDrive) {
             motorPID = new PIDController(targetHeading);
             FirstCallPIDDrive = false;
         }
@@ -187,10 +187,11 @@ public class HardwareOmniBot
         currentDiff = targetHeading - gyroScope.currentHeadingZ;
         correction = motorPID.Update(gyroScope.currentHeadingZ);
 
-        power00 += correction ;
-        power01 += correction ;
-        power10 -= correction ;
-        power11 -= correction ;
+
+        power00 -= correction;
+        power01 -= correction;
+        power10 += correction;
+        power11 += correction;
 
         setBotMovement(power00, power01, power10, power11) ;
 
@@ -223,7 +224,11 @@ public class HardwareOmniBot
                         @Override public String value() {
                             return formatDouble(gyroScope.currentHeadingZ);
                         }
-                    });
+                    })
+                    .addData("Current Error", new Func<String>() {
+                                @Override public String value() {
+                                    return formatDouble(correction) ;
+                                }}) ;
 
         }
         telemetry.addLine()
