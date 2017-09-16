@@ -126,12 +126,20 @@ public class OmniTeleOp1 extends OpMode {
         } else if (!dPadDownValue && waitForDownRelease) {
             waitForDownRelease = false ;
         }
-        dPadScalar = Range.clip(dPadScalar,1, 20) ;
+        dPadScalar = Range.clip(dPadScalar,1, 21) ;
         return dPadScalar ;
     }
 
     public float [] getCurrentPolarCoordinate (float padStickLeftY, float padStickLeftX) {
-        stickAngle = (float) Math.atan( padStickLeftY/padStickLeftX) ;
+        if (padStickLeftX == 0 ) {
+            if (padStickLeftY >= 0) {
+                stickAngle = 90;
+            } else  {
+                stickAngle = -90 ;
+            }
+        } else {
+            stickAngle = (float) ( Math.atan( padStickLeftY/padStickLeftX)*(180/Math.PI) );
+        }
 
         if (padStickLeftY < 0 && padStickLeftX > 0) {
             stickAngle += 360 ;
@@ -141,7 +149,7 @@ public class OmniTeleOp1 extends OpMode {
             stickAngle += 180 ;
         }
 
-        gamePad1LeftStickMagnitude = (float) Math.pow((padStickLeftX*padStickLeftX +padStickLeftY*padStickLeftY), 0.5) ;
+        gamePad1LeftStickMagnitude = (float) Math.pow((padStickLeftX*padStickLeftX + padStickLeftY*padStickLeftY), 0.5) ;
         polarCoordinates[0] = gamePad1LeftStickMagnitude ;
         polarCoordinates[1] = stickAngle ;
 

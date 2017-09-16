@@ -12,20 +12,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 public class OmniAutoOp1 extends OpMode {
     public enum MotorState{
-        ERROR_STATE,
-        WAIT_TO_START,
-        WAIT_PERIOD,
-        WAIT_START_PERIOD,
-        STOP_MOVING,
-        WAIT_FOR_STABLE,
-        DRIVE_FORWARD_TO_BALL,
-        WAIT_DRIVE_FORWARD,
-        SENSE_BALL,
-        PUSH_OFF_BALL,
-        ARE_WE_DONE,
-        DONE
+        Drive,
+        Turn,
+        InitializeTurn
     }
-
+    MotorState currentState = MotorState.Turn;
     float motorLeft1power = 0;
     float motorLeft2power = 0;
     float motorRight1power = 0;
@@ -58,21 +49,15 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = true ;
             controller2 = false ;
 
-            motorLeft1power = leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x;
-            motorLeft2power = leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x;
-            motorRight1power = leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x;
-            motorRight2power = leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x;
-
-            OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+            OmniBot.driveOmniBot(0, 0, 0);
 
         }
         if (gamepad2.a || controller2) {
-            controller2 = true ;
-            controller1 = false ;
+            controller2 = true;
+            controller1 = false;
 
-            OmniBot.driveOmniBot( (float) 0.1, 0, 0);
+            OmniBot.driveOmniBot((float) 0, 0, 0);
         }
-
         OmniBot.waitForTick(40);
         telemetry.update();
 

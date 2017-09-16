@@ -61,8 +61,8 @@ public class HardwareOmniBot
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
-    protected float motorPowerMin = -1 ;
-    protected float motorPowerMax = 1 ;
+    protected static final float motorPowerMin = -1 ;
+    protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
     protected boolean gyroConnected = false;
@@ -256,7 +256,7 @@ public class HardwareOmniBot
                 public String value() {
                     return FormatHelper.formatDouble(Motor11.getPower());
                 }
-            });
+            }) ;
     }
 
     /***
