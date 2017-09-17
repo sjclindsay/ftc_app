@@ -16,20 +16,11 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 public class OmniAutoOp1 extends OpMode {
     public enum MotorState{
-        ERROR_STATE,
-        WAIT_TO_START,
-        WAIT_PERIOD,
-        WAIT_START_PERIOD,
-        STOP_MOVING,
-        WAIT_FOR_STABLE,
-        DRIVE_FORWARD_TO_BALL,
-        WAIT_DRIVE_FORWARD,
-        SENSE_BALL,
-        PUSH_OFF_BALL,
-        ARE_WE_DONE,
-        DONE
+        Drive,
+        Turn,
+        InitializeTurn
     }
-
+    MotorState currentState = MotorState.Turn;
     float motorLeft1power = 0;
     float motorLeft2power = 0;
     float motorRight1power = 0;
@@ -63,6 +54,7 @@ public class OmniAutoOp1 extends OpMode {
 
     @Override
     public void loop() {
+<<<<<<< HEAD
         if(currentState != nextState) {
             RobotLog.i("Change State to " + nextState);
         }
@@ -96,7 +88,23 @@ public class OmniAutoOp1 extends OpMode {
             default:
                 break;
         }
+=======
+        leftStickY = -gamepad1.left_stick_y ;
 
+        if (gamepad1.a || controller1) {
+            controller1 = true ;
+            controller2 = false ;
+
+            OmniBot.driveOmniBot(0, 0, 0);
+
+        }
+        if (gamepad2.a || controller2) {
+            controller2 = true;
+            controller1 = false;
+>>>>>>> 95a44fefe0e611353b6c14bd5fecf3ba576f7098
+
+            OmniBot.driveOmniBot((float) 0, 0, 0);
+        }
         OmniBot.waitForTick(40);
         telemetry.update();
 
@@ -107,8 +115,13 @@ public class OmniAutoOp1 extends OpMode {
 
     }
     void composeTelemetry() {
+<<<<<<< HEAD
 
         OmniBot.addTelemetry(telemetry);
+=======
+        OmniBot.addTelemetry(telemetry);
+        //OmniBot.getTelemetry(telemetry);
+>>>>>>> 95a44fefe0e611353b6c14bd5fecf3ba576f7098
     }
 
 

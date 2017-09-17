@@ -62,8 +62,8 @@ public class HardwareOmniBot
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
-    protected float motorPowerMin = -1 ;
-    protected float motorPowerMax = 1 ;
+    protected static final float motorPowerMin = -1 ;
+    protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
     protected boolean gyroConnected = false;
@@ -73,6 +73,7 @@ public class HardwareOmniBot
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
+    private double correction = 0.0 ;
 
 
 
@@ -181,11 +182,14 @@ public class HardwareOmniBot
     }
 
     public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
-        double correction = 0.0;
         double currentDiff = 0.0;
+<<<<<<< HEAD
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
+=======
+        if (FirstCallPIDDrive) {
+>>>>>>> 95a44fefe0e611353b6c14bd5fecf3ba576f7098
             motorPID = new PIDController(targetHeading);
             FirstCallPIDDrive = false;
         }
@@ -193,18 +197,19 @@ public class HardwareOmniBot
         currentDiff = targetHeading - gyroScope.currentHeadingZ;
         correction = motorPID.Update(gyroScope.currentHeadingZ);
 
-        power00 += correction ;
-        power01 += correction ;
-        power10 -= correction ;
-        power11 -= correction ;
+
+        power00 -= correction;
+        power01 -= correction;
+        power10 += correction;
+        power11 += correction;
 
         setBotMovement(power00, power01, power10, power11) ;
 
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading) {
-        float xValue = (float) Math.cos(direction) ;
-        float yValue = (float) Math.sin(direction) ;
+        float xValue = (float) Math.cos(direction)*magnitude ;
+        float yValue = (float) Math.sin(direction)*magnitude ;
 
         float power00 = yValue + xValue ;
         float power01 = yValue - xValue ;
@@ -229,7 +234,11 @@ public class HardwareOmniBot
                         @Override public String value() {
                             return formatDouble(gyroScope.currentHeadingZ);
                         }
-                    });
+                    })
+                    .addData("Current Error", new Func<String>() {
+                                @Override public String value() {
+                                    return formatDouble(correction) ;
+                                }}) ;
 
         }
         telemetry.addLine()
@@ -257,7 +266,7 @@ public class HardwareOmniBot
                 public String value() {
                     return FormatHelper.formatDouble(Motor11.getPower());
                 }
-            });
+            }) ;
     }
 
     /***
