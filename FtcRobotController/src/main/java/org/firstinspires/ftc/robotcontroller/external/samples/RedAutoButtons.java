@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -254,7 +254,7 @@ public class RedAutoButtons extends OpMode  {
 
         telemetry.update();
         if(currentState != nextState) {
-            DbgLog.msg("Current State is " + nextState);
+            RobotLog.i("Current State is " + nextState);
         }
         currentState = nextState;
         pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.thirdAngle)) ;
@@ -363,31 +363,31 @@ public class RedAutoButtons extends OpMode  {
                         nextStateAfterWait = MotorState.ARE_WE_DONE ;
                     }
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_BACK:
                 StartWallFollowBackwards();
-                //DbgLog.msg("InWallFollowState");
+                //RobotLog.i("InWallFollowState");
                 if (WhiteLineDetector(grayLightValue, lightSensor0.getRawLightDetected())) {
                     nextState = MotorState.STOP_ROBOT ;
                     if (buttonPressCount == 2)
                         nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_PASSED_TAPE:
                 StartWallFollow();
                 if (lightSensor0.getRawLightDetected() < 2.0) {
                     nextState = MotorState.WALL_FOLLOW ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_PAST_TAPE_BACK:
                 StartWallFollowBackwards();
                 if (lightSensor0.getRawLightDetected() < 1.8) {
                     nextState = MotorState.WALL_FOLLOW_BACK ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
 
             case SENSE_BUTTON:
@@ -402,7 +402,7 @@ public class RedAutoButtons extends OpMode  {
                     waitTimer.reset();
                     nextState = MotorState.PUSH_BACK_BUTTON;
                 } else {
-                    DbgLog.msg("ERROR: Light not Sensed backup");
+                    RobotLog.i("ERROR: Light not Sensed backup");
                     BackUp();
                     waitTimer.reset();
                     nextState= MotorState.BACK_UP_SENSE_BUTTON;
@@ -412,14 +412,14 @@ public class RedAutoButtons extends OpMode  {
                 if(SenseBeaconColor(SensorColor.Blue)||SenseBeaconColor(SensorColor.Red)) {
                     StopMove();
                     nextState = MotorState.SENSE_BUTTON;
-                    DbgLog.msg("Sensed Button");
+                    RobotLog.i("Sensed Button");
                 } else if(WhiteLineDetector(grayLightValue, lightSensor0.getRawLightDetected()) ) {
                     nextState = MotorState.STOP_ROBOT ;
                     nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 } else if(waitTimer.time()>500){
                     StopMove();
                     nextState= MotorState.WALL_FOLLOW;
-                    DbgLog.msg("Ran Out of time");
+                    RobotLog.i("Ran Out of time");
                 }
                 break;
             case BACK_UP_TO_VORTEX:
@@ -507,7 +507,7 @@ public class RedAutoButtons extends OpMode  {
         motorSideButtonPower = Range.clip(motorSideButtonPower, motorPowerMin, motorPowerMax);
 
         //sets motor and servo power/position
-        //DbgLog.msg("LeftPower "+motorLeftPower+"RightPower "+motorRightPower);
+        //RobotLog.i("LeftPower "+motorLeftPower+"RightPower "+motorRightPower);
         motorLeft1.setPower(motorLeftPower);
         motorLeft2.setPower(motorLeftPower);
         motorRight1.setPower(motorRightPower);
@@ -706,7 +706,7 @@ public class RedAutoButtons extends OpMode  {
     }
 
     public void StartWallFollow() {
-        //DbgLog.msg("Start Wall Follow");
+        //RobotLog.i("Start Wall Follow");
         motorLeftPower = normalSpeed ;
         motorRightPower = normalSpeed - (float)0.03;
     }
@@ -763,8 +763,8 @@ public class RedAutoButtons extends OpMode  {
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
 
         motorPID = new PIDController(TargetHeading);
-        //DbgLog.msg("Set Target" + startOrientation);
-        //DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        //RobotLog.i("Set Target" + startOrientation);
+        //RobotLog.i("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
         return TargetHeading;
     }
 
@@ -776,8 +776,8 @@ public class RedAutoButtons extends OpMode  {
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
 
         motorPID = new PIDController(TargetHeading);
-        //DbgLog.msg("Set Target" + startOrientation);
-        //DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        //RobotLog.i("Set Target" + startOrientation);
+        //RobotLog.i("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
         return TargetHeading;
     }
 
@@ -854,7 +854,7 @@ public class RedAutoButtons extends OpMode  {
         double correction = 0.0;
         //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
         diffFromStartHeading = target_ - currentHeading;
-        //DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
+        //RobotLog.i("TargetHeading"+target_+" currentHD "+ currentHeading);
         if(false) {
             correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
@@ -920,7 +920,7 @@ public class RedAutoButtons extends OpMode  {
 
             lastError_ = error;
             lastTime_ = time;
-            //DbgLog.msg("Drive Correction " + output);
+            //RobotLog.i("Drive Correction " + output);
             return output;
         }
     }

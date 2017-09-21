@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -129,7 +129,7 @@ public class WeCoTeleOp extends OpMode {
 
 //Makes lifter stay within desired area
     if (lifterHolofectSensor.getState() == false) {
-      DbgLog.msg("==== Hall Effect On ===");
+      RobotLog.i("==== Hall Effect On ===");
     }
     if (lifterHolofectSensor.getState() == false) {
       if (currentPosition == POSITION.TOP || stickDirection == DIRECTION.UP && currentPosition != POSITION.BOTTOM) {

@@ -1,6 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -39,7 +39,7 @@ public class WeCoAutoLineOp extends OpMode {
     public void loop(){
         double currentEncoderPos = motorLeft.getCurrentPosition();
         if (currentEncoderPos <= distanceFinal / distanceperRev * ticksperRev){
-            DbgLog.msg("====Moving===");
+            RobotLog.i("====Moving===");
             motorRight.setPower(normalSpeed);
             motorLeft.setPower(normalSpeed);
 
@@ -47,7 +47,7 @@ public class WeCoAutoLineOp extends OpMode {
         else {
             motorRight.setPower(reset);
             motorLeft.setPower(reset);
-            DbgLog.msg("====Stopped===");
+            RobotLog.i("====Stopped===");
         }
 
         telemetry.addData ("0 current position", "Current Position is" + String.format("%.2f", currentEncoderPos));

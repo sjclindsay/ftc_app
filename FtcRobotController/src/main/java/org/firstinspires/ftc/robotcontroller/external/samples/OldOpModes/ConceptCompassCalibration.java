@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.robotcontroller.external.samples.OldOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -93,8 +93,8 @@ public class ConceptCompassCalibration extends LinearOpMode {
         // Start the robot rotating clockwise
         telemetry.addData("Compass", "Calibration mode. Turning the robot...");
         telemetry.update();
-        robot.leftDrive.setPower(MOTOR_POWER);
-        robot.rightDrive.setPower(-MOTOR_POWER);
+        robot.leftMotor.setPower(MOTOR_POWER);
+        robot.rightMotor.setPower(-MOTOR_POWER);
 
         // run until time expires OR the driver presses STOP;
         runtime.reset();

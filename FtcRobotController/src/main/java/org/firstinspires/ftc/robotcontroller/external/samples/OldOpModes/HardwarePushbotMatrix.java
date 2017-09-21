@@ -28,8 +28,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples.OldOpModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
 import com.qualcomm.hardware.matrix.MatrixDcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoController;

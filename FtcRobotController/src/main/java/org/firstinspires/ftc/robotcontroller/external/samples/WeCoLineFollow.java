@@ -37,7 +37,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import android.hardware.SensorEventListener;
  import android.hardware.SensorManager;
 
- import com.qualcomm.ftccommon.DbgLog;
+ import com.qualcomm.robotcore.util.RobotLog;
  import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -178,7 +178,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
      double leftPower = speed - constantProporionality * error;
      double rightPower = speed + constantProporionality *error;
-     DbgLog.msg("Line Follow" + leftPower + "Error: "+ error);
+     RobotLog.i("Line Follow" + leftPower + "Error: "+ error);
 
      moveForward((float) leftPower, (float) rightPower);
    }

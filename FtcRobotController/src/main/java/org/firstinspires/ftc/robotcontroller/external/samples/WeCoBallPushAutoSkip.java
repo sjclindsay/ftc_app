@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -545,7 +545,7 @@ public class WeCoBallPushAutoSkip extends OpMode  {
 
             lastError_ = error;
             lastTime_ = time;
-            DbgLog.msg("Drive Correction " + output);
+            RobotLog.i("Drive Correction " + output);
             return output;
         }
     }

@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -252,7 +252,7 @@ public class BlueAutoButtons extends OpMode  {
 
         telemetry.update();
         if(currentState != nextState) {
-            DbgLog.msg("Current State is " + nextState);
+            RobotLog.i("Current State is " + nextState);
         }
         currentState = nextState;
         pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.thirdAngle)) ;
@@ -358,7 +358,7 @@ public class BlueAutoButtons extends OpMode  {
                         nextStateAfterWait = MotorState.ARE_WE_DONE ;
                     }
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_BACK:
                 StartWallFollowBackwards();
@@ -368,21 +368,21 @@ public class BlueAutoButtons extends OpMode  {
                     if (buttonPressCount == 2)
                         nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_PASSED_TAPE:
                 StartWallFollow();
                 if (lightSensor0.getRawLightDetected() < 2.0) {
                     nextState = MotorState.WALL_FOLLOW ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
             case WALL_FOLLOW_PAST_TAPE_BACK:
                 StartWallFollowBackwards();
                 if (lightSensor0.getRawLightDetected() < 1.8) {
                     nextState = MotorState.WALL_FOLLOW_BACK ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
 
             case SENSE_BUTTON:
@@ -397,7 +397,7 @@ public class BlueAutoButtons extends OpMode  {
                     waitTimer.reset();
                     nextState = MotorState.PUSH_BACK_BUTTON;
                 } else {
-                    DbgLog.msg("ERROR: Light not Sensed backup");
+                    RobotLog.i("ERROR: Light not Sensed backup");
                     BackUp();
                     waitTimer.reset();
                     nextState= MotorState.BACK_UP_SENSE_BUTTON;
@@ -407,14 +407,14 @@ public class BlueAutoButtons extends OpMode  {
                 if(SenseBeaconColor(SensorColor.Blue)||SenseBeaconColor(SensorColor.Red)) {
                     StopMove();
                     nextState = MotorState.SENSE_BUTTON;
-                    DbgLog.msg("Sensed Button");
+                    RobotLog.i("Sensed Button");
                 } else if(lightSensor0.getRawLightDetected() >= 2.0 ) {
                     nextState = MotorState.STOP_ROBOT ;
                     nextStateAfterWait = MotorState.SENSE_BUTTON ;
                 } else if(waitTimer.time()>500){
                     StopMove();
                     nextState= MotorState.WALL_FOLLOW;
-                    DbgLog.msg("Ran Out of time");
+                    RobotLog.i("Ran Out of time");
                 }
                 break;
             case BACK_UP_TO_VORTEX:

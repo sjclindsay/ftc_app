@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -242,7 +242,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
 
         telemetry.update();
         if(currentState != nextState) {
-            DbgLog.msg("Current State is " + nextState);
+            RobotLog.i("Current State is " + nextState);
         }
         currentState = nextState;
         pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit,angles.thirdAngle)) ;
@@ -304,7 +304,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
                 if (lightSensor0.getRawLightDetected() < 1.8) {
                     nextState = MotorState.ERROR_STATE ;
                 }
-                DbgLog.msg("RawLight "+lightSensor0.getRawLightDetected());
+                RobotLog.i("RawLight "+lightSensor0.getRawLightDetected());
                 break;
 
             case SENSE_BUTTON:
@@ -315,7 +315,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
                     cdim.setLED(0x2,true);
                     nextState = MotorState.PUSH_BACK_BUTTON;
                 } else {
-                    DbgLog.msg("ERROR: Light not Sensed backup");
+                    RobotLog.i("ERROR: Light not Sensed backup");
                     BackUp();
                     waitTimer.reset();
                     nextState= MotorState.BACK_UP_SENSE_BUTTON;
@@ -613,8 +613,8 @@ public class WeCoAutoButtonBlue extends OpMode  {
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
 
         motorPID = new PIDController(TargetHeading);
-        //DbgLog.msg("Set Target" + startOrientation);
-        //DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        //RobotLog.i("Set Target" + startOrientation);
+        //RobotLog.i("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
         return TargetHeading;
     }
 
@@ -688,7 +688,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
         double correction = 0.0;
         //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
         diffFromStartHeading = target_ - currentHeading;
-        //DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
+        //RobotLog.i("TargetHeading"+target_+" currentHD "+ currentHeading);
         if(false) {
             correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller
@@ -753,7 +753,7 @@ public class WeCoAutoButtonBlue extends OpMode  {
 
             lastError_ = error;
             lastTime_ = time;
-            //DbgLog.msg("Drive Correction " + output);
+            //RobotLog.i("Drive Correction " + output);
             return output;
         }
     }

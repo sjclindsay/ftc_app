@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -96,18 +96,18 @@ public class TurnOp extends OpMode implements SensorEventListener {
     if (driveTime <= 5.0) {
 
       moveStraight();
-      DbgLog.msg("===Moving Straight===");
+      RobotLog.i("===Moving Straight===");
 
     } else if (driveTime >= 5.0) {
 
       leftTurn();
-      DbgLog.msg("===Turning Left===");
+      RobotLog.i("===Turning Left===");
 
       if (Math.round(Math.toDegrees(azimuth)) % 90 == 0 && driveTime >= 5.5) {
 
         elapsedTime.reset();
         elapsedTime.startTime();
-        DbgLog.msg("===Reseting Elapsed Time===");
+        RobotLog.i("===Reseting Elapsed Time===");
       }
     }
 //        telemetry.addData("1 Start", "OrientOp started at " + startDate);

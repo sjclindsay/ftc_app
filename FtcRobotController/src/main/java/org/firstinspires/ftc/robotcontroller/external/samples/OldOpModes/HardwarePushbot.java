@@ -27,9 +27,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples.OldOpModes;
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -103,7 +100,7 @@ public class HardwarePushbot
         leftClaw.setPosition(MID_SERVO);
         rightClaw.setPosition(MID_SERVO);
     }
- }
+
 
     /***
      *

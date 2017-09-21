@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -62,7 +62,7 @@ public class HardwareGyro {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        DbgLog.msg("gyro initialized");
+        RobotLog.i("gyro initialized");
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu"

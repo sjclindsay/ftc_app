@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -396,8 +396,8 @@ public class WeCoBallPushAuto extends OpMode  {
         startOrientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle;
         //startOrientation = startOrientation > (float) 180.0 ? (startOrientation- (float)360.0) : startOrientation;
         motorPID = new PIDController(startOrientation);
-        DbgLog.msg("Set Target" + startOrientation);
-        DbgLog.msg("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
+        RobotLog.i("Set Target" + startOrientation);
+        RobotLog.i("Heading" + imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX).firstAngle);
         return startOrientation;
     }
 
@@ -458,7 +458,7 @@ public class WeCoBallPushAuto extends OpMode  {
         double correction = 0.0;
         //currentHeading = currentHeading > (float) 180.0 ? currentHeading -(float) 360.0 : currentHeading;
         diffFromStartHeading = target_ - currentHeading;
-        DbgLog.msg("TargetHeading"+target_+" currentHD "+ currentHeading);
+        RobotLog.i("TargetHeading"+target_+" currentHD "+ currentHeading);
         if(false) {
             correction = (diffFromStartHeading > SIGNIFICANT_HEADING_DIFF) ? (diffFromStartHeading / 180) * CORRECTOR : (diffFromStartHeading / 180) * CORRECTOR;
         } else { //PID controller

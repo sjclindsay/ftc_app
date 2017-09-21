@@ -1,4 +1,4 @@
-package org.usfirst.FTC5866.library;
+package org.usfirst.FTC5866.Library;
 
 /**
  * Created by Olavi Kamppari on 10/7/2015.

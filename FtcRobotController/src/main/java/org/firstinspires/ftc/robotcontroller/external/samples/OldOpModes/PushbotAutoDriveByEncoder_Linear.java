@@ -102,8 +102,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",
 
-                          robot.leftDrive.getCurrentPosition(),
-                          robot.rightDrive.getCurrentPosition());
+                          robot.leftMotor.getCurrentPosition(),
+                          robot.rightMotor.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -142,19 +142,19 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
 
-            newLeftTarget = robot.leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.leftDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(newRightTarget);
+            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = robot.rightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            robot.leftMotor.setTargetPosition(newLeftTarget);
+            robot.rightMotor.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.leftDrive.setPower(Math.abs(speed));
-            robot.rightDrive.setPower(Math.abs(speed));
+            robot.leftMotor.setPower(Math.abs(speed));
+            robot.rightMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -165,27 +165,27 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
 
-                   (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+                   (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
 
 
-                                            robot.leftDrive.getCurrentPosition(),
-                                            robot.rightDrive.getCurrentPosition());
+                                            robot.leftMotor.getCurrentPosition(),
+                                            robot.rightMotor.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
 
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
 
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }

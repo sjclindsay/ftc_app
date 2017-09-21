@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
- import com.qualcomm.ftccommon.DbgLog;
+ import com.qualcomm.robotcore.util.RobotLog;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.hardware.DcMotor;
  import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -110,10 +110,10 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
  //Opens and closes hook
      if (gamepad2.right_trigger == 1) {
-       DbgLog.msg("===== Set Hook to 1 =====");
+       RobotLog.i("===== Set Hook to 1 =====");
        servoHookPosition = 1.0;
      } else if (gamepad2.right_bumper == true) {
-       DbgLog.msg("===== Set Hook to 0 =====");
+       RobotLog.i("===== Set Hook to 0 =====");
        servoHookPosition = 0.0;
      }
 

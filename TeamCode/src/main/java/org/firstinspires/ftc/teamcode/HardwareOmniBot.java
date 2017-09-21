@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -108,7 +108,7 @@ public class HardwareOmniBot
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
         if(gyroConnected) {
             gyroScope = new HardwareGyro();
-            DbgLog.msg("defined gyroscope");
+            RobotLog.i("defined gyroscope");
             gyroScope.init(hwMap);
 
         }
@@ -183,13 +183,11 @@ public class HardwareOmniBot
 
     public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
         double currentDiff = 0.0;
-<<<<<<< HEAD
+
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
-=======
-        if (FirstCallPIDDrive) {
->>>>>>> 95a44fefe0e611353b6c14bd5fecf3ba576f7098
+
             motorPID = new PIDController(targetHeading);
             FirstCallPIDDrive = false;
         }

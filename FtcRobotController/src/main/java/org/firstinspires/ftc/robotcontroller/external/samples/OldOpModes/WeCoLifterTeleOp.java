@@ -2,7 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.widget.DigitalClock;
 
-import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -50,7 +50,7 @@ public class WeCoLifterTeleOp extends OpMode {
         //sets motor power
         float motorLifterpower = -gamepad2.left_stick_y  ;
         if(lifterHolofectSensor.getState() == false) {
-            DbgLog.msg("==== Hall Effect On ===");
+            RobotLog.i("==== Hall Effect On ===");
         }
         if (lifterHolofectSensor.getState() == false) {
             if (stickDirection == 1 || currentPosition == POSITION.TOP) {
@@ -75,10 +75,10 @@ public class WeCoLifterTeleOp extends OpMode {
         }
 
         if (gamepad2.right_trigger == 1 ) {
-            DbgLog.msg("===== Set Hook to 1 =====");
+            RobotLog.i("===== Set Hook to 1 =====");
             servoHookPosition = 1.0 ;
         } else if (gamepad2.left_trigger  == 1) {
-            DbgLog.msg("===== Set Hook to 0 =====");
+            RobotLog.i("===== Set Hook to 0 =====");
             servoHookPosition = 0.0 ;
         }
 
