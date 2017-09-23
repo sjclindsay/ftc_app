@@ -76,28 +76,28 @@ public class OmniTeleOp1 extends OpMode {
 
         dPadScalar = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalar) ;
 
-        currentPolarCoordinates = getCurrentPolarCoordinate(-gamepad2.left_stick_y, gamepad2.left_stick_x) ;
-        currentPolarCoordinates[0] = currentPolarCoordinates[0]/dPadScalar ;
+        //currentPolarCoordinates = getCurrentPolarCoordinate(-gamepad2.left_stick_y, gamepad2.left_stick_x) ;
+        //currentPolarCoordinates[0] = currentPolarCoordinates[0]/dPadScalar ;
 
-        targetHeading -= gamepad2.right_stick_x ;
+        //targetHeading -= gamepad2.right_stick_x ;
 
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
 
-            motorLeft1power = (leftStickY  + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar ;
-            motorLeft2power = (leftStickY  - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
-            motorRight1power = (leftStickY - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
-            motorRight2power = (leftStickY + gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
+            motorLeft1power = (leftStickY  + gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar ;
+            motorLeft2power = (leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
+            motorRight1power = (leftStickY - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
+            motorRight2power = (leftStickY + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
 
         }
-        if (gamepad2.a || controller2) {
+        /*if (gamepad2.a || controller2) {
             controller2 = true ;
             controller1 = false ;
             OmniBot.driveOmniBot(currentPolarCoordinates[0], currentPolarCoordinates[1], (float) targetHeading);
-        }
+        } */
 
         OmniBot.waitForTick(40);
         telemetry.update();

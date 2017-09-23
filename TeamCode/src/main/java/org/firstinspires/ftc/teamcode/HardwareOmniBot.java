@@ -188,7 +188,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
 
-            motorPID = new PIDController(targetHeading);
+            motorPID = new PIDController(targetHeading, 0.005, 0, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -196,10 +196,10 @@ public class HardwareOmniBot
         correction = motorPID.Update(gyroScope.currentHeadingZ);
 
 
-        power00 -= correction;
-        power01 -= correction;
-        power10 += correction;
-        power11 += correction;
+        power00 += correction;
+        power01 += correction;
+        power10 -= correction;
+        power11 -= correction;
 
         setBotMovement(power00, power01, power10, power11) ;
 
