@@ -62,7 +62,7 @@ public class OmniAutoOp1 extends OpMode {
         if (gamepad2.a || controller2) {
             controller2 = true;
             controller1 = false;
-            OmniBot.driveOmniBot((float) 0, 0, 0);
+            OmniBot.driveOmniBot((float) 0.1, 0, 0);
         }
         OmniBot.waitForTick(40);
         telemetry.update();

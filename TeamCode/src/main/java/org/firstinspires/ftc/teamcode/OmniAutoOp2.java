@@ -10,7 +10,7 @@ import com.vuforia.CameraDevice;
  * Created by conno on 8/17/2017.
  */
 
-@TeleOp(name="Omni: AutoOp1", group="Omni")
+@TeleOp(name="Omni: AutoOp2", group="Omni")
 
 
 public class OmniAutoOp2 extends OpMode {
@@ -22,22 +22,20 @@ public class OmniAutoOp2 extends OpMode {
         WAIT_PERIOD,
         WAIT_DRIVE_FORWARD,
         STOP_MOVING,
-        DONE,
-        DRIVE_FORWARD_TO_BALL,
         ERROR_STATE
     }
     MotorState currentState = MotorState.ERROR_STATE;
-    float motorLeft1power = 0;
-    float motorLeft2power = 0;
-    float motorRight1power = 0;
-    float motorRight2power = 0;
-    float leftStickY = 0 ;
-    boolean controller1 = true;
-    boolean controller2 = false ;
+    float targetHeading = 0 ;
+    float magnitude = 0 ;
+    float direction = 90 ;
+    double currentHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    MotorState nextState = MotorState.ERROR_STATE;
+    ElapsedTime WaitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    double waitTimer  = 0 ;
+    MotorState nextState = MotorState.WAIT_START_PERIOD;
+    MotorState stateAfterNext = MotorState.InitializeTurn ;
 
     @Override
     public void init() {
@@ -62,36 +60,54 @@ public class OmniAutoOp2 extends OpMode {
             RobotLog.i("Change State to " + nextState);
         }
 
+        waitTimer = WaitTimer.time() ;
+        currentHeading = OmniBot.getcurrentHeading() ;
+
         currentState = nextState;
+
         switch(nextState) {
             case WAIT_START_PERIOD:
                 StabilizationTimer.startTime();
                 nextState = MotorState.WAIT_PERIOD;
+
                 break;
             case WAIT_PERIOD:
                 if (StabilizationTimer.time() > 500) {
-                    nextState = MotorState.WAIT_DRIVE_FORWARD;
+                    nextState = stateAfterNext ;
                 }
                 break;
-            case WAIT_DRIVE_FORWARD:
-                OmniBot.gyroDriveStaight(0.5, 45.0);
-                if(StabilizationTimer.seconds() > 1000) {
-                    nextState = MotorState.STOP_MOVING;
-                } else {
-                    nextState = MotorState.DRIVE_FORWARD_TO_BALL;
-                }
-                nextState = MotorState.ERROR_STATE;
-                break;
-            case STOP_MOVING:
+            case InitializeTurn:
                 OmniBot.resetFirstPIDDrive();
-                nextState = MotorState.DONE;
+                targetHeading = (float) currentHeading + 90 ;
+                OmniBot.driveOmniBot(0, 90, targetHeading);
+                nextState = MotorState.Turn ;
                 break;
-            case ERROR_STATE:
+            case Turn:
+                magnitude = 0 ;
+                direction = 90 ;
+                if (targetHeading - currentHeading <= 2 || targetHeading - currentHeading >= -2) {
+                    nextState = MotorState.Drive ;
+                    OmniBot.resetFirstPIDDrive();
+                    WaitTimer.reset();
+                }
+                break;
+            case Drive:
+                OmniBot.driveOmniBot((float) 0.1, 90, targetHeading);
+                if (waitTimer >= 1000) {
+                    nextState = MotorState.WAIT_PERIOD ;
+                    stateAfterNext = MotorState.InitializeTurn ;
+                }
+            case STOP_MOVING:
                 break;
             default:
+                magnitude = 0 ;
+                direction = 0 ;
+                targetHeading = (float) currentHeading ;
+                RobotLog.i("error no case");
                 break;
-
         }
+
+
         OmniBot.waitForTick(40);
         telemetry.update();
 
