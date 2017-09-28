@@ -49,6 +49,10 @@ public class OmniTeleOp1 extends OpMode {
     float [] currentPolarCoordinates = {0,0} ;
     float stickAngle = 0 ;
     double targetHeading = 0.0 ;
+    boolean dPadLeftToggle = false ;
+    boolean dPadLeftOff = false ;
+    boolean dPadRightToggle = false ;
+    boolean dPadRightOff = false ;
 
     @Override
     public void init() {
@@ -81,6 +85,21 @@ public class OmniTeleOp1 extends OpMode {
 
         //targetHeading -= gamepad2.right_stick_x ;
 
+        if (gamepad1.dpad_left && !dPadLeftToggle) {
+            dPadLeftToggle = true ;
+            dPadLeftOff = true ;
+        } else if (!gamepad1.dpad_left && dPadLeftToggle) {
+            dPadLeftToggle = false ;
+            dPadLeftOff = false ;
+        }
+        if (gamepad1.dpad_right && !dPadRightToggle) {
+            dPadRightToggle = true ;
+            dPadRightOff = true ;
+        } else if (!gamepad1.dpad_right && dPadRightToggle) {
+            dPadRightToggle = false ;
+            dPadRightOff = false ;
+        }
+
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
@@ -89,6 +108,15 @@ public class OmniTeleOp1 extends OpMode {
             motorLeft2power = (leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
             motorRight1power = (leftStickY - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
             motorRight2power = (leftStickY + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
+
+            if (dPadLeftOff) {
+                motorLeft1power = 0 ;
+                motorLeft2power = 0 ;
+            }
+            if (dPadRightOff) {
+                motorRight1power = 0 ;
+                motorRight2power = 0 ;
+            }
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
 
