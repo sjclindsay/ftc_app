@@ -206,13 +206,13 @@ public class HardwareOmniBot
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading) {
-        float xValue = (float) Math.cos(direction)*magnitude ;
-        float yValue = (float) Math.sin(direction)*magnitude ;
+        float yValue = (float) Math.cos(direction)*magnitude ;
+        float xValue = (float) Math.sin(direction)*magnitude ;
 
-        float power00 = yValue + xValue ;
-        float power01 = yValue - xValue ;
-        float power10 = yValue - xValue ;
-        float power11 = yValue + xValue ;
+        float power00 = yValue - xValue ;
+        float power01 = yValue + xValue ;
+        float power10 = yValue + xValue ;
+        float power11 = yValue - xValue ;
 
         gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
     }
