@@ -52,11 +52,15 @@ public class OmniAutoOp1 extends OpMode {
     public void loop() {
         leftStickY = -gamepad1.left_stick_y ;
 
+        if ((gamepad1.a && !controller1) || (gamepad2.a && !controller2)) {
+            OmniBot.resetFirstPIDDrive();
+        }
+
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
 
-            OmniBot.driveOmniBot(0, 0, 90);
+            OmniBot.driveOmniBot( (float) 0.1, 45, 0);
 
         }
         if (gamepad2.a || controller2) {

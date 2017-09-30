@@ -134,20 +134,45 @@ public class OmniTeleOp1 extends OpMode {
             if (gamepad2.left_bumper && !headingToggle) {
                 headingToggle = true ;
                 OmniBot.resetFirstPIDDrive();
-                targetHeading = OmniBot.getcurrentHeading() + 90;
+                targetHeading = targetHeading + 90;
+                RobotLog.i("target heading is " + targetHeading);
             } else if (!gamepad2.left_bumper && headingToggle) {
                 headingToggle = false ;
             }
+
             if (gamepad2.right_bumper && !headingToggle) {
-                headingToggle = true ;
+                headingToggle = true;
                 OmniBot.resetFirstPIDDrive();
-                targetHeading = OmniBot.getcurrentHeading() - 90 ;
-            } else if (!gamepad2.right_bumper && headingToggle) {
+                targetHeading = targetHeading - 90;
+                RobotLog.i("target heading is " + targetHeading);
+            }else if (!gamepad2.right_bumper && headingToggle) {
                 headingToggle = false ;
             }
 
+            if (gamepad2.dpad_left && !directionToggle) {
+                directionToggle = true ;
+                OmniBot.resetFirstPIDDrive();
+                polarCoordinates[1] = polarCoordinates[1] + 45;
+                RobotLog.i("direction is " + polarCoordinates[1]);
+            } else if (!gamepad2.dpad_left && directionToggle) {
+                directionToggle = false ;
+            }
 
-            OmniBot.driveOmniBot(polarCoordinates[0], 0,  (float) targetHeading);
+            if (gamepad2.dpad_right && !directionToggle) {
+                directionToggle = true ;
+                OmniBot.resetFirstPIDDrive();
+                polarCoordinates[1] = polarCoordinates[1] - 45 ;
+                RobotLog.i("direction is " + polarCoordinates[1]);
+            } else if (!gamepad2.dpad_right && directionToggle) {
+                directionToggle = false ;
+            }
+
+            targetHeading = normalizeAngle(targetHeading) ;
+            polarCoordinates[1] = (float) normalizeAngle((double) polarCoordinates[1]);
+
+            RobotLog.i("target heading is " + targetHeading);
+
+            OmniBot.driveOmniBot(polarCoordinates[0], polarCoordinates[1],  (float) targetHeading);
         }
 
         OmniBot.waitForTick(40);
@@ -179,6 +204,16 @@ public class OmniTeleOp1 extends OpMode {
         }
         dPadScalar = Range.clip(dPadScalar,1, 21) ;
         return dPadScalar ;
+    }
+
+    public double normalizeAngle(double angle) {
+        if (angle > 180) {
+            angle -= 360 ;
+        }
+        if (angle < -180) {
+            angle += 360 ;
+        }
+        return angle ;
     }
 
     public float [] getCurrentPolarCoordinate (float padStickLeftY, float padStickLeftX) {
