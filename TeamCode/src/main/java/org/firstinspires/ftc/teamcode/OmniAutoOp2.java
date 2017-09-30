@@ -79,8 +79,9 @@ public class OmniAutoOp2 extends OpMode {
             case InitializeTurn:
                 OmniBot.resetFirstPIDDrive();
                 targetHeading = (float) currentHeading + 90 ;
-                OmniBot.driveOmniBot(0, 90, targetHeading);
+                OmniBot.driveOmniBot(0, 0, targetHeading);
                 nextState = MotorState.Turn ;
+                RobotLog.i("start turn") ;
                 break;
             case Turn:
                 magnitude = 0 ;
@@ -89,20 +90,21 @@ public class OmniAutoOp2 extends OpMode {
                     nextState = MotorState.Drive ;
                     OmniBot.resetFirstPIDDrive();
                     WaitTimer.reset();
+                    RobotLog.i("finish turn") ;
                 }
                 break;
             case Drive:
-                OmniBot.driveOmniBot((float) 0.1, 90, targetHeading);
+                OmniBot.driveOmniBot((float) 0.1, 0, targetHeading);
                 if (waitTimer >= 1000) {
                     nextState = MotorState.WAIT_PERIOD ;
                     stateAfterNext = MotorState.InitializeTurn ;
+                    RobotLog.i("finish drive") ;
                 }
             case STOP_MOVING:
+                OmniBot.driveOmniBot(0, 0, (float)currentHeading);
                 break;
             default:
-                magnitude = 0 ;
-                direction = 0 ;
-                targetHeading = (float) currentHeading ;
+                OmniBot.driveOmniBot(0, 0, (float)currentHeading);
                 RobotLog.i("error no case");
                 break;
         }

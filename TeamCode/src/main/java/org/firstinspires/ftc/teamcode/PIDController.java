@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 /**
  * This is NOT an opmode.
  *
@@ -27,7 +29,7 @@ public class PIDController
         lastTime_ = System.currentTimeMillis();
         errorSum_ = 0;
 
-        kp_ = (float)0.0008 ;
+        kp_ = (float)0.0004 ;
         ki_ = (float)0;
         kd_ = (float)0;
     }
@@ -49,9 +51,15 @@ public class PIDController
         long period = time - lastTime_;
         double error  = setPoint_ - newInput;
         errorSum_ += (error * period);
-        double derError = 0; //(error - lastError_) / period;
+        double derError = 0;//(error - lastError_) / period;
 
         double output = (kp_ * error) + (ki_ * errorSum_) + (kd_ * derError);
+
+        RobotLog.i("Input is " + newInput) ;
+        RobotLog.i("PID error is " + error);
+        RobotLog.i("KP is " + output) ;
+        RobotLog.i("KI is " + ki_*errorSum_) ;
+        RobotLog.i("KD is " + kd_*derError) ;
 
         lastError_ = error;
         lastTime_ = time;

@@ -188,7 +188,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
 
-            motorPID = new PIDController(targetHeading);
+            motorPID = new PIDController(targetHeading, 0.005, 0, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -196,23 +196,23 @@ public class HardwareOmniBot
         correction = motorPID.Update(gyroScope.currentHeadingZ);
 
 
-        power00 -= correction;
-        power01 -= correction;
-        power10 += correction;
-        power11 += correction;
+        power00 += correction;
+        power01 += correction;
+        power10 -= correction;
+        power11 -= correction;
 
         setBotMovement(power00, power01, power10, power11) ;
 
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading) {
-        float xValue = (float) Math.cos(direction)*magnitude ;
-        float yValue = (float) Math.sin(direction)*magnitude ;
+        float yValue = (float) Math.cos(direction)*magnitude ;
+        float xValue = (float) Math.sin(direction)*magnitude ;
 
-        float power00 = yValue + xValue ;
-        float power01 = yValue - xValue ;
-        float power10 = yValue - xValue ;
-        float power11 = yValue + xValue ;
+        float power00 = yValue - xValue ;
+        float power01 = yValue + xValue ;
+        float power10 = yValue + xValue ;
+        float power11 = yValue - xValue ;
 
         gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
     }
