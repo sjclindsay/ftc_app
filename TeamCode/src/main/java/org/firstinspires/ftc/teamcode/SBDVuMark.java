@@ -63,6 +63,7 @@ public class SBDVuMark extends OpMode {
 
     @Override
     public void init () {
+        VuReader = new HardwareVuforia();
         VuReader.init(hardwareMap);
 
     }
