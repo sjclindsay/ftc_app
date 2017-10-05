@@ -51,7 +51,7 @@ enum robotHWconnected {
     MotorOnly,
     MotorGyro,
     MotorGyroServo,
-    MotorServo
+    MotorGyroLifter
 }
 
 public class HardwareOmniBot
@@ -67,9 +67,11 @@ public class HardwareOmniBot
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
     protected boolean gyroConnected = false;
+    protected boolean lifterConnected = false ;
     protected boolean servoConnected = false;
     protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
+    protected HardwareLifter lifter = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
@@ -88,6 +90,10 @@ public class HardwareOmniBot
     public HardwareOmniBot(robotHWconnected ConnectedParts){
         if((ConnectedParts == robotHWconnected.MotorGyro) || (ConnectedParts == robotHWconnected.MotorGyroServo)){
             gyroConnected = true;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
+            gyroConnected = true ;
+            lifterConnected = true ;
         }
     }
 
@@ -112,6 +118,11 @@ public class HardwareOmniBot
             gyroScope.init(hwMap);
 
         }
+        if (lifterConnected) {
+            lifter = new HardwareLifter();
+            RobotLog.i("defined gyroscope");
+            lifter.init(hwMap);
+        }
 
         // Set all motors to zero power
         Motor00.setPower(0);
@@ -131,6 +142,9 @@ public class HardwareOmniBot
     public void start() {
         if (gyroConnected) {
             gyroScope.start();
+        }
+        if (lifterConnected) {
+            lifter.start();
         }
     }
 
