@@ -36,6 +36,7 @@ public class OmniTeleOp1 extends OpMode {
     float motorLeft2power = 0;
     float motorRight1power = 0;
     float motorRight2power = 0;
+    float motorLifterPower = 0 ;
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
@@ -58,7 +59,7 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyro) ;
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifter) ;
         OmniBot.init(hardwareMap);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -67,6 +68,7 @@ public class OmniTeleOp1 extends OpMode {
         motorLeft2power = 0;
         motorRight1power = 0;
         motorRight2power = 0;
+        motorLifterPower = 0 ;
         composeTelemetry();
     }
 
@@ -118,7 +120,14 @@ public class OmniTeleOp1 extends OpMode {
                 motorRight2power = 0 ;
             }
 
+            if (gamepad1.left_bumper) {
+                motorLifterPower = (float)0.3 ;
+            } else if (gamepad1.right_bumper) {
+                motorLifterPower = (float)-0.3 ;
+            }
+
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+            OmniBot.setLifterGrabber(motorLifterPower);
 
         }
         if (gamepad2.a || controller2) {

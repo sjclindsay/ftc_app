@@ -58,4 +58,14 @@ public class HardwareLifter {
     }
 
     //put functions here
+
+    public  void setLifterGrabber (float lifterSpeed) {
+        motorLifter.setPower(lifterSpeed);
+    }
+    public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
+        motorLifter.setPower(lifterSpeed);
+        grabber.setServoGrabberPosition(grabberPosition);
+    }
+
+
 }

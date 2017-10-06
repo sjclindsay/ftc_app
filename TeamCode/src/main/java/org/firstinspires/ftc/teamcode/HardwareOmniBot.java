@@ -119,8 +119,8 @@ public class HardwareOmniBot
 
         }
         if (lifterConnected) {
-            lifter = new HardwareLifter();
-            RobotLog.i("defined gyroscope");
+            lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
+            RobotLog.i("defined lifter");
             lifter.init(hwMap);
         }
 
@@ -232,6 +232,13 @@ public class HardwareOmniBot
         float power11 = (yValue - xValue)*magnitude ;
 
         gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
+    }
+
+    public void setLifterGrabber (float lifterSpeed) {
+        lifter.setLifterGrabber(lifterSpeed);
+    }
+    public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
+        lifter.setLifterGrabber(lifterSpeed, grabberPosition);
     }
 
 
