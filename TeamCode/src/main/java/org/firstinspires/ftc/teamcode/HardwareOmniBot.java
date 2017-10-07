@@ -261,8 +261,8 @@ public class HardwareOmniBot
                                 @Override public String value() {
                                     return formatDouble(correction) ;
                                 }}) ;
-
         }
+
         telemetry.addLine()
             .addData("Motor Power 00", new Func<String>() {
                 @Override
@@ -289,6 +289,9 @@ public class HardwareOmniBot
                     return FormatHelper.formatDouble(Motor11.getPower());
                 }
             }) ;
+        if(lifterConnected) {
+            lifter.addTelemetry(telemetry);
+        }
     }
 
     /***

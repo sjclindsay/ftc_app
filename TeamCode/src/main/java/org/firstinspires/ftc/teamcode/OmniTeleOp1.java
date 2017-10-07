@@ -120,10 +120,12 @@ public class OmniTeleOp1 extends OpMode {
                 motorRight2power = 0 ;
             }
 
-            if (gamepad1.left_bumper) {
-                motorLifterPower = (float)0.3 ;
-            } else if (gamepad1.right_bumper) {
+            if ((gamepad1.left_bumper) && (!gamepad1.right_bumper)) {
+                motorLifterPower = (float) 0.3;
+            } else if ((gamepad1.right_bumper) && (!gamepad1.left_bumper)){
                 motorLifterPower = (float)-0.3 ;
+            } else {
+                motorLifterPower = (float) 0.0;
             }
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);

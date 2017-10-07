@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Created by matth on 9/16/2017.
  */
@@ -66,6 +69,20 @@ public class HardwareLifter {
         motorLifter.setPower(lifterSpeed);
         grabber.setServoGrabberPosition(grabberPosition);
     }
-
+    public void addTelemetry(Telemetry telemetry) {
+        telemetry.addLine()
+            .addData("Lifter Power ", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(motorLifter.getPower());
+                }
+            })
+            .addData("Grabber ", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(grabber.servoGrabber.getPosition());
+                }
+            });
+    }
 
 }
