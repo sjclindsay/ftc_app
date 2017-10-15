@@ -20,11 +20,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class HardwareVuforia {
-
+    private double [][] VuforiaCoords = { {0, 0, 0},
+                                         {0, 0, 0} } ;
     private OpenGLMatrix lastLocation = null;
     private VuforiaTrackables relicTrackables = null;
     private VuforiaTrackable relicTemplate = null;
     private RelicRecoveryVuMark vuMark = null;
+
+    public enum vuForiaCoord {
+        tX,
+        tY,
+        tZ,
+        rX,
+        rY,
+        rZ
+    }
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
@@ -95,7 +105,7 @@ public class HardwareVuforia {
         return (vuMark) ;
     }
 
-    public double GetX () {
+  /*  public double GetX () {
 
 
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -108,6 +118,56 @@ public class HardwareVuforia {
         vuMark = RelicRecoveryVuMark.from(relicTemplate);
         return (0.0);
     }
+*/
+
+  public void updateVuforiaCoords () {
+
+      OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+
+                /* We further illustrate how to decompose the pose into useful rotational and
+                 * translational components */
+      if (pose != null) {
+          VectorF trans = pose.getTranslation();
+          Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+          // Extract the X, Y, and Z components of the offset of the target relative to the robot
+          double tX = trans.get(0);
+          double tY = trans.get(1);
+          double tZ = trans.get(2);
+
+          // Extract the rotational components of the target relative to the robot
+          double rX = rot.firstAngle;
+          double rY = rot.secondAngle;
+          double rZ = rot.thirdAngle;
+
+          VuforiaCoords [0] [0] = tX ;
+          VuforiaCoords [0] [1] = tY ;
+          VuforiaCoords [0] [2] = tZ ;
+
+          VuforiaCoords [1] [0] = rX ;
+          VuforiaCoords [1] [1] = rY ;
+          VuforiaCoords [1] [2] = rZ ;
+      }
+  }
+
+  public double getVuforiaCoords (vuForiaCoord axis) {
+      double outPut = 0 ;
+
+      if (axis == vuForiaCoord.tX) {outPut = VuforiaCoords [0][0] ;}
+      if (axis == vuForiaCoord.tY) {outPut = VuforiaCoords [0][1] ;}
+      if (axis == vuForiaCoord.tZ) {outPut = VuforiaCoords [0][2] ;}
+
+      if (axis == vuForiaCoord.rX) {outPut = VuforiaCoords [1][0] ;}
+      if (axis == vuForiaCoord.rY) {outPut = VuforiaCoords [1][1] ;}
+      if (axis == vuForiaCoord.rZ) {outPut = VuforiaCoords [1][2] ;}
+
+      return  outPut ;
+  }
+
+
+
+
+
 
             //if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 

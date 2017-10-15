@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -83,6 +84,11 @@ public class SBDVuMark extends OpMode {
 @Override
 
     public void loop () {
+
+        VuReader.updateVuforiaCoords();
+
+        RobotLog.i("X value is " + VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ));
+        RobotLog.i("X value Rot is " + VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rZ));
 
         vuMark =  VuReader.GetLocation() ;
         telemetry.addData("VuMark", "%s visible", vuMark);
