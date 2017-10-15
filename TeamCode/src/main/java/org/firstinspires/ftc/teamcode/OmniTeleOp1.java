@@ -37,6 +37,7 @@ public class OmniTeleOp1 extends OpMode {
     float motorRight1power = 0;
     float motorRight2power = 0;
     float motorLifterPower = 0 ;
+    float servoGrabberPosition = 0 ;
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
@@ -128,8 +129,11 @@ public class OmniTeleOp1 extends OpMode {
                 motorLifterPower = (float) 0.0;
             }
 
+            servoGrabberPosition = gamepad1.left_trigger ;
+
+
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-            OmniBot.setLifterGrabber(motorLifterPower);
+            OmniBot.setLifterGrabber(motorLifterPower, servoGrabberPosition);
 
         }
         if (gamepad2.a || controller2) {
@@ -147,8 +151,10 @@ public class OmniTeleOp1 extends OpMode {
                 OmniBot.resetFirstPIDDrive();
                 targetHeading = targetHeading + 90;
                 RobotLog.i("target heading is " + targetHeading);
+                RobotLog.i("button pressed") ;
             } else if (!gamepad2.left_bumper && headingToggle) {
                 headingToggle = false ;
+                RobotLog.i("button released ") ;
             }
 
             if (gamepad2.right_bumper && !headingToggle) {
