@@ -51,7 +51,8 @@ enum robotHWconnected {
     MotorOnly,
     MotorGyro,
     MotorGyroServo,
-    MotorGyroLifter
+    MotorGyroLifter,
+    MotorGyroLifterVufor
 }
 
 public class HardwareOmniBot
@@ -68,10 +69,12 @@ public class HardwareOmniBot
     protected  double maxPower = 1;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
+    protected boolean vuForConnected = false ;
     protected boolean servoConnected = false;
     protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
+    protected HardwareVuforia vufor = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
@@ -95,6 +98,11 @@ public class HardwareOmniBot
             gyroConnected = true ;
             lifterConnected = true ;
         }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVufor) {
+            gyroConnected = true ;
+            lifterConnected = true ;
+            vuForConnected = true ;
+        }
     }
 
     /* Initialize standard Hardware interfaces */
@@ -116,12 +124,15 @@ public class HardwareOmniBot
             gyroScope = new HardwareGyro();
             RobotLog.i("defined gyroscope");
             gyroScope.init(hwMap);
-
         }
         if (lifterConnected) {
             lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
             RobotLog.i("defined lifter");
             lifter.init(hwMap);
+        }
+        if (vuForConnected) {
+            vufor = new HardwareVuforia() ;
+            RobotLog.i("defined Vufor") ;
         }
 
         // Set all motors to zero power
@@ -145,6 +156,9 @@ public class HardwareOmniBot
         }
         if (lifterConnected) {
             lifter.start();
+        }
+        if (vuForConnected) {
+            vufor.start();
         }
     }
 
