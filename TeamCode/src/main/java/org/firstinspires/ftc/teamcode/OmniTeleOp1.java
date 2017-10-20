@@ -112,84 +112,33 @@ public class OmniTeleOp1 extends OpMode {
             motorRight1power = (leftStickY - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
             motorRight2power = (leftStickY + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
 
-            if (dPadLeftOff == 1) {
+/*            if (dPadLeftOff == 1) {
                 motorLeft1power = 0 ;
                 motorLeft2power = 0 ;
             }
             if (dPadRightOff == 1) {
                 motorRight1power = 0 ;
                 motorRight2power = 0 ;
-            }
+            } */
 
             if ((gamepad1.left_bumper) && (!gamepad1.right_bumper)) {
-                motorLifterPower = (float) 0.3;
+                motorLifterPower = (float) 0.7;
             } else if ((gamepad1.right_bumper) && (!gamepad1.left_bumper)){
-                motorLifterPower = (float)-0.3 ;
+                motorLifterPower = (float)-0.7 ;
             } else {
                 motorLifterPower = (float) 0.0;
             }
 
-            servoGrabberPosition = gamepad1.left_trigger ;
-
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-            OmniBot.setLifterGrabber(motorLifterPower, servoGrabberPosition);
+            OmniBot.setLifterGrabber(motorLifterPower, gamepad1.left_trigger);
 
         }
         if (gamepad2.a || controller2) {
             controller2 = true ;
             controller1 = false ;
 
-            if (gamepad2.dpad_up) {
-                polarCoordinates[0] = (float) 0.2 ;
-            } else {
-                polarCoordinates[0] = 0 ;
-            }
 
-            if (gamepad2.left_bumper && !headingToggle) {
-                headingToggle = true ;
-                OmniBot.resetFirstPIDDrive();
-                targetHeading = targetHeading + 90;
-                RobotLog.i("target heading is " + targetHeading);
-                RobotLog.i("button pressed") ;
-            } else if (!gamepad2.left_bumper && headingToggle) {
-                headingToggle = false ;
-                RobotLog.i("button released ") ;
-            }
-
-            if (gamepad2.right_bumper && !headingToggle) {
-                headingToggle = true;
-                OmniBot.resetFirstPIDDrive();
-                targetHeading = targetHeading - 90;
-                RobotLog.i("target heading is " + targetHeading);
-            }else if (!gamepad2.right_bumper && headingToggle) {
-                headingToggle = false ;
-            }
-
-            if (gamepad2.dpad_left && !directionToggle) {
-                directionToggle = true ;
-                OmniBot.resetFirstPIDDrive();
-                polarCoordinates[1] = polarCoordinates[1] + 45;
-                RobotLog.i("direction is " + polarCoordinates[1]);
-            } else if (!gamepad2.dpad_left && directionToggle) {
-                directionToggle = false ;
-            }
-
-            if (gamepad2.dpad_right && !directionToggle) {
-                directionToggle = true ;
-                OmniBot.resetFirstPIDDrive();
-                polarCoordinates[1] = polarCoordinates[1] - 45 ;
-                RobotLog.i("direction is " + polarCoordinates[1]);
-            } else if (!gamepad2.dpad_right && directionToggle) {
-                directionToggle = false ;
-            }
-
-            targetHeading = normalizeAngle(targetHeading) ;
-            polarCoordinates[1] = (float) normalizeAngle((double) polarCoordinates[1]);
-
-            RobotLog.i("target heading is " + targetHeading);
-
-            OmniBot.driveOmniBot(polarCoordinates[0], polarCoordinates[1],  (float) targetHeading);
         }
 
         OmniBot.waitForTick(40);
@@ -266,3 +215,56 @@ public class OmniTeleOp1 extends OpMode {
     }
 
 }
+
+/*
+if (gamepad2.dpad_up) {
+        polarCoordinates[0] = (float) 0.2 ;
+        } else {
+        polarCoordinates[0] = 0 ;
+        }
+
+        if (gamepad2.left_bumper && !headingToggle) {
+        headingToggle = true ;
+        OmniBot.resetFirstPIDDrive();
+        targetHeading = targetHeading + 90;
+        RobotLog.i("target heading is " + targetHeading);
+        RobotLog.i("button pressed") ;
+        } else if (!gamepad2.left_bumper && headingToggle) {
+        headingToggle = false ;
+        RobotLog.i("button released ") ;
+        }
+
+        if (gamepad2.right_bumper && !headingToggle) {
+        headingToggle = true;
+        OmniBot.resetFirstPIDDrive();
+        targetHeading = targetHeading - 90;
+        RobotLog.i("target heading is " + targetHeading);
+        }else if (!gamepad2.right_bumper && headingToggle) {
+        headingToggle = false ;
+        }
+
+        if (gamepad2.dpad_left && !directionToggle) {
+        directionToggle = true ;
+        OmniBot.resetFirstPIDDrive();
+        polarCoordinates[1] = polarCoordinates[1] + 45;
+        RobotLog.i("direction is " + polarCoordinates[1]);
+        } else if (!gamepad2.dpad_left && directionToggle) {
+        directionToggle = false ;
+        }
+
+        if (gamepad2.dpad_right && !directionToggle) {
+        directionToggle = true ;
+        OmniBot.resetFirstPIDDrive();
+        polarCoordinates[1] = polarCoordinates[1] - 45 ;
+        RobotLog.i("direction is " + polarCoordinates[1]);
+        } else if (!gamepad2.dpad_right && directionToggle) {
+        directionToggle = false ;
+        }
+
+        targetHeading = normalizeAngle(targetHeading) ;
+        polarCoordinates[1] = (float) normalizeAngle((double) polarCoordinates[1]);
+
+        RobotLog.i("target heading is " + targetHeading);
+
+        OmniBot.driveOmniBot(polarCoordinates[0], polarCoordinates[1],  (float) targetHeading);
+*/

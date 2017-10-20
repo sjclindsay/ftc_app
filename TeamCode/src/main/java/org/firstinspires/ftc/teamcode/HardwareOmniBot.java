@@ -55,6 +55,16 @@ enum robotHWconnected {
     MotorGyroLifterVufor
 }
 
+enum PIDAxis {
+    gyro,
+    tx,
+    ty,
+    tz,
+    rx,
+    ry,
+    rz
+}
+
 public class HardwareOmniBot
 {
     /* Public OpMode members. */
@@ -233,28 +243,109 @@ public class HardwareOmniBot
 
     }
 
-    public void driveOmniBot (float magnitude, float direction, float targetHeading) {
-        float yValue = (float) Math.cos( direction*(Math.PI/180) ) ;
-        float xValue = (float) Math.sin( direction*(Math.PI/180) ) ;
+    public void txSquareOmniBot ( float targetHeading ) {
+        double currentHeadingTX = 0.0;
 
-        RobotLog.i("cos is " + yValue);
-        RobotLog.i("sin is " + xValue);
+        vufor.updateVuforiaCoords();
+        currentHeadingTX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
 
-        float power00 = (yValue - xValue)*magnitude ;
-        float power01 = (yValue + xValue)*magnitude ;
-        float power10 = (yValue + xValue)*magnitude ;
-        float power11 = (yValue - xValue)*magnitude ;
 
-        gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
+
+        if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + currentHeadingTX);
+
+            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            FirstCallPIDDrive = false;
+        }
+
+        correction = motorPID.Update(currentHeadingTX);
+
+
+        setBotMovement(correction, -correction, -correction, correction) ;
+    }
+
+    public void rxSquareOmniBot ( float targetHeading ) {
+        double currentHeadingRX = 0.0;
+
+        vufor.updateVuforiaCoords();
+        currentHeadingRX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
+
+
+
+        if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + currentHeadingRX);
+
+            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            FirstCallPIDDrive = false;
+        }
+
+        correction = motorPID.Update(currentHeadingRX);
+
+
+        setBotMovement(correction, correction, -correction, -correction) ;
+    }
+
+    public void tzSquareOmniBot ( float targetHeading ) {
+        double currentHeadingTZ = 0.0;
+
+        vufor.updateVuforiaCoords();
+        currentHeadingTZ = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
+
+
+
+        if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + currentHeadingTZ);
+
+            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            FirstCallPIDDrive = false;
+        }
+
+        correction = motorPID.Update(currentHeadingTZ);
+
+
+        setBotMovement(correction, correction, correction, correction) ;
+    }
+
+    public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
+        if (axis == PIDAxis.gyro) {
+
+            float yValue = (float) Math.cos( direction*(Math.PI/180) ) ;
+            float xValue = (float) Math.sin( direction*(Math.PI/180) ) ;
+
+            RobotLog.i("cos is " + yValue);
+            RobotLog.i("sin is " + xValue);
+
+            float power00 = (yValue - xValue)*magnitude ;
+            float power01 = (yValue + xValue)*magnitude ;
+            float power10 = (yValue + xValue)*magnitude ;
+            float power11 = (yValue - xValue)*magnitude ;
+
+            gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
+        } else if (axis == PIDAxis.tx) {
+            txSquareOmniBot(targetHeading);
+        } else if (axis == PIDAxis.rx) {
+            rxSquareOmniBot(targetHeading);
+        } else if (axis == PIDAxis.tz) {
+            tzSquareOmniBot(targetHeading);
+        }
+
+
     }
 
     public void setLifterGrabber (float lifterSpeed) {
         lifter.setLifterGrabber(lifterSpeed);
     }
     public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
+
+        grabberPosition = HardwareGrabber.servoGrabberInitialPosition - grabberPosition*0.35;
+
         lifter.setLifterGrabber(lifterSpeed, grabberPosition);
     }
 
+    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return vufor.getVuforiaCoords(axis) ;}
 
     public void addTelemetry(Telemetry telemetry) {
 

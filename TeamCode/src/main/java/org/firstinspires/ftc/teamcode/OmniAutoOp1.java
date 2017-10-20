@@ -60,7 +60,7 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = true ;
             controller2 = false ;
 
-            OmniBot.driveOmniBot( (float) 0.1, 45, 0);
+            OmniBot.driveOmniBot( (float) 0.1, 45, 0, PIDAxis.gyro);
 
         }
         if (gamepad2.a || controller2) {
@@ -68,7 +68,7 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = false;
 
 
-            OmniBot.driveOmniBot((float) 0.1, 0, 0);
+            OmniBot.driveOmniBot((float) 0.1, 0, 0, PIDAxis.gyro);
         }
         OmniBot.waitForTick(40);
         telemetry.update();

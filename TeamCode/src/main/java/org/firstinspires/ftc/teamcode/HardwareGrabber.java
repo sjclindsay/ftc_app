@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 /**
  * Created by matth on 9/16/2017.
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class HardwareGrabber {
 
     Servo servoGrabber = null;
+    public static float servoGrabberInitialPosition = (float) 0.85 ;
 
     HardwareMap hwMap = null;
 
@@ -25,7 +27,7 @@ public class HardwareGrabber {
 
         servoGrabber = hwMap.servo.get("servoGrabber") ;
 
-        servoGrabber.setPosition(0);
+        servoGrabber.setPosition(servoGrabberInitialPosition);
     }
 
     public void start() {
@@ -35,6 +37,8 @@ public class HardwareGrabber {
     //put functions here
 
     public void setServoGrabberPosition ( double position) {
+
+        position = Range.clip(position, 0.5, servoGrabberInitialPosition) ;
 
         servoGrabber.setPosition(position);
 
