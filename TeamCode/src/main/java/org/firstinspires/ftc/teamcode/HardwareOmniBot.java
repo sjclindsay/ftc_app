@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.HardwareColorSensor;
 import org.firstinspires.ftc.robotcontroller.external.samples.WeCoBallPushAuto;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -69,7 +70,7 @@ enum PIDAxis {
 public class HardwareOmniBot
 {
     /* Public OpMode members. */
-    private robotHWconnected connectedHW = robotHWconnected.MotorOnly;
+    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVufor;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
@@ -84,6 +85,7 @@ public class HardwareOmniBot
     protected boolean vuForConnected = false ;
     protected boolean colorConnected = false ;
     protected boolean servoConnected = false;
+    protected HardwareColorSensor colorSensor = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
     protected HardwareVuforia vufor = null ;
