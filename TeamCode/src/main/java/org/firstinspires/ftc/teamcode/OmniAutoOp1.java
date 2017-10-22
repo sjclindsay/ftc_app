@@ -68,7 +68,7 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = false;
 
 
-            OmniBot.driveOmniBot((float) 0.1, 0, 0, PIDAxis.gyro);
+            OmniBot.driveOmniBot(0, 0 , 0, PIDAxis.tx);
         }
         OmniBot.waitForTick(40);
         telemetry.update();

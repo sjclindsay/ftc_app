@@ -52,7 +52,8 @@ enum robotHWconnected {
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
-    MotorGyroLifterVufor
+    MotorGyroLifterVufor,
+    MotorGyroLifterVuforColor
 }
 
 enum PIDAxis {
@@ -73,6 +74,7 @@ public class HardwareOmniBot
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
+    protected Servo servoJewel = null ;
     protected static final float motorPowerMin = -1 ;
     protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
@@ -80,8 +82,8 @@ public class HardwareOmniBot
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
     protected boolean vuForConnected = false ;
+    protected boolean colorConnected = false ;
     protected boolean servoConnected = false;
-    protected ColorSensor colorSensor = null;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
     protected HardwareVuforia vufor = null ;
@@ -126,6 +128,7 @@ public class HardwareOmniBot
         Motor01  = hwMap.dcMotor.get("drive_wheel_01");
         Motor10  = hwMap.dcMotor.get("drive_wheel_10");
         Motor11  = hwMap.dcMotor.get("drive_wheel_11");
+        servoJewel = hwMap.servo.get("servoJewel") ;
 
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -150,6 +153,7 @@ public class HardwareOmniBot
         Motor01.setPower(0);
         Motor10.setPower(0);
         Motor11.setPower(0);
+        servoJewel.setPosition(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -172,6 +176,8 @@ public class HardwareOmniBot
         }
     }
 
+    public void lowerServoJewel () { servoJewel.setPosition(0.5) ; }
+    public void raiseServoJewel () { servoJewel.setPosition(0) ; }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
 
@@ -262,7 +268,7 @@ public class HardwareOmniBot
         correction = motorPID.Update(currentHeadingTX);
 
 
-        setBotMovement(correction, -correction, -correction, correction) ;
+        setBotMovement(correction, correction, correction, correction) ;
     }
 
     public void rxSquareOmniBot ( float targetHeading ) {
@@ -306,7 +312,7 @@ public class HardwareOmniBot
         correction = motorPID.Update(currentHeadingTZ);
 
 
-        setBotMovement(correction, correction, correction, correction) ;
+        setBotMovement(correction, correction, -correction, -correction) ;
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
