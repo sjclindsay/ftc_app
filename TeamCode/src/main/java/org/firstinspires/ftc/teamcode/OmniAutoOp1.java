@@ -28,7 +28,7 @@ public class OmniAutoOp1 extends OpMode {
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
