@@ -80,7 +80,7 @@ public class HardwareLifter {
             .addData("Grabber ", new Func<String>() {
                 @Override
                 public String value() {
-                    return FormatHelper.formatDouble(grabber.servoGrabber.getPosition());
+                    return FormatHelper.formatDouble(grabber.servoGrabber2.getPosition());
                 }
             });
     }

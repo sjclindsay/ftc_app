@@ -21,14 +21,10 @@ public class OmniAutoOp1 extends OpMode {
         InitializeTurn
     }
     MotorState currentState = MotorState.Turn;
-    float motorLeft1power = 0;
-    float motorLeft2power = 0;
-    float motorRight1power = 0;
-    float motorRight2power = 0;
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorLifter;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -60,15 +56,15 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = true ;
             controller2 = false ;
 
-            OmniBot.driveOmniBot( (float) 0.1, 45, 0, PIDAxis.gyro);
-
+            OmniBot.servoJewel.setPosition((double) 1.0);
+            OmniBot.lifter.grabber.servoGrabber1.setPosition((double) 0.0);
         }
         if (gamepad2.a || controller2) {
             controller2 = true;
             controller1 = false;
 
-
-            OmniBot.driveOmniBot(0, 0 , 0, PIDAxis.tx);
+            OmniBot.servoJewel.setPosition((double) 0.0);
+            OmniBot.lifter.grabber.servoGrabber1.setPosition((double) 1.0);
         }
         OmniBot.waitForTick(40);
         telemetry.update();

@@ -10,8 +10,9 @@ import com.qualcomm.robotcore.util.Range;
 
 public class HardwareGrabber {
 
-    Servo servoGrabber = null;
-    public static float servoGrabberInitialPosition = (float) 0.85 ;
+    Servo servoGrabber1 = null;
+    Servo servoGrabber2 = null ;
+    public static float servoGrabberInitialPosition = (float) 0.9 ;
 
     HardwareMap hwMap = null;
 
@@ -25,9 +26,12 @@ public class HardwareGrabber {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        servoGrabber = hwMap.servo.get("servoGrabber") ;
+        servoGrabber1 = hwMap.servo.get("servoGrabber1") ;
+        servoGrabber2 = hwMap.servo.get("servoGrabber2") ;
 
-        servoGrabber.setPosition(servoGrabberInitialPosition);
+        servoGrabber1.setPosition(servoGrabberInitialPosition);
+        servoGrabber2.setPosition(1 - servoGrabberInitialPosition);
+
     }
 
     public void start() {
@@ -38,9 +42,12 @@ public class HardwareGrabber {
 
     public void setServoGrabberPosition ( double position) {
 
+        position = position*0.4 + 0.5 ;
+
         position = Range.clip(position, 0.5, servoGrabberInitialPosition) ;
 
-        servoGrabber.setPosition(position);
+        servoGrabber1.setPosition(position);
+        servoGrabber2.setPosition(1 - position);
 
     }
 
