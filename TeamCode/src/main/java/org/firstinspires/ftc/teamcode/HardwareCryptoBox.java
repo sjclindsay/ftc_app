@@ -12,11 +12,12 @@ public class HardwareCryptoBox {
 
     DigitalChannel cryptoBoxTouch1 = null ;
     DigitalChannel cryptoBoxTouch2 = null ;
+    DigitalChannel cryptoBoxEndTouch = null ;
     Servo cryptoBoxServo = null ;
     protected boolean cryptoBoxTouchValue1 = false ;
     protected boolean cryptoBoxTouchValue2 = false ;
-    protected float cryptoBoxServoPositionUp = (float) 0.5 ;
-    protected float cryptoBoxServoPositionDown = 0 ;
+    protected float cryptoBoxServoPositionUp = (float) 0.4 ;
+    protected float cryptoBoxServoPositionDown = (float) 0.9 ;
     HardwareMap hwMap = null ;
 
     public  HardwareCryptoBox() {
@@ -29,10 +30,13 @@ public class HardwareCryptoBox {
 
         cryptoBoxTouch1 = hwMap.digitalChannel.get("cryptoBoxTouch1") ;
         cryptoBoxTouch2 = hwMap.digitalChannel.get("cryptoBoxTouch2") ;
+        cryptoBoxEndTouch = hwMap.digitalChannel.get("cryptoBoxEndTouch") ;
         cryptoBoxServo = hwMap.servo.get("cryptoBoxServo") ;
 
         cryptoBoxTouch1.setMode(DigitalChannel.Mode.INPUT);
         cryptoBoxTouch2.setMode(DigitalChannel.Mode.INPUT);
+        cryptoBoxEndTouch.setMode(DigitalChannel.Mode.INPUT);
+
         cryptoBoxServo.setPosition(cryptoBoxServoPositionUp);
     }
 
@@ -53,6 +57,10 @@ public class HardwareCryptoBox {
     public boolean updateCryptoTouch2() {
         return cryptoBoxTouch2.getState();
     }
+    public boolean updateCryptoEndTouch() {
+        return cryptoBoxEndTouch.getState();
+    }
+
 
 
 }

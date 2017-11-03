@@ -12,7 +12,7 @@ public class HardwareGrabber {
 
     Servo servoGrabber1 = null;
     Servo servoGrabber2 = null ;
-    public static float servoGrabberInitialPosition = (float) 0.9 ;
+    public static float servoGrabberInitialPosition = (float) 0.8 ;
 
     HardwareMap hwMap = null;
 
@@ -29,8 +29,8 @@ public class HardwareGrabber {
         servoGrabber1 = hwMap.servo.get("servoGrabber1") ;
         servoGrabber2 = hwMap.servo.get("servoGrabber2") ;
 
-        servoGrabber1.setPosition(servoGrabberInitialPosition);
-        servoGrabber2.setPosition(1 - servoGrabberInitialPosition);
+        servoGrabber1.setPosition(0.5);
+        servoGrabber2.setPosition(0.5);
 
     }
 
@@ -42,7 +42,7 @@ public class HardwareGrabber {
 
     public void setServoGrabberPosition ( double position) {
 
-        position = position*0.4 + 0.5 ;
+        position = position*0.3 + 0.5 ;
 
         position = Range.clip(position, 0.5, servoGrabberInitialPosition) ;
 

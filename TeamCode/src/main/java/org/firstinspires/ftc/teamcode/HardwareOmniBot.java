@@ -60,6 +60,7 @@ enum robotHWconnected {
     MotorGyroLifterVuforColor,
     MotorGyroLifterCrypto,
     MotorLifterCrypto,
+    MotorLifterColorCrypto,
     MotorGyroLifterVuforCrypto
 
 }
@@ -149,6 +150,10 @@ public class HardwareOmniBot
         }
         if (ConnectedParts == robotHWconnected.MotorLifterCrypto) {
             lifterConnected = true ;
+            cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterColorCrypto) {
+            lifterConnected = true ;
             colorConnected = true ;
             cryptoConnected = true ;
         }
@@ -170,20 +175,23 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
+        if (vuForConnected) {
+            vufor = new HardwareVuforia() ;
+            RobotLog.i("defined Vufor") ;
+            vufor.init(hwMap);
+            RobotLog.i("Init Complete Vuforia");
+        }
         if(gyroConnected) {
             gyroScope = new HardwareGyro();
             RobotLog.i("defined gyroscope");
             gyroScope.init(hwMap);
+            RobotLog.i("Init Complete Gyro");
         }
         if (lifterConnected) {
             lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
             RobotLog.i("defined lifter");
             lifter.init(hwMap);
-        }
-        if (vuForConnected) {
-            vufor = new HardwareVuforia() ;
-            RobotLog.i("defined Vufor") ;
-            vufor.init(hwMap);
+            RobotLog.i("Init COmplete Lifter");
         }
         if (cryptoConnected) {
             crypto = new HardwareCryptoBox() ;

@@ -14,7 +14,7 @@ public class HardwareColorSensor {
         colorSensor = hwMap.colorSensor.get ("SmackerColorSensor") ;
     }
 
-    enum Color {
+    public enum Color {
         Blue,
         Red,
         None

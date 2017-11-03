@@ -25,7 +25,7 @@ public class HardwareVuforia {
     private OpenGLMatrix lastLocation = null;
     private VuforiaTrackables relicTrackables = null;
     private VuforiaTrackable relicTemplate = null;
-    private RelicRecoveryVuMark vuMark = null;
+    public RelicRecoveryVuMark vuMark = null;
 
     public enum vuForiaCoord {
         tX,
@@ -70,7 +70,7 @@ public class HardwareVuforia {
 
         /*
          * We also indicate which camera on the RC that we wish to use.
-         * Here we chose the back (HiRes) camera (for greater range), but
+         * Here we chose the Front (LowRes) camera (for greater range), but
          * for a competition robot, the front camera might be more convenient.
          */
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
