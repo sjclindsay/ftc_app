@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.HardwareColorSensor;
+
 /**
  * Created by conno on 8/17/2017.
  */
@@ -21,14 +23,10 @@ public class OmniAutoOp1 extends OpMode {
         InitializeTurn
     }
     MotorState currentState = MotorState.Turn;
-    float motorLeft1power = 0;
-    float motorLeft2power = 0;
-    float motorRight1power = 0;
-    float motorRight2power = 0;
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorLifterColorCrypto;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -60,15 +58,25 @@ public class OmniAutoOp1 extends OpMode {
             controller1 = true ;
             controller2 = false ;
 
-            OmniBot.driveOmniBot( (float) 0.1, 45, 0, PIDAxis.gyro);
+            OmniBot.lowerServoJewel();
+            OmniBot.crypto.lowerCryptoServo();
+
+            if (OmniBot.colorSensor.WhatColor() == HardwareColorSensor.Color.Red) {
+                RobotLog.i("red") ;
+            } else if (OmniBot.colorSensor.WhatColor() == HardwareColorSensor.Color.Blue) {
+                RobotLog.i("blue") ;
+            } else {
+                RobotLog.i("color not found") ;
+            }
 
         }
         if (gamepad2.a || controller2) {
             controller2 = true;
             controller1 = false;
 
+            OmniBot.raiseServoJewel();
+            OmniBot.crypto.raiseCryptoServo();
 
-            OmniBot.driveOmniBot(0, 0 , 0, PIDAxis.tx);
         }
         OmniBot.waitForTick(40);
         telemetry.update();

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.Hardware;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.FormatHelper;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -50,11 +52,18 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
 enum robotHWconnected {
     MotorOnly,
+    MotorLifter,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
     MotorGyroLifterVufor,
-    MotorGyroLifterVuforColor
+    MotorGyroLifterVuforColor,
+    MotorGyroLifterCrypto,
+    MotorLifterCrypto,
+    MotorLifterColorCrypto,
+    MotorGyroLifterVuforCrypto,
+    MotorVufor
+
 }
 
 enum PIDAxis {
@@ -84,16 +93,17 @@ public class HardwareOmniBot
     protected boolean lifterConnected = false ;
     protected boolean vuForConnected = false ;
     protected boolean colorConnected = false ;
-    protected boolean servoConnected = false;
+    protected boolean cryptoConnected = false;
     protected HardwareColorSensor colorSensor = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
-    protected HardwareVuforia vufor = null ;
+    protected HardwareVuforia VuReader = null ;
+    protected RelicRecoveryVuMark vuMark = null ;
+    protected HardwareCryptoBox crypto = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
     private double correction = 0.0 ;
-
 
 
     /* local OpMode members. */
@@ -108,6 +118,9 @@ public class HardwareOmniBot
         if((ConnectedParts == robotHWconnected.MotorGyro) || (ConnectedParts == robotHWconnected.MotorGyroServo)){
             gyroConnected = true;
         }
+        if (ConnectedParts == robotHWconnected.MotorLifter) {
+            lifterConnected = true ;
+        }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             gyroConnected = true ;
             lifterConnected = true ;
@@ -116,6 +129,37 @@ public class HardwareOmniBot
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforColor) {
+            gyroConnected = true ;
+            lifterConnected = true ;
+            vuForConnected = true ;
+            colorConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCrypto) {
+            gyroConnected = true ;
+            lifterConnected = true ;
+            vuForConnected = true ;
+            colorConnected = true ;
+            cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterCrypto) {
+            gyroConnected = true ;
+            lifterConnected = true ;
+            colorConnected = true ;
+            cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterCrypto) {
+            lifterConnected = true ;
+            cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterColorCrypto) {
+            lifterConnected = true ;
+            colorConnected = true ;
+            cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorVufor) {
+           vuForConnected = true ;
         }
     }
 
@@ -135,19 +179,28 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
+        if (vuForConnected) {
+            VuReader = new HardwareVuforia();
+            VuReader.init(hwMap);
+            RobotLog.i("defined Vufor") ;
+            RobotLog.i("Init Complete Vuforia");
+        }
         if(gyroConnected) {
             gyroScope = new HardwareGyro();
             RobotLog.i("defined gyroscope");
             gyroScope.init(hwMap);
+            RobotLog.i("Init Complete Gyro");
         }
         if (lifterConnected) {
             lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
             RobotLog.i("defined lifter");
             lifter.init(hwMap);
+            RobotLog.i("Init COmplete Lifter");
         }
-        if (vuForConnected) {
-            vufor = new HardwareVuforia() ;
-            RobotLog.i("defined Vufor") ;
+        if (cryptoConnected) {
+            crypto = new HardwareCryptoBox() ;
+            RobotLog.i("defined crypto class") ;
+            crypto.init(hwMap) ;
         }
 
         // Set all motors to zero power
@@ -174,12 +227,22 @@ public class HardwareOmniBot
             lifter.start();
         }
         if (vuForConnected) {
-            vufor.start();
+            VuReader.start();
+        }
+        if (cryptoConnected) {
+            crypto.start();
         }
     }
 
     public void lowerServoJewel () { servoJewel.setPosition(0.5) ; }
     public void raiseServoJewel () { servoJewel.setPosition(0) ; }
+
+    public boolean updateCryptoTouch1() {
+        return crypto.updateCryptoTouch1() ;
+    }
+    public boolean updateCryptoTouch2() {
+        return crypto.updateCryptoTouch2() ;
+    }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
 
@@ -254,8 +317,8 @@ public class HardwareOmniBot
     public void txSquareOmniBot ( float targetHeading ) {
         double currentHeadingTX = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingTX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingTX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
 
 
 
@@ -276,8 +339,8 @@ public class HardwareOmniBot
     public void rxSquareOmniBot ( float targetHeading ) {
         double currentHeadingRX = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingRX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingRX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
 
 
 
@@ -298,8 +361,8 @@ public class HardwareOmniBot
     public void tzSquareOmniBot ( float targetHeading ) {
         double currentHeadingTZ = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingTZ = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingTZ = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
 
 
 
@@ -348,12 +411,10 @@ public class HardwareOmniBot
     }
     public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
 
-        grabberPosition = HardwareGrabber.servoGrabberInitialPosition - grabberPosition*0.35;
-
         lifter.setLifterGrabber(lifterSpeed, grabberPosition);
     }
 
-    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return vufor.getVuforiaCoords(axis) ;}
+    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
 
     public void addTelemetry(Telemetry telemetry) {
 

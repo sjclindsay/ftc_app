@@ -60,7 +60,7 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifter) ;
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorLifterCrypto) ;
         OmniBot.init(hardwareMap);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -106,6 +106,7 @@ public class OmniTeleOp1 extends OpMode {
         if (gamepad1.a || controller1) {
             controller1 = true ;
             controller2 = false ;
+
 
             motorLeft1power = (leftStickY  + gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar ;
             motorLeft2power = (leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
