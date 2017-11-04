@@ -61,7 +61,8 @@ enum robotHWconnected {
     MotorGyroLifterCrypto,
     MotorLifterCrypto,
     MotorLifterColorCrypto,
-    MotorGyroLifterVuforCrypto
+    MotorGyroLifterVuforCrypto,
+    MotorVufor
 
 }
 
@@ -96,7 +97,7 @@ public class HardwareOmniBot
     protected HardwareColorSensor colorSensor = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
-    protected HardwareVuforia vufor = null ;
+    protected HardwareVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBox crypto = null ;
     protected double TargetHeading = 0.0;
@@ -157,6 +158,9 @@ public class HardwareOmniBot
             colorConnected = true ;
             cryptoConnected = true ;
         }
+        if (ConnectedParts == robotHWconnected.MotorVufor) {
+           vuForConnected = true ;
+        }
     }
 
     /* Initialize standard Hardware interfaces */
@@ -176,9 +180,9 @@ public class HardwareOmniBot
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
        // colorSensor = hwMap.colorSensor.get("colorSensor1");
         if (vuForConnected) {
-            vufor = new HardwareVuforia() ;
+            VuReader = new HardwareVuforia();
+            VuReader.init(hwMap);
             RobotLog.i("defined Vufor") ;
-            vufor.init(hwMap);
             RobotLog.i("Init Complete Vuforia");
         }
         if(gyroConnected) {
@@ -223,7 +227,7 @@ public class HardwareOmniBot
             lifter.start();
         }
         if (vuForConnected) {
-            vufor.start();
+            VuReader.start();
         }
         if (cryptoConnected) {
             crypto.start();
@@ -313,8 +317,8 @@ public class HardwareOmniBot
     public void txSquareOmniBot ( float targetHeading ) {
         double currentHeadingTX = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingTX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingTX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
 
 
 
@@ -335,8 +339,8 @@ public class HardwareOmniBot
     public void rxSquareOmniBot ( float targetHeading ) {
         double currentHeadingRX = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingRX = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingRX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
 
 
 
@@ -357,8 +361,8 @@ public class HardwareOmniBot
     public void tzSquareOmniBot ( float targetHeading ) {
         double currentHeadingTZ = 0.0;
 
-        vufor.updateVuforiaCoords();
-        currentHeadingTZ = vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
+        VuReader.updateVuforiaCoords();
+        currentHeadingTZ = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
 
 
 
@@ -410,7 +414,7 @@ public class HardwareOmniBot
         lifter.setLifterGrabber(lifterSpeed, grabberPosition);
     }
 
-    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return vufor.getVuforiaCoords(axis) ;}
+    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
 
     public void addTelemetry(Telemetry telemetry) {
 

@@ -57,6 +57,9 @@ public class OmniAutoMain extends OpMode {
     public void start() {
 
         OmniBot.start();
+
+        telemetry.update();
+
     }
 
     @Override
@@ -136,6 +139,11 @@ public class OmniAutoMain extends OpMode {
                 break;
         }
         */
+
+        vuMark =  OmniBot.VuReader.GetLocation() ;
+        telemetry.addData("VuMark", "%s visible", vuMark);
+
+        telemetry.update();
 
     }
 
