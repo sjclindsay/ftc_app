@@ -28,10 +28,13 @@
  */
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 
@@ -56,11 +59,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 @TeleOp(name="Omni: SBDVuMarkHW", group="Omni")
 public class SBDVuMarkHW extends OpMode {
 
-    public RelicRecoveryVuMark vuMark = null ;
-    HardwareVuforia VuReader = null ;
 
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorVufor;
-    HardwareOmniBot OmniBot ;
+
+    private robotHWconnected autoConnectedHW = robotHWconnected.MotorVufor;
+    private HardwareOmniBot OmniBot ;
 
 
     @Override
@@ -68,6 +70,7 @@ public class SBDVuMarkHW extends OpMode {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
         OmniBot.init(hardwareMap);
 
+        composeTelemetry();
 
     }
 
@@ -81,20 +84,25 @@ public class SBDVuMarkHW extends OpMode {
 
     }
 
-
-
-@Override
-
+    @Override
     public void loop () {
 
-        VuReader.updateVuforiaCoords();
+        RelicRecoveryVuMark vuMark;
 
-        RobotLog.i("X value is " + VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ));
-        RobotLog.i("X value Rot is " + VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rZ));
+//        OmniBot.VuReader.updateVuforiaCoords();
 
-        vuMark =  VuReader.GetLocation() ;
+        RobotLog.i("X value is " + OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ));
+        RobotLog.i("X value Rot is " + OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rZ));
+
+        vuMark =  OmniBot.VuReader.GetLocation() ;
         telemetry.addData("VuMark", "%s visible", vuMark);
 
         telemetry.update();
+    }
+
+    void composeTelemetry() {
+
+        OmniBot.addTelemetry(telemetry);
+        //OmniBot.getTelemetry(telemetry);
     }
 }

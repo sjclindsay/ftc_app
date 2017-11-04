@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import com.qualcomm.robotcore.util.Hardware;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwareColorSenso
 import org.firstinspires.ftc.robotcontroller.external.samples.WeCoBallPushAuto;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -62,6 +65,7 @@ enum robotHWconnected {
     MotorLifterCrypto,
     MotorLifterColorCrypto,
     MotorGyroLifterVuforCrypto,
+    MotorLifterVufor,
     MotorVufor
 
 }
@@ -78,6 +82,7 @@ enum PIDAxis {
 
 public class HardwareOmniBot
 {
+
     /* Public OpMode members. */
     private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVufor;
     protected DcMotor Motor00   = null;
@@ -97,7 +102,7 @@ public class HardwareOmniBot
     protected HardwareColorSensor colorSensor = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
-    protected HardwareVuforia VuReader = null ;
+    public HardwareVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBox crypto = null ;
     protected double TargetHeading = 0.0;
@@ -160,6 +165,10 @@ public class HardwareOmniBot
         }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
            vuForConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterVufor) {
+            vuForConnected = true ;
+            lifterConnected = true;
         }
     }
 
@@ -227,7 +236,7 @@ public class HardwareOmniBot
             lifter.start();
         }
         if (vuForConnected) {
-            VuReader.start();
+            //VuReader.start();
         }
         if (cryptoConnected) {
             crypto.start();

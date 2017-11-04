@@ -39,7 +39,7 @@ public class OmniAutoMain extends OpMode {
 
     MotorState nextState = null ;
     MotorState stateAfterNext = null ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorLifterVufor;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -65,10 +65,10 @@ public class OmniAutoMain extends OpMode {
     @Override
     public void loop() {
 
-        OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
+        //OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
 
-        /*OmniBot.vufor.updateVuforiaCoords();
-
+        OmniBot.VuReader.updateVuforiaCoords();
+        /*
         currentState = nextState ;
         switch (currentState) {
             case INITIALIZE:
@@ -140,7 +140,7 @@ public class OmniAutoMain extends OpMode {
         }
         */
 
-        vuMark =  OmniBot.VuReader.GetLocation() ;
+        vuMark =  OmniBot. VuReader.GetLocation() ;
         telemetry.addData("VuMark", "%s visible", vuMark);
 
         telemetry.update();

@@ -22,7 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public class HardwareVuforia {
     private double [][] VuforiaCoords = { {0, 0, 0},
                                          {0, 0, 0} } ;
-    private OpenGLMatrix lastLocation = null;
+    public OpenGLMatrix lastLocation = null;
+
     private VuforiaTrackables relicTrackables = null;
     private VuforiaTrackable relicTemplate = null;
     public RelicRecoveryVuMark vuMark = null;
@@ -39,7 +40,8 @@ public class HardwareVuforia {
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
-    private VuforiaLocalizer vuforia;
+    public VuforiaLocalizer vuforia;
+
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
 
@@ -49,7 +51,7 @@ public class HardwareVuforia {
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
         int cameraMonitorViewId = ahwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", ahwMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         // OR...  Do Not Activate the Camera Monitor View, to save power
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
