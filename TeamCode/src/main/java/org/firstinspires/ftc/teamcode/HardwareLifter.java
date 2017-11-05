@@ -19,7 +19,7 @@ enum LifterHWcontroller {
 
 public class HardwareLifter {
 
-    DcMotor motorLifter = null;
+    public DcMotor motorLifter = null;
     protected boolean grabberConnected = false ;
     protected HardwareGrabber grabber = null ;
 
@@ -69,6 +69,7 @@ public class HardwareLifter {
         motorLifter.setPower(lifterSpeed);
         grabber.setServoGrabberPosition(grabberPosition);
     }
+
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
             .addData("Lifter Power ", new Func<String>() {
@@ -76,13 +77,10 @@ public class HardwareLifter {
                 public String value() {
                     return FormatHelper.formatDouble(motorLifter.getPower());
                 }
-            })
-            .addData("Grabber ", new Func<String>() {
-                @Override
-                public String value() {
-                    return FormatHelper.formatDouble(grabber.servoGrabber2.getPosition());
-                }
             });
+        if(grabberConnected) {
+            grabber.addTelemetry(telemetry);
+        }
     }
 
 }

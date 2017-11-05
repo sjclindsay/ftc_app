@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Created by conno on 10/26/2017.
  */
@@ -61,6 +64,33 @@ public class HardwareCryptoBox {
         return cryptoBoxEndTouch.getState();
     }
 
-
+    public void addTelemetry(Telemetry telemetry) {
+        telemetry.addLine()
+                .addData("CryptoTouch1 ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return Boolean.toString(cryptoBoxTouch1.getState());
+                    }
+                })
+                .addData("CryptoTouch2 ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return Boolean.toString(cryptoBoxTouch2.getState());
+                    }
+                })
+                .addData("CryptoEndTouch ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return Boolean.toString(cryptoBoxEndTouch.getState());
+                    }
+                });
+        telemetry.addLine()
+                .addData("CryptoServo ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(cryptoBoxServo.getPosition());
+                    }
+                });
+    }
 
 }

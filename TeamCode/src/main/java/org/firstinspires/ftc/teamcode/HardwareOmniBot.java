@@ -1,35 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import com.qualcomm.robotcore.util.Hardware;
 import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwareColorSensor;
-import org.firstinspires.ftc.robotcontroller.external.samples.WeCoBallPushAuto;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.teamcode.FormatHelper;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
@@ -66,6 +46,7 @@ enum robotHWconnected {
     MotorLifterColorCrypto,
     MotorGyroLifterVuforCrypto,
     MotorLifterVufor,
+    MotorJewel,
     MotorVufor
 
 }
@@ -99,7 +80,8 @@ public class HardwareOmniBot
     protected boolean vuForConnected = false ;
     protected boolean colorConnected = false ;
     protected boolean cryptoConnected = false;
-    protected HardwareColorSensor colorSensor = null ;
+    protected boolean jewelConnected = false;
+    protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
     public HardwareVuforia VuReader = null ;
@@ -170,6 +152,9 @@ public class HardwareOmniBot
             vuForConnected = true ;
             lifterConnected = true;
         }
+        if (ConnectedParts == robotHWconnected.MotorJewel) {
+            jewelConnected = true;
+        }
     }
 
     /* Initialize standard Hardware interfaces */
@@ -211,6 +196,11 @@ public class HardwareOmniBot
             RobotLog.i("defined crypto class") ;
             crypto.init(hwMap) ;
         }
+        if (jewelConnected){
+            jewelSystem = new HardwareJewel();
+            RobotLog.i("Jewel Defined");
+            jewelSystem.init(hwMap);
+        }
 
         // Set all motors to zero power
         Motor00.setPower(0);
@@ -240,6 +230,9 @@ public class HardwareOmniBot
         }
         if (cryptoConnected) {
             crypto.start();
+        }
+        if(jewelConnected) {
+            jewelSystem.start();
         }
     }
 
@@ -474,6 +467,12 @@ public class HardwareOmniBot
             }) ;
         if(lifterConnected) {
             lifter.addTelemetry(telemetry);
+        }
+        if(jewelConnected) {
+            jewelSystem.addTelemetry(telemetry);
+        }
+        if(cryptoConnected) {
+            crypto.addTelemetry(telemetry);
         }
     }
 

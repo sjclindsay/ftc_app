@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.test.MoreAsserts;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwareColorSensor;
 
 /**
  * Created by conno on 8/17/2017.
@@ -61,9 +57,9 @@ public class OmniAutoOp1 extends OpMode {
             OmniBot.lowerServoJewel();
             OmniBot.crypto.lowerCryptoServo();
 
-            if (OmniBot.colorSensor.WhatColor() == HardwareColorSensor.Color.Red) {
+            if (OmniBot.jewelSystem.jewelSensor.WhatColor() == HardwareColorSensor.Color.Red) {
                 RobotLog.i("red") ;
-            } else if (OmniBot.colorSensor.WhatColor() == HardwareColorSensor.Color.Blue) {
+            } else if (OmniBot.jewelSystem.jewelSensor.WhatColor() == HardwareColorSensor.Color.Blue) {
                 RobotLog.i("blue") ;
             } else {
                 RobotLog.i("color not found") ;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -11,16 +12,19 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by matth on 9/16/2017.
  */
 
-public class HardwareGrabber {
+public class HardwareJewel {
 
-    Servo servoGrabber1 = null;
-    Servo servoGrabber2 = null;
-    public static float servoGrabberMaxPosition = (float) 0.8;
+    Servo servoJewel = null;
+    HardwareColorSensor jewelSensor;
+
+
+    public static float servoJewelMaxPosition = (float) 1.0;
+    public static float servoJewelInitalPosition = (float) 1.0;
 
     HardwareMap hwMap = null;
 
     /* Constructor */
-    public HardwareGrabber() {
+    public HardwareJewel() {
 
     }
 
@@ -29,12 +33,12 @@ public class HardwareGrabber {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        servoGrabber1 = hwMap.servo.get("servoGrabber1");
-        servoGrabber2 = hwMap.servo.get("servoGrabber2");
+        servoJewel = hwMap.servo.get("servoJewel") ;
+        servoJewel.setPosition(servoJewelInitalPosition);
 
-        servoGrabber1.setPosition(0.5);
-        servoGrabber2.setPosition(0.5);
 
+        jewelSensor = new HardwareColorSensor();
+        jewelSensor.init(hwMap);
     }
 
     public void start() {
@@ -43,29 +47,27 @@ public class HardwareGrabber {
 
     //put functions here
 
-    public void setServoGrabberPosition(double position) {
+    public void setServoJewelPosition(double position) {
 
         position = position * 0.3 + 0.5;
 
-        position = Range.clip(position, 0.5, servoGrabberMaxPosition);
+        position = Range.clip(position, 0.5, servoJewelMaxPosition);
 
-        servoGrabber1.setPosition(position);
-        servoGrabber2.setPosition(1 - position);
-
+        servoJewel.setPosition(position);
     }
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
-                .addData("Grabber1 ", new Func<String>() {
+                .addData("ServoJewel ", new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(servoGrabber1.getPosition());
+                        return FormatHelper.formatDouble(servoJewel.getPosition());
                     }
                 })
-                .addData("Grabber2 ", new Func<String>() {
+                .addData("Color ", new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(servoGrabber2.getPosition());
+                        return FormatHelper.formatColor(jewelSensor.WhatColor());
                     }
                 });
     }

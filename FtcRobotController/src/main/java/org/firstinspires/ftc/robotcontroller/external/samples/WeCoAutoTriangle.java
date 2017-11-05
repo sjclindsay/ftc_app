@@ -1,5 +1,7 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by akhil on 9/29/2015.
  */
+@Autonomous(name="WeCo: WeCoBallAutoButtonRed", group="WeCo")
+@Disabled
 public class WeCoAutoTriangle extends OpMode {
 
     @Override

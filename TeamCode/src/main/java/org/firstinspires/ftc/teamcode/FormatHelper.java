@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.HardwareColorSensor;
 
 import java.util.Locale;
 
@@ -26,6 +27,15 @@ public class FormatHelper
 
     public static String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+    public static String formatColor(HardwareColorSensor.Color currentColor) {
+        if(currentColor == HardwareColorSensor.Color.Red) {
+            return("RED");
+        } else if(currentColor == HardwareColorSensor.Color.Blue){
+            return("BLUE");
+        } else {
+            return ("None");
+        }
     }
 
 }

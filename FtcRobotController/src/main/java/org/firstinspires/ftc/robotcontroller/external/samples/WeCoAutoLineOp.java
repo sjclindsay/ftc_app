@@ -1,5 +1,7 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by Connor on 3/15/2016.
  */
+@Autonomous(name="WeCo: WeCoAutoLineOp", group="WeCo")
+@Disabled
 public class WeCoAutoLineOp extends OpMode {
 
     DcMotor motorRight;
