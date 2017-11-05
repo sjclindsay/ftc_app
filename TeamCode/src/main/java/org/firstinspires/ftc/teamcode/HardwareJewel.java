@@ -69,6 +69,24 @@ public class HardwareJewel {
                     public String value() {
                         return FormatHelper.formatColor(jewelSensor.WhatColor());
                     }
+                })
+                .addData("Red ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(jewelSensor.colorSensor.red());
+                    }
+                })
+                .addData("Blue ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(jewelSensor.colorSensor.blue());
+                    }
+                })
+                .addData("Green ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(jewelSensor.colorSensor.green());
+                    }
                 });
     }
 }

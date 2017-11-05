@@ -65,7 +65,7 @@ public class OmniAutoMain extends OpMode {
     @Override
     public void loop() {
 
-        //OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
+        OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
 
         OmniBot.VuReader.updateVuforiaCoords();
         /*
