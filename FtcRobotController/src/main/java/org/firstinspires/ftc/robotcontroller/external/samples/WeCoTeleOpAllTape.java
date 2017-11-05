@@ -38,6 +38,8 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import android.hardware.SensorEventListener;
  import android.hardware.SensorManager;
 
+ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  import com.qualcomm.robotcore.hardware.CRServo;
@@ -54,7 +56,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
  import org.firstinspires.ftc.robotcore.external.Func;
 
  @TeleOp(name="WeCo: TeleOpAllTape", group="WeCo")
- //@Disabled
+ @Disabled
  public class WeCoTeleOpAllTape extends OpMode implements SensorEventListener {
      private enum TurnDir {
          LEFT,RIGHT

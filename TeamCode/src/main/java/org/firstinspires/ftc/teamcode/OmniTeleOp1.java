@@ -60,7 +60,7 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(robotHWconnected.MotorLifterCrypto) ;
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifterCryptoJewel) ;
         OmniBot.init(hardwareMap);
         waitForUpRelease = false ;
         waitForUpRelease = false ;

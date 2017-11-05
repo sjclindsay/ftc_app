@@ -37,6 +37,7 @@ package  org.firstinspires.ftc.robotcontroller.external.samples;
  import android.hardware.SensorEventListener;
  import android.hardware.SensorManager;
 
+ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  import com.qualcomm.robotcore.util.RobotLog;
  import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -47,7 +48,7 @@ package  org.firstinspires.ftc.robotcontroller.external.samples;
  import com.qualcomm.robotcore.util.Range;
 
  @TeleOp(name="WeCo: TeleOpGyro", group="WeCo")
- //@Disabled
+ @Disabled
  public class WeCoTeleOpGyro extends OpMode implements SensorEventListener {
 
    // orientation values

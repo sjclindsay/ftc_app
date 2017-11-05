@@ -42,6 +42,7 @@ enum robotHWconnected {
     MotorGyroLifterVufor,
     MotorGyroLifterVuforColor,
     MotorGyroLifterCrypto,
+    MotorGyroLifterCryptoJewel,
     MotorLifterCrypto,
     MotorLifterColorCrypto,
     MotorGyroLifterVuforCrypto,
@@ -135,6 +136,13 @@ public class HardwareOmniBot
             lifterConnected = true ;
             colorConnected = true ;
             cryptoConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterCryptoJewel) {
+            gyroConnected = true ;
+            lifterConnected = true ;
+            colorConnected = true ;
+            cryptoConnected = true ;
+            jewelConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterCrypto) {
             lifterConnected = true ;

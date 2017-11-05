@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples.OldOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -43,6 +45,8 @@ import java.util.Date;
  * <p>
  *Enables control of the robot via the gamepad
  */
+@Autonomous(name="WeCo: WeCoAutoSquareOp", group="WeCo")
+@Disabled
 public class WeCoAutoSquareOp extends OpMode {
 
 

@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -55,7 +56,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Locale;
 
 @Autonomous(name="WeCo: WeCoBallPushAutoSkipWait", group="WeCo")
-// @Disabled
+@Disabled
 public class WeCoBallPushAutoSkipWait extends OpMode  {
     public enum MotorState{
         ERROR_STATE,

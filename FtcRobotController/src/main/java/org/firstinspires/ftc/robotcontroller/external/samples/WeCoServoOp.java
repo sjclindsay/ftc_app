@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -42,6 +44,8 @@ import com.qualcomm.robotcore.util.Range;
  * <p>
  *Enables control of the robot via the gamepad
  */
+@Autonomous(name="WeCo: WeCoServoOp", group="WeCo")
+@Disabled
 public class WeCoServoOp extends OpMode {
 
   Servo servo1 ;
