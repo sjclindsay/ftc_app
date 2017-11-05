@@ -55,6 +55,17 @@ public class HardwareJewel {
 
         servoJewel.setPosition(position);
     }
+    public HardwareColorSensor.Color WhatColor (){
+        return jewelSensor.WhatColor();
+    }
+
+    public void led_off() {
+        jewelSensor.sensorLED.setState(false);
+    }
+
+    public void led_on() {
+        jewelSensor.sensorLED.setState(true);
+    }
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()

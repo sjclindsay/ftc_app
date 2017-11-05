@@ -22,7 +22,7 @@ public class OmniAutoOp1 extends OpMode {
     float leftStickY = 0 ;
     boolean controller1 = true;
     boolean controller2 = false ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorLifterColorCrypto;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorLifterCryptoJewel;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -57,9 +57,9 @@ public class OmniAutoOp1 extends OpMode {
             OmniBot.lowerServoJewel();
             OmniBot.crypto.lowerCryptoServo();
 
-            if (OmniBot.jewelSystem.jewelSensor.WhatColor() == HardwareColorSensor.Color.Red) {
+            if (OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                 RobotLog.i("red") ;
-            } else if (OmniBot.jewelSystem.jewelSensor.WhatColor() == HardwareColorSensor.Color.Blue) {
+            } else if (OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Blue) {
                 RobotLog.i("blue") ;
             } else {
                 RobotLog.i("color not found") ;
@@ -81,7 +81,7 @@ public class OmniAutoOp1 extends OpMode {
 
     @Override
     public void stop() {
-
+        OmniBot.jewelSystem.led_off();
     }
     void composeTelemetry() {
 

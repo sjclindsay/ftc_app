@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -87,6 +90,7 @@ public class HardwareVuforia {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+
     }
         //telemetry.addData(">", "Press Play to start");
         //telemetry.update();
@@ -210,6 +214,21 @@ public class HardwareVuforia {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
     public void addTelemetry(Telemetry telemetry) {
-        telemetry.addData("VuMark", "%s visible", vuMark);
+        vuMark = GetLocation();
+        telemetry.addLine()
+             .addData("VuMark", "%s visible", GetLocation());
+        telemetry.addLine()
+                .addData("X Vuforia ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tZ));
+                    }
+                })
+                .addData("X Rot Vuforia ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rZ));
+                    }
+                });
     }
 }

@@ -141,8 +141,6 @@ public class OmniAutoMain extends OpMode {
         */
 
         vuMark =  OmniBot.VuReader.GetLocation() ;
-        telemetry.addData("VuMark", "%s visible", vuMark);
-
         telemetry.update();
 
     }

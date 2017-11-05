@@ -40,11 +40,12 @@ enum robotHWconnected {
     MotorGyroServo,
     MotorGyroLifter,
     MotorGyroLifterVufor,
-    MotorGyroLifterVuforColor,
+    MotorGyroLifterVuforJewel,
+    MotorGyroLifterVuforCryptoJewel,
     MotorGyroLifterCrypto,
     MotorGyroLifterCryptoJewel,
     MotorLifterCrypto,
-    MotorLifterColorCrypto,
+    MotorLifterCryptoJewel,
     MotorGyroLifterVuforCrypto,
     MotorLifterVufor,
     MotorJewel,
@@ -79,7 +80,6 @@ public class HardwareOmniBot
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
     protected boolean vuForConnected = false ;
-    protected boolean colorConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
     protected HardwareJewel jewelSystem = null ;
@@ -118,29 +118,27 @@ public class HardwareOmniBot
             lifterConnected = true ;
             vuForConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforColor) {
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforJewel) {
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
-            colorConnected = true ;
+            jewelConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCrypto) {
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCryptoJewel) {
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
-            colorConnected = true ;
+            jewelConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterCrypto) {
             gyroConnected = true ;
             lifterConnected = true ;
-            colorConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterCryptoJewel) {
             gyroConnected = true ;
             lifterConnected = true ;
-            colorConnected = true ;
             cryptoConnected = true ;
             jewelConnected = true;
         }
@@ -148,9 +146,9 @@ public class HardwareOmniBot
             lifterConnected = true ;
             cryptoConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorLifterColorCrypto) {
+        if (ConnectedParts == robotHWconnected.MotorLifterCryptoJewel) {
             lifterConnected = true ;
-            colorConnected = true ;
+            jewelConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
@@ -234,7 +232,7 @@ public class HardwareOmniBot
             lifter.start();
         }
         if (vuForConnected) {
-            //VuReader.start();
+            VuReader.start();
         }
         if (cryptoConnected) {
             crypto.start();
@@ -481,6 +479,9 @@ public class HardwareOmniBot
         }
         if(cryptoConnected) {
             crypto.addTelemetry(telemetry);
+        }
+        if(vuForConnected) {
+            VuReader.addTelemetry(telemetry);
         }
     }
 
