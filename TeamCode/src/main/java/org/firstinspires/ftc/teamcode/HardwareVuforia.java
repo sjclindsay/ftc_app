@@ -234,10 +234,31 @@ public class HardwareVuforia {
                 .addData("X Vuforia ", new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tZ));
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tX));
                     }
                 })
                 .addData("X Rot Vuforia ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rX));
+                    }
+                })
+                .addData("Y Vuforia ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tY));
+                    }
+                })
+                .addData("Y Rot Vuforia ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rY));
+                    }
+                }).addData("Z Vuforia ", new Func<String>() {
+            @Override
+            public String value() {
+                return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tZ));
+                }}).addData("Z Rot Vuforia ", new Func<String>() {
                     @Override
                     public String value() {
                         return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rZ));

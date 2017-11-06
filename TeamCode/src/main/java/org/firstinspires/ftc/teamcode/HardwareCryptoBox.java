@@ -19,7 +19,7 @@ public class HardwareCryptoBox {
     Servo cryptoBoxServo = null ;
     protected boolean cryptoBoxTouchValue1 = false ;
     protected boolean cryptoBoxTouchValue2 = false ;
-    protected float cryptoBoxServoPositionUp = (float) 0.4 ;
+    protected float cryptoBoxServoPositionUp = (float) 0.3 ;
     protected float cryptoBoxServoPositionDown = (float) 0.9 ;
     HardwareMap hwMap = null ;
 
