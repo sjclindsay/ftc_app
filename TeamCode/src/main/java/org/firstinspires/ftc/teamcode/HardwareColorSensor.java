@@ -5,22 +5,22 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PWMOutput;
 
 
 public class HardwareColorSensor {
 
-    private int RED_Threshold = 100;
-    private int BLUE_Threshold = 100;
-    public DigitalChannel sensorLED = null;
+    private int RED_Threshold = 30000;
+    private int BLUE_Threshold = 30000;
+    public PWMOutput sensorLED = null;
     ColorSensor colorSensor;   // Hardware Device Object
     HardwareMap hwMap = null;
 
     public void init (HardwareMap ahwMap){
         hwMap = ahwMap ;
 
-        sensorLED = hwMap.digitalChannel.get("SmackerLED");
-        sensorLED.setMode(DigitalChannel.Mode.OUTPUT);
-        sensorLED.setState(false);
+        sensorLED = hwMap.pwmOutput.get("LED");
+        sensorLED.setPulseWidthOutputTime(0);
 
         colorSensor = hwMap.colorSensor.get ("SmackerColorSensor") ;
     }
@@ -32,10 +32,10 @@ public class HardwareColorSensor {
     }
 
     public Color WhatColor (){
-        if (colorSensor.red() > RED_Threshold) {
+        if (colorSensor.red() > colorSensor.blue()) {
             return Color.Red ;
         }
-        else if (colorSensor.blue() >BLUE_Threshold) {
+        else if (colorSensor.blue() >colorSensor.red()) {
             return Color.Blue;
         }
         else {

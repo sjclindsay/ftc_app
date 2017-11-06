@@ -209,14 +209,27 @@ public class HardwareVuforia {
             }
 
     */
+    public void UpdateVuMarkStatus() {
+        vuMark = GetLocation();
+        RobotLog.i("Vumark: " + vuMark);
+    }
 
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
     public void addTelemetry(Telemetry telemetry) {
-        vuMark = GetLocation();
+        telemetry.addAction(new Runnable() {
+            @Override
+            public void run() {
+                // Acquiring the angles is relatively expensive; we don't want
+                // to do that in each of the three items that need that info, as that's
+                // three times the necessary expense.
+                updateVuforiaCoords();
+                vuMark = GetLocation();
+             }
+        });
         telemetry.addLine()
-             .addData("VuMark", "%s visible", GetLocation());
+             .addData("VuMark", "%s visible", vuMark);
         telemetry.addLine()
                 .addData("X Vuforia ", new Func<String>() {
                     @Override

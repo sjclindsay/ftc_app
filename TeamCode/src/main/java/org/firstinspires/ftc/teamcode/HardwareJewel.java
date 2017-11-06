@@ -19,7 +19,9 @@ public class HardwareJewel {
 
 
     public static float servoJewelMaxPosition = (float) 1.0;
-    public static float servoJewelInitalPosition = (float) 1.0;
+    public static float servoJewelInitalPosition = (float) 0.0;
+    public static float servoJewelDownPosition = (float) 0.8;
+
 
     HardwareMap hwMap = null;
 
@@ -60,11 +62,19 @@ public class HardwareJewel {
     }
 
     public void led_off() {
-        jewelSensor.sensorLED.setState(false);
+        jewelSensor.sensorLED.setPulseWidthOutputTime(0);
     }
 
     public void led_on() {
-        jewelSensor.sensorLED.setState(true);
+        jewelSensor.sensorLED.setPulseWidthOutputTime(127);
+    }
+
+    public void setJewelDown() {
+        setServoJewelPosition(servoJewelDownPosition);
+    }
+
+    public void setJewelUp() {
+        setServoJewelPosition(servoJewelInitalPosition);
     }
 
     public void addTelemetry(Telemetry telemetry) {

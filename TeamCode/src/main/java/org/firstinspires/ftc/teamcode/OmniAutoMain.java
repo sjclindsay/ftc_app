@@ -64,10 +64,12 @@ public class OmniAutoMain extends OpMode {
 
     @Override
     public void loop() {
-
+        OmniBot.VuReader.UpdateVuMarkStatus(); ;
+        //OmniBot.VuReader.updateVuforiaCoords();
+        telemetry.update();
         OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
 
-        OmniBot.VuReader.updateVuforiaCoords();
+
         /*
         currentState = nextState ;
         switch (currentState) {
@@ -139,9 +141,8 @@ public class OmniAutoMain extends OpMode {
                 break;
         }
         */
+        OmniBot.waitForTick(40);
 
-        vuMark =  OmniBot.VuReader.GetLocation() ;
-        telemetry.update();
 
     }
 
