@@ -322,48 +322,48 @@ public class HardwareOmniBot
 
     }
 
-    public void txSquareOmniBot ( float targetHeading ) {
-        double currentHeadingTX = 0.0;
+    public void tySquareOmniBot ( float targetHeading ) {
+        double currentHeadingTY = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingTX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX) ;
+        currentHeadingTY = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tY) ;
 
 
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
-            RobotLog.i("Current Heading" + currentHeadingTX);
+            RobotLog.i("Current Heading" + currentHeadingTY);
 
             motorPID = new PIDController(targetHeading, 0.003, 0, 0);
             FirstCallPIDDrive = false;
         }
 
-        correction = motorPID.Update(currentHeadingTX);
+        correction = motorPID.Update(currentHeadingTY);
 
 
         setBotMovement(correction, correction, correction, correction) ;
     }
 
-    public void rxSquareOmniBot ( float targetHeading ) {
-        double currentHeadingRX = 0.0;
+    public void rySquareOmniBot ( float targetHeading ) {
+        double currentHeadingRY = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingRX = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX) ;
+        currentHeadingRY = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rY) ;
 
 
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
-            RobotLog.i("Current Heading" + currentHeadingRX);
+            RobotLog.i("Current Heading" + currentHeadingRY);
 
             motorPID = new PIDController(targetHeading, 0.003, 0, 0);
             FirstCallPIDDrive = false;
         }
 
-        correction = motorPID.Update(currentHeadingRX);
+        correction = motorPID.Update(currentHeadingRY);
 
 
-        setBotMovement(correction, correction, -correction, -correction) ;
+        setBotMovement(-correction, -correction, correction, correction) ;
     }
 
     public void tzSquareOmniBot ( float targetHeading ) {
@@ -403,10 +403,10 @@ public class HardwareOmniBot
             float power11 = (yValue - xValue)*magnitude ;
 
             gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
-        } else if (axis == PIDAxis.tx) {
-            txSquareOmniBot(targetHeading);
-        } else if (axis == PIDAxis.rx) {
-            rxSquareOmniBot(targetHeading);
+        } else if (axis == PIDAxis.ty) {
+            tySquareOmniBot(targetHeading);
+        } else if (axis == PIDAxis.ry) {
+            rySquareOmniBot(targetHeading);
         } else if (axis == PIDAxis.tz) {
             tzSquareOmniBot(targetHeading);
         }

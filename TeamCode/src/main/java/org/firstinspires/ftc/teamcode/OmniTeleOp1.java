@@ -60,7 +60,7 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifterCryptoJewel) ;
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifterCrypto) ;
         OmniBot.init(hardwareMap);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -123,9 +123,9 @@ public class OmniTeleOp1 extends OpMode {
             } */
 
             if ((gamepad1.left_bumper) && (!gamepad1.right_bumper)) {
-                motorLifterPower = (float) 0.7;
+                motorLifterPower = (float) 0.9;
             } else if ((gamepad1.right_bumper) && (!gamepad1.left_bumper)){
-                motorLifterPower = (float)-0.7 ;
+                motorLifterPower = (float)-0.9 ;
             } else {
                 motorLifterPower = (float) 0.0;
             }

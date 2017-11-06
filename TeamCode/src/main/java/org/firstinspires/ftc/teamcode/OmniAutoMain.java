@@ -19,8 +19,8 @@ public class OmniAutoMain extends OpMode {
         PUSHBALLS,
         INITIALIZEDRIVEOFFPLATFORM,
         DRIVEOFFPLATFORM,
-        SQUAREVUFORIARX,
-        SQUAREVUFORIATX,
+        SQUAREVUFORIARY,
+        SQUAREVUFORIATY,
         SQUAREVUFORIATZ,
         INITIALIZEDRIVETOCRYPTO,
         DRIVETOCRYPTO,
@@ -64,12 +64,11 @@ public class OmniAutoMain extends OpMode {
 
     @Override
     public void loop() {
-
-        OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
-
         OmniBot.VuReader.updateVuforiaCoords();
-        /*
-        currentState = nextState ;
+
+        //OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry);
+
+
         switch (currentState) {
             case INITIALIZE:
                 if (StabilizationTimer.time() >= 500) {
@@ -87,31 +86,35 @@ public class OmniAutoMain extends OpMode {
                 if (Math.abs(OmniBot.gyroScope.currentHeadingZ) <= 2.5 ) {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.SQUAREVUFORIARX ;
+                    StabilizationTimer.reset();
+                    stateAfterNext = MotorState.SQUAREVUFORIARY ;
                 }
                 break;
-            case SQUAREVUFORIARX:
-                OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx);
-                if (Math.abs(OmniBot.vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rX)) <= 2) {
-                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.rx ) ;
+            case SQUAREVUFORIARY:
+                OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry);
+                if (Math.abs(OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rY)) <= 2) {
+                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry ) ;
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.SQUAREVUFORIATX ;
+                    StabilizationTimer.reset();
+                    stateAfterNext = MotorState.SQUAREVUFORIATY ;
                 }
                 break;
-            case SQUAREVUFORIATX:
-                OmniBot.driveOmniBot(0, 0, 0, PIDAxis.tx);
-                if (Math.abs(OmniBot.vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tX)) <= 2) {
-                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.tx ) ;
+            case SQUAREVUFORIATY:
+                OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ty);
+                if (Math.abs(OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tY)) <= 2) {
+                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ty ) ;
                     nextState = MotorState.WAIT ;
+                    StabilizationTimer.reset();
                     stateAfterNext = MotorState.SQUAREVUFORIATZ ;
                 }
                 break;
             case SQUAREVUFORIATZ:
                 OmniBot.driveOmniBot(0, 0, 0, PIDAxis.tz);
-                if (Math.abs(OmniBot.vufor.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ)) <= 2) {
+                if (500 - Math.abs(OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ)) <= 2) {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.tz ) ;
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.DRIVETOCRYPTO;
+                    StabilizationTimer.reset();
+                    stateAfterNext = null ;
                 }
                 break;
             case INITIALIZEDRIVETOCRYPTO:
@@ -138,7 +141,8 @@ public class OmniAutoMain extends OpMode {
                 }
                 break;
         }
-        */
+
+        currentState = nextState ;
 
         vuMark =  OmniBot.VuReader.GetLocation() ;
         telemetry.update();
