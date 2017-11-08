@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+
 /**
  * Created by conno on 8/17/2017.
  */
@@ -72,8 +74,10 @@ public class OmniAutoJewelRed extends OpMode {
             case CHECK_COLOR:
                 OmniBot.jewelSystem.led_on();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
+                    OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
                 } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
+                    OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
                   else {
@@ -93,7 +97,7 @@ public class OmniAutoJewelRed extends OpMode {
                 OmniBot.driveOmniBot(0,0,-10,PIDAxis.gyro);
                 nextState = MotorState.HitWait ;
                 WaitTimer.reset();
-            break;
+                break;
             case HitWait:
                 if (WaitTimer.time() > 500){
                     nextState = MotorState.STOP_MOVING   ;
@@ -105,6 +109,7 @@ public class OmniAutoJewelRed extends OpMode {
                 break;
             case ERROR_STATE:
                 RobotLog.i("Error_State");
+                break;
             default:
                 OmniBot.driveOmniBot(0, 0, (float)currentHeading, PIDAxis.gyro);
                 RobotLog.i("error no case");
@@ -119,9 +124,25 @@ public class OmniAutoJewelRed extends OpMode {
 
     @Override
     public void stop() {
+        OmniBot.Red_LEDoff();
+        OmniBot.Blue_LEDoff();
+        OmniBot.jewelSystem.led_off();
 
     }
     void composeTelemetry() {
+        telemetry.addLine()
+                .addData("Current State ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return currentState.name();
+                    }
+                })
+                .addData("Next State", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return nextState.name();
+                    }
+                }) ;
         OmniBot.addTelemetry(telemetry);
         //OmniBot.getTelemetry(telemetry);
 

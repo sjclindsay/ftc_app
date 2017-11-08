@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -73,6 +74,7 @@ public class HardwareOmniBot
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
     protected Servo servoJewel = null ;
+    protected DeviceInterfaceModule coreInterfaceModule = null;
     protected static final float motorPowerMin = -1 ;
     protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
@@ -175,6 +177,7 @@ public class HardwareOmniBot
         Motor10  = hwMap.dcMotor.get("drive_wheel_10");
         Motor11  = hwMap.dcMotor.get("drive_wheel_11");
         servoJewel = hwMap.servo.get("servoJewel") ;
+        coreInterfaceModule = hwMap.deviceInterfaceModule.get("(dim");
 
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -244,6 +247,11 @@ public class HardwareOmniBot
 
     public void lowerServoJewel () { servoJewel.setPosition(0.5) ; }
     public void raiseServoJewel () { servoJewel.setPosition(0) ; }
+
+    public void Red_LEDon() {coreInterfaceModule.setLED(0x1,true);}
+    public void Red_LEDoff() {coreInterfaceModule.setLED(0x1,false);}
+    public void Blue_LEDon() {coreInterfaceModule.setLED(0x2,true);}
+    public void Blue_LEDoff() {coreInterfaceModule.setLED(0x2,false);}
 
     public boolean updateCryptoTouch1() {
         return crypto.updateCryptoTouch1() ;
@@ -471,6 +479,13 @@ public class HardwareOmniBot
                     return FormatHelper.formatDouble(Motor11.getPower());
                 }
             }) ;
+        telemetry.addLine()
+                .addData("PID Correction", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(correction);
+                    }
+                }) ;
         if(lifterConnected) {
             lifter.addTelemetry(telemetry);
         }
