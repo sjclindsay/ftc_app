@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
@@ -13,8 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  */
 
 @TeleOp(name="Omni: AutoJewelRed", group="Omni")
-
-
+//@Disable
 public class OmniAutoJewelRed extends OpMode {
     public enum MotorState{
         WAIT_START,
@@ -57,11 +57,12 @@ public class OmniAutoJewelRed extends OpMode {
 
     @Override
     public void loop() {
+        waitTimer = WaitTimer.time() ;
         if(currentState != nextState) {
             RobotLog.i("Change State to " + nextState);
         }
 
-        waitTimer = WaitTimer.time() ;
+
         currentHeading = OmniBot.getcurrentHeading() ;
 
         currentState = nextState;
@@ -89,37 +90,37 @@ public class OmniAutoJewelRed extends OpMode {
                 }
                 break;
             case TURN_COUNTERCLOCKWISE:
-                OmniBot.driveOmniBot(0,0,10,PIDAxis.gyro);
+                targetHeading = (float) (currentHeading + 10.0);
+                OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 nextState = MotorState.HitWait ;
                 WaitTimer.reset();
                 break;
             case TURN_CLOCKWISE:
-                OmniBot.driveOmniBot(0,0,-10,PIDAxis.gyro);
+                targetHeading = (float) (currentHeading - 10.0);
+                OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 nextState = MotorState.HitWait ;
                 WaitTimer.reset();
                 break;
             case HitWait:
                 if (WaitTimer.time() > 500){
                     nextState = MotorState.STOP_MOVING   ;
+                } else if (currentHeading == targetHeading) {
+                    nextState = MotorState.STOP_MOVING;
                 }
                 break;
-
             case STOP_MOVING:
-                OmniBot.driveOmniBot(0, 0, (float)currentHeading, PIDAxis.gyro);
+                OmniBot.setBotMovement(0,0,0,0);
                 break;
             case ERROR_STATE:
                 RobotLog.i("Error_State");
-                break;
             default:
-                OmniBot.driveOmniBot(0, 0, (float)currentHeading, PIDAxis.gyro);
+                OmniBot.setBotMovement(0,0,0,0);
                 RobotLog.i("error no case");
                 break;
         }
 
-
-        OmniBot.waitForTick(40);
         telemetry.update();
-
+        OmniBot.waitForTick(40);
     }
 
     @Override
@@ -127,6 +128,7 @@ public class OmniAutoJewelRed extends OpMode {
         OmniBot.Red_LEDoff();
         OmniBot.Blue_LEDoff();
         OmniBot.jewelSystem.led_off();
+        OmniBot.setBotMovement(0,0,0,0);
 
     }
     void composeTelemetry() {
@@ -143,8 +145,20 @@ public class OmniAutoJewelRed extends OpMode {
                         return nextState.name();
                     }
                 }) ;
+        telemetry.addLine()
+                .addData("Wait Timer ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(WaitTimer.milliseconds());
+                    }
+                })
+                .addData("Stabilize Timer", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(StabilizationTimer.milliseconds());
+                    }
+                }) ;
         OmniBot.addTelemetry(telemetry);
-        //OmniBot.getTelemetry(telemetry);
 
     }
 
