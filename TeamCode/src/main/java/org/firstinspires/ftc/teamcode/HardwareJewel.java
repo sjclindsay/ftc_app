@@ -84,7 +84,8 @@ public class HardwareJewel {
                     public String value() {
                         return FormatHelper.formatDouble(servoJewel.getPosition());
                     }
-                })
+                });
+        telemetry.addLine()
                 .addData("Color ", new Func<String>() {
                     @Override
                     public String value() {

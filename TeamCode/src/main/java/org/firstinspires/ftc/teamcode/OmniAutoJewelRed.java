@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@TeleOp(name="Omni: AutoJewelRed", group="Omni")
+@Autonomous(name="Omni: AutoJewelRed", group="Omni")
 //@Disable
 public class OmniAutoJewelRed extends OpMode {
     public enum MotorState{
@@ -75,10 +76,10 @@ public class OmniAutoJewelRed extends OpMode {
             case CHECK_COLOR:
                 OmniBot.jewelSystem.led_on();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
-                    OmniBot.Red_LEDon();
+                    //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
                 } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
-                    OmniBot.Blue_LEDon();
+                    //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
                   else {
@@ -125,8 +126,8 @@ public class OmniAutoJewelRed extends OpMode {
 
     @Override
     public void stop() {
-        OmniBot.Red_LEDoff();
-        OmniBot.Blue_LEDoff();
+        //OmniBot.Red_LEDoff();
+        //OmniBot.Blue_LEDoff();
         OmniBot.jewelSystem.led_off();
         OmniBot.setBotMovement(0,0,0,0);
 

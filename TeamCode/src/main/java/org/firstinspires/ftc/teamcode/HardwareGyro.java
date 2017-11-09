@@ -67,12 +67,13 @@ public class HardwareGyro {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu"
         imu = hwMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+
 
     }
 
     public void start() {
 
+        imu.initialize(parameters);
         imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
     }
 

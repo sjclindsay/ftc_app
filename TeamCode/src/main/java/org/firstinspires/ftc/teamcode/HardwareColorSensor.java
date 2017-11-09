@@ -21,7 +21,7 @@ public class HardwareColorSensor {
 
         sensorLED = hwMap.pwmOutput.get("LED");
         sensorLED.setPulseWidthPeriod(20000);
-        sensorLED.setPulseWidthOutputTime(0);
+        sensorLED.setPulseWidthOutputTime(10);
 
         colorSensor = hwMap.colorSensor.get ("SmackerColorSensor") ;
     }
