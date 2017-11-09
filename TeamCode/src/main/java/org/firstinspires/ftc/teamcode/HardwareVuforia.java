@@ -96,6 +96,7 @@ public class HardwareVuforia {
         //telemetry.update();
         //waitForStart();
     public void start () {
+
         relicTrackables.activate();
     }
     public RelicRecoveryVuMark GetLocation () {
