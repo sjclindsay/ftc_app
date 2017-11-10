@@ -44,7 +44,7 @@ public class HardwareJewel {
     }
 
     public void start() {
-
+        led_low();
     }
 
     //put functions here
@@ -62,11 +62,13 @@ public class HardwareJewel {
     }
 
     public void led_off() {
-        jewelSensor.sensorLED.setPulseWidthOutputTime(0);
+        jewelSensor.sensorLED.setPulseWidthOutputTime(1);
     }
 
+    public void led_low() { jewelSensor.sensorLED.setPulseWidthOutputTime(10);}
+
     public void led_on() {
-        jewelSensor.sensorLED.setPulseWidthOutputTime(10000);
+        jewelSensor.sensorLED.setPulseWidthOutputTime(100);
     }
 
     public void setJewelDown() {

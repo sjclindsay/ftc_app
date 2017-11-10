@@ -24,16 +24,19 @@ public class OmniAutoJewelRed extends OpMode {
         TURN_CLOCKWISE,
         STOP_MOVING,
         HitWait,
+        DELAY,
         ERROR_STATE
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
     float magnitude = 0 ;
     float direction = 90 ;
+    int delay_time = 0;
     double currentHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterCryptoJewel;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    double last_time = 0;
     ElapsedTime WaitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double waitTimer  = 0 ;
     MotorState nextState = MotorState.WAIT_START;
@@ -69,12 +72,21 @@ public class OmniAutoJewelRed extends OpMode {
         currentState = nextState;
 
         switch(nextState) {
+            case DELAY:
+                if(waitTimer - last_time >= delay_time) {
+                    nextState = stateAfterNext;
+                }
             case WAIT_START:
                 OmniBot.jewelSystem.setJewelDown();
-                nextState = MotorState.CHECK_COLOR;
+                nextState = MotorState.DELAY;
+                delay_time = 1000;
+                stateAfterNext = MotorState.CHECK_COLOR;
+                last_time = WaitTimer.milliseconds();
                 break;
             case CHECK_COLOR:
-                OmniBot.jewelSystem.led_on();
+                RobotLog.i("In CHECK_COLOR");
+                RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
+                OmniBot.jewelSystem.led_low();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
@@ -82,13 +94,10 @@ public class OmniAutoJewelRed extends OpMode {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
-                  else {
-                    nextState = MotorState.ERROR_STATE ;
-                }
 
-                if (StabilizationTimer.time() > 500) {
-                    nextState = stateAfterNext ;
-                }
+                //if (StabilizationTimer.time() > 5000) {
+                //    nextState = stateAfterNext ;
+                //}
                 break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 10.0);

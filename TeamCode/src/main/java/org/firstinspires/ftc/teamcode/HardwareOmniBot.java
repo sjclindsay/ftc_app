@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.provider.Telephony;
+
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -179,17 +181,17 @@ public class HardwareOmniBot
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         // colorSensor = hwMap.colorSensor.get("colorSensor1");
-        if (vuForConnected) {
-            VuReader = new HardwareVuforia();
-            VuReader.init(hwMap);
-            RobotLog.i("defined Vufor") ;
-            RobotLog.i("Init Complete Vuforia");
-        }
         if(gyroConnected) {
             gyroScope = new HardwareGyro();
             RobotLog.i("defined gyroscope");
             gyroScope.init(hwMap);
             RobotLog.i("Init Complete Gyro");
+        }
+        if (vuForConnected) {
+            VuReader = new HardwareVuforia();
+            VuReader.init(hwMap);
+            RobotLog.i("defined Vufor") ;
+            RobotLog.i("Init Complete Vuforia");
         }
         if (lifterConnected) {
             lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
@@ -244,6 +246,7 @@ public class HardwareOmniBot
 
     public void lowerServoJewel () { servoJewel.setPosition(0.5) ; }
     public void raiseServoJewel () { servoJewel.setPosition(0) ; }
+
 
     public boolean updateCryptoTouch1() {
         return crypto.updateCryptoTouch1() ;
@@ -426,7 +429,13 @@ public class HardwareOmniBot
 
     public void addTelemetry(Telemetry telemetry) {
 
+
         if(gyroConnected){
+
+            while (gyroScope.gyroInitThreadIsAlive())  {
+
+            }
+
             gyroScope.addTelemetry(telemetry);
             telemetry.addLine()
                     .addData("targetHeading ", new Func<String>() {
@@ -443,6 +452,7 @@ public class HardwareOmniBot
                         @Override public String value() {
                             return formatDouble(correction) ;
                         }}) ;
+
         }
 
         telemetry.addLine()
