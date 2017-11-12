@@ -103,10 +103,6 @@ public class OmniTeleOp1 extends OpMode {
             dPadRightToggle = false ;
         }
 
-        if (gamepad1.a || controller1) {
-            controller1 = true ;
-            controller2 = false ;
-
 
             motorLeft1power = (leftStickY  + gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar ;
             motorLeft2power = (leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
@@ -122,9 +118,9 @@ public class OmniTeleOp1 extends OpMode {
                 motorRight2power = 0 ;
             } */
 
-            if ((gamepad1.left_bumper) && (!gamepad1.right_bumper)) {
+            if ((gamepad2.left_bumper) && (!gamepad2.right_bumper)) {
                 motorLifterPower = (float) 0.9;
-            } else if ((gamepad1.right_bumper) && (!gamepad1.left_bumper)){
+            } else if ((gamepad2.right_bumper) && (!gamepad2.left_bumper)){
                 motorLifterPower = (float)-0.9 ;
             } else {
                 motorLifterPower = (float) 0.0;
@@ -134,13 +130,6 @@ public class OmniTeleOp1 extends OpMode {
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
             OmniBot.setLifterGrabber(motorLifterPower, gamepad1.left_trigger);
 
-        }
-        if (gamepad2.a || controller2) {
-            controller2 = true ;
-            controller1 = false ;
-
-
-        }
 
         OmniBot.waitForTick(40);
         telemetry.update();

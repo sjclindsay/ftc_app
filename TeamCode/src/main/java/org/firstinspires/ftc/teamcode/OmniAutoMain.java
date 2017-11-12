@@ -77,13 +77,13 @@ public class OmniAutoMain extends OpMode {
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 //red side (i think)
-                OmniBot.driveOmniBot( (float) 0.5, -90, 0, PIDAxis.gyro);
+                OmniBot.driveOmniBot( (float) 0.5, 0, 0, PIDAxis.gyro);
                 if ( Math.abs(OmniBot.gyroScope.currentHeadingZ) >= 2.5) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
                 break;
             case DRIVEOFFPLATFORM:
-                if (Math.abs(OmniBot.gyroScope.currentHeadingZ) <= 2.5 ) {
+                if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2.5 ) {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
                     nextState = MotorState.WAIT ;
                     StabilizationTimer.reset();
