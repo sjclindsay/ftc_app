@@ -65,7 +65,7 @@ public class HardwareJewel {
         jewelSensor.sensorLED.setPulseWidthOutputTime(1);
     }
 
-    public void led_low() { jewelSensor.sensorLED.setPulseWidthOutputTime(10);}
+    public void led_low() { jewelSensor.sensorLED.setPulseWidthOutputTime(300);}
 
     public void led_on() {
         jewelSensor.sensorLED.setPulseWidthOutputTime(100);

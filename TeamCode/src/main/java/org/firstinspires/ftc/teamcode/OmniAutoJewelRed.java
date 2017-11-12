@@ -37,7 +37,9 @@ public class OmniAutoJewelRed extends OpMode {
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
-    ElapsedTime WaitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    double current_delay = 0;
+    ElapsedTime WaitTimer = new  ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    ElapsedTime FreeRunningTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double waitTimer  = 0 ;
     MotorState nextState = MotorState.WAIT_START;
     MotorState stateAfterNext = MotorState.ERROR_STATE ;
@@ -61,7 +63,7 @@ public class OmniAutoJewelRed extends OpMode {
 
     @Override
     public void loop() {
-        waitTimer = WaitTimer.time() ;
+        waitTimer = WaitTimer.milliseconds();
         if(currentState != nextState) {
             RobotLog.i("Change State to " + nextState);
         }
@@ -73,7 +75,9 @@ public class OmniAutoJewelRed extends OpMode {
 
         switch(nextState) {
             case DELAY:
-                if(waitTimer - last_time >= delay_time) {
+                current_delay = WaitTimer.milliseconds() - last_time;
+                RobotLog.i("Delay Time " + current_delay);
+                if(current_delay >= delay_time) {
                     nextState = stateAfterNext;
                 }
             case WAIT_START:
@@ -143,18 +147,24 @@ public class OmniAutoJewelRed extends OpMode {
     }
     void composeTelemetry() {
         telemetry.addLine()
-                .addData("Current State ", new Func<String>() {
+                .addData("Waittime ", new Func<String>() {
                     @Override
                     public String value() {
-                        return currentState.name();
+                        return FormatHelper.formatDouble(waitTimer);
                     }
                 })
-                .addData("Next State", new Func<String>() {
+                .addData("current ", new Func<String>() {
                     @Override
                     public String value() {
-                        return nextState.name();
+                        return FormatHelper.formatDouble(current_delay);
                     }
-                }) ;
+                })
+                .addData("last ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(last_time);
+                    }
+                });
         telemetry.addLine()
                 .addData("Wait Timer ", new Func<String>() {
                     @Override
