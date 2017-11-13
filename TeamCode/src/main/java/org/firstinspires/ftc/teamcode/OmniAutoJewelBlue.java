@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -14,9 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelRed", group="Omni")
+@Autonomous(name="Omni: AutoJewelBlue", group="Omni")
 //@Disable
-public class OmniAutoJewelRed extends OpMode {
+public class OmniAutoJewelBlue extends OpMode {
     public enum MotorState{
         WAIT_START,
         CHECK_COLOR,
@@ -94,15 +91,11 @@ public class OmniAutoJewelRed extends OpMode {
                 OmniBot.jewelSystem.led_low();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
-                    nextState = MotorState.TURN_COUNTERCLOCKWISE;
+                    nextState = MotorState.TURN_CLOCKWISE;
                 } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
                     //OmniBot.Blue_LEDon();
-                    nextState = MotorState.TURN_CLOCKWISE;
+                    nextState = MotorState.TURN_COUNTERCLOCKWISE;
                 }
-
-                //if (StabilizationTimer.time() > 5000) {
-                //    nextState = stateAfterNext ;
-                //}
                 break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);

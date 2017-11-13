@@ -76,7 +76,7 @@ public class HardwareJewel {
     }
 
     public void setJewelUp() {
-        setServoJewelPosition(servoJewelInitalPosition);
+        servoJewel.setPosition(servoJewelInitalPosition);
     }
 
     public void addTelemetry(Telemetry telemetry) {
