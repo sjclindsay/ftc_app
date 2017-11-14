@@ -51,9 +51,9 @@ public class OmniTeleOp1 extends OpMode {
     float [] currentPolarCoordinates = {0,0} ;
     float stickAngle = 0 ;
     double targetHeading = 0.0 ;
-    boolean dPadLeftToggle = false ;
+    boolean triggerLeftToggle = false ;
     int dPadLeftOff = 0 ;
-    boolean dPadRightToggle = false ;
+    boolean triggerRightToggle = false ;
     int  dPadRightOff = 0 ;
     boolean headingToggle = false ;
     boolean directionToggle  = false ;
@@ -90,17 +90,17 @@ public class OmniTeleOp1 extends OpMode {
 
         //targetHeading -= gamepad2.right_stick_x ;
 
-        if (gamepad1.dpad_left && !dPadLeftToggle) {
-            dPadLeftToggle = true ;
+        if (gamepad1.left_trigger >= 0.5 && !triggerLeftToggle) {
+            triggerLeftToggle = true ;
             dPadLeftOff = (dPadLeftOff + 1)%2 ;
-        } else if (!gamepad1.dpad_left && dPadLeftToggle) {
-            dPadLeftToggle = false ;
+        } else if (gamepad1.left_trigger <= 0.5 && triggerLeftToggle) {
+            triggerLeftToggle = false ;
         }
-        if (gamepad1.dpad_right && !dPadRightToggle) {
-            dPadRightToggle = true ;
+        if (gamepad1.right_trigger >= 0.5 && !triggerRightToggle) {
+            triggerRightToggle = true ;
             dPadRightOff = (dPadRightOff + 1)%2 ;
-        } else if (!gamepad1.dpad_right && dPadRightToggle) {
-            dPadRightToggle = false ;
+        } else if (gamepad1.right_trigger <= 0.5 && triggerRightToggle) {
+            triggerRightToggle = false ;
         }
 
 
@@ -128,7 +128,7 @@ public class OmniTeleOp1 extends OpMode {
 
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-            OmniBot.setLifterGrabber(motorLifterPower, gamepad1.left_trigger);
+            OmniBot.setLifterGrabber(motorLifterPower, gamepad2.left_trigger);
 
 
         OmniBot.waitForTick(40);

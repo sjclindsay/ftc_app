@@ -93,7 +93,8 @@ public class HardwareOmniBot
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     private boolean FirstCallPIDDrive = true;
-    private double correction = 0.0 ;
+    public double correction = 0.0 ;
+
 
 
     /* local OpMode members. */
@@ -355,6 +356,8 @@ public class HardwareOmniBot
 
 
 
+
+
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingRY);
@@ -381,14 +384,14 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingTZ);
 
-            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            motorPID = new PIDController(targetHeading, 0.002, 0, 0);
             FirstCallPIDDrive = false;
         }
 
         correction = motorPID.Update(currentHeadingTZ);
 
 
-        setBotMovement(correction, correction, -correction, -correction) ;
+        setBotMovement(correction, -correction, -correction, correction) ;
     }
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {

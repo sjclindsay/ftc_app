@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
@@ -19,6 +20,7 @@ public class OmniAutoMain extends OpMode {
         PUSHBALLS,
         INITIALIZEDRIVEOFFPLATFORM,
         DRIVEOFFPLATFORM,
+        WAITFORVUREADER,
         SQUAREVUFORIARY,
         SQUAREVUFORIATY,
         SQUAREVUFORIATZ,
@@ -68,6 +70,8 @@ public class OmniAutoMain extends OpMode {
         OmniBot.gyroScope.Update();
         //OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry);
 
+        RobotLog.i("Stabilization timer is " + StabilizationTimer.time()) ;
+        RobotLog.i("state is " + currentState) ;
 
         switch (currentState) {
             case INITIALIZE:
@@ -77,8 +81,8 @@ public class OmniAutoMain extends OpMode {
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 //red side (i think)
-                OmniBot.driveOmniBot( (float) 0.5, 0, 0, PIDAxis.gyro);
-                if ( Math.abs(OmniBot.gyroScope.currentHeadingZ) >= 2.5) {
+                OmniBot.driveOmniBot( (float) 0.3, 0, 0, PIDAxis.gyro);
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
                 break;
@@ -87,11 +91,21 @@ public class OmniAutoMain extends OpMode {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
                     nextState = MotorState.WAIT ;
                     StabilizationTimer.reset();
-                    stateAfterNext = MotorState.SQUAREVUFORIARY ;
+                    stateAfterNext = MotorState.WAITFORVUREADER ;
+                }
+                break;
+            case WAITFORVUREADER:
+                if (OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) == 0 || StabilizationTimer.time() <= 1000) {
+
+                } else if (OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) != 0 ) {
+                    nextState = MotorState.SQUAREVUFORIARY ;
+                } else {
+                    nextState = MotorState.INITIALIZEDRIVETOCRYPTO ;
                 }
                 break;
             case SQUAREVUFORIARY:
                 OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry);
+                RobotLog.i("RY correction is " + OmniBot.correction) ;
                 if (Math.abs(OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rY)) <= 2) {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.ry ) ;
                     nextState = MotorState.WAIT ;
@@ -138,6 +152,7 @@ public class OmniAutoMain extends OpMode {
             case WAIT:
                 if (StabilizationTimer.time() >= 300) {
                     nextState = stateAfterNext ;
+                    StabilizationTimer.reset();
                 }
                 break;
         }

@@ -29,7 +29,7 @@ public class OmniAutoOp2 extends OpMode {
     float magnitude = 0 ;
     float direction = 90 ;
     double currentHeading = 0 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime WaitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -56,7 +56,9 @@ public class OmniAutoOp2 extends OpMode {
 
     @Override
     public void loop() {
-        if(currentState != nextState) {
+
+        OmniBot.driveOmniBot(0,0,0,PIDAxis.ry);
+        /*if(currentState != nextState) {
             RobotLog.i("Change State to " + nextState);
         }
 
@@ -108,7 +110,7 @@ public class OmniAutoOp2 extends OpMode {
                 RobotLog.i("error no case");
                 break;
         }
-
+*/
 
         OmniBot.waitForTick(40);
         telemetry.update();
