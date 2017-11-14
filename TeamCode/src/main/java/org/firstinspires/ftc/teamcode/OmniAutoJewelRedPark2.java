@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -14,9 +12,9 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelRed", group="Omni")
+@Autonomous(name="Omni: AutoJewelRedPark2", group="Omni")
 //@Disable
-public class OmniAutoJewelRed extends OpMode {
+public class OmniAutoJewelRedPark2 extends OpMode {
     public enum MotorState{
         WAIT_START,
         CHECK_COLOR,
@@ -25,6 +23,10 @@ public class OmniAutoJewelRed extends OpMode {
         STOP_MOVING,
         HitWait,
         DELAY,
+        INITIALIZE,
+        INITIALIZEDRIVEOFFPLATFORM,
+        DRIVEOFFPLATFORM,
+
         ERROR_STATE
     }
     MotorState currentState = MotorState.ERROR_STATE;
@@ -99,10 +101,6 @@ public class OmniAutoJewelRed extends OpMode {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
-
-                //if (StabilizationTimer.time() > 5000) {
-                //    nextState = stateAfterNext ;
-                //}
                 break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
@@ -125,7 +123,24 @@ public class OmniAutoJewelRed extends OpMode {
                 break;
             case STOP_MOVING:
                 OmniBot.jewelSystem.setJewelUp();
+                OmniBot.crypto.lowerCryptoServo();
                 OmniBot.setBotMovement(0,0,0,0);
+                nextState = MotorState.INITIALIZEDRIVEOFFPLATFORM;
+                break;
+            case INITIALIZEDRIVEOFFPLATFORM:
+                //red side (i think)
+                OmniBot.driveOmniBot( (float) 0.3, 0, 0, PIDAxis.gyro);
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
+                    nextState = MotorState.DRIVEOFFPLATFORM ;
+                }
+                break;
+            case DRIVEOFFPLATFORM:
+                if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2.5 ) {
+                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
+                    nextState = MotorState.DELAY ;
+                    StabilizationTimer.reset();
+                    stateAfterNext = MotorState.STOP_MOVING ;
+                }
                 break;
             case ERROR_STATE:
                 RobotLog.i("Error_State");
