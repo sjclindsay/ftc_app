@@ -95,7 +95,7 @@ public class OmniAutoMain extends OpMode {
                 }
                 break;
             case WAITFORVUREADER:
-                if (OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) == 0 || StabilizationTimer.time() <= 1000) {
+                if (OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) == 0 || StabilizationTimer.time() <= 2000) {
 
                 } else if (OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) != 0 ) {
                     nextState = MotorState.SQUAREVUFORIARY ;

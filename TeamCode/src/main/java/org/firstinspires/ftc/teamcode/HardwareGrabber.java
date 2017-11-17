@@ -16,7 +16,7 @@ public class HardwareGrabber {
     Servo servoGrabber1 = null;
     Servo servoGrabber2 = null;
     public static float servoGrabberMaxPosition = (float) 0.8;
-    public static float servoGrabberMinPosition = (float) 0.55;
+    public static float servoGrabberMinPosition = (float) 0.57;
     public static float servoGrabberStartPosition = servoGrabberMinPosition;
 
     HardwareMap hwMap = null;

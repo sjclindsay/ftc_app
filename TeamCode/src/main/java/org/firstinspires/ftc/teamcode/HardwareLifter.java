@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -20,6 +21,8 @@ enum LifterHWcontroller {
 public class HardwareLifter {
 
     public DcMotor motorLifter = null;
+    public  DigitalChannel lifterRangeUpper ;
+    public DigitalChannel liferRangeLower ;
     protected boolean grabberConnected = false ;
     protected HardwareGrabber grabber = null ;
 
@@ -45,6 +48,8 @@ public class HardwareLifter {
         hwMap = ahwMap;
 
         motorLifter = hwMap.dcMotor.get("motorLifter") ;
+        liferRangeLower = hwMap.digitalChannel.get("topLimit") ;
+        lifterRangeUpper = hwMap.digitalChannel.get("bottomLimit") ;
 
         if (grabberConnected) {
             grabber = new HardwareGrabber();

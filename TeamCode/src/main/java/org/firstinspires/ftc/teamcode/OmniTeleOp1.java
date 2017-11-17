@@ -119,13 +119,19 @@ public class OmniTeleOp1 extends OpMode {
             } */
 
             if ((gamepad2.left_bumper) && (!gamepad2.right_bumper)) {
-                motorLifterPower = (float) 0.9;
+                motorLifterPower = (float) 1.0;
             } else if ((gamepad2.right_bumper) && (!gamepad2.left_bumper)){
-                motorLifterPower = (float)-0.9 ;
+                motorLifterPower = (float)-1.0 ;
             } else {
                 motorLifterPower = (float) 0.0;
             }
 
+        if (OmniBot.lifter.lifterRangeUpper.getState()) {
+            motorLifterPower = Range.clip(motorLifterPower, 0, 1) ;
+        }
+        if (OmniBot.lifter.liferRangeLower.getState()) {
+            motorLifterPower = Range.clip(motorLifterPower,-1,0) ;
+        }
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
             OmniBot.setLifterGrabber(motorLifterPower, gamepad2.left_trigger);
