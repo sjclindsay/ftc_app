@@ -22,7 +22,7 @@ public class HardwareLifter {
 
     public DcMotor motorLifter = null;
     public  DigitalChannel lifterRangeUpper ;
-    public DigitalChannel liferRangeLower ;
+    public DigitalChannel lifterRangeLower ;
     protected boolean grabberConnected = false ;
     protected HardwareGrabber grabber = null ;
 
@@ -48,7 +48,7 @@ public class HardwareLifter {
         hwMap = ahwMap;
 
         motorLifter = hwMap.dcMotor.get("motorLifter") ;
-        liferRangeLower = hwMap.digitalChannel.get("topLimit") ;
+        lifterRangeLower = hwMap.digitalChannel.get("topLimit") ;
         lifterRangeUpper = hwMap.digitalChannel.get("bottomLimit") ;
 
         if (grabberConnected) {
@@ -77,13 +77,28 @@ public class HardwareLifter {
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
-            .addData("Lifter Power ", new Func<String>() {
-                @Override
-                public String value() {
-                    return FormatHelper.formatDouble(motorLifter.getPower());
-                }
-            });
-        if(grabberConnected) {
+                .addData("Lifter Power ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(motorLifter.getPower());
+                    }
+                });
+        telemetry.addLine()
+                .addData("Limit Top", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.valueOf(lifterRangeUpper.getState());
+                    }
+                })
+                .addData("Limit Bottom", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.valueOf(lifterRangeLower.getState());
+                    }
+                });
+
+
+        if (grabberConnected) {
             grabber.addTelemetry(telemetry);
         }
     }

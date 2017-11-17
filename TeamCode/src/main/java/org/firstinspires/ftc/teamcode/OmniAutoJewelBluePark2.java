@@ -131,7 +131,7 @@ public class OmniAutoJewelBluePark2 extends OpMode {
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 //red side (i think)
-                OmniBot.driveOmniBot( (float) -0.3, 0, 0, PIDAxis.gyro);
+                OmniBot.setBotMovement((double) -0.3, (double) -0.3, (double) -0.3, (double) -0.3);
                 if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
@@ -141,12 +141,12 @@ public class OmniAutoJewelBluePark2 extends OpMode {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
                     StabilizationTimer.reset();
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.STOP_MOVING ;
+                    stateAfterNext = MotorState.DRIVETOSAFEZONE;
                 }
                 break;
             case DRIVETOSAFEZONE:
-                OmniBot.driveOmniBot( (float) -0.2, 0, 0, PIDAxis.gyro);
-                if (OmniBot.crypto.cryptoBoxEndTouch.getState()) {
+                OmniBot.driveOmniBot( (float) -0.1, 0, 0, PIDAxis.gyro);
+                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100) {
                     OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
                     nextState = MotorState.STOPROBOT ;
                 }

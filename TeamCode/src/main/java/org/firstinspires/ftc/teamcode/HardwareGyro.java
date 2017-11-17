@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.FormatHelper;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -37,7 +38,11 @@ public class HardwareGyro {
     public float currentHeadingZ = (float) 0.0;
     public float currentHeadingY = (float) 0.0;
     public float currentHeadingX = (float) 0.0;
+    public double currentAccelerationZ = 0.0;
+    public double currentAccelerationY = 0.0;
+    public double currentAccelerationX = 0.0;
     private Orientation angles = null;
+    private Acceleration acceleration = null ;
     private Acceleration gravity = null;
 
     /* local OpMode members. */
@@ -95,7 +100,7 @@ public class HardwareGyro {
     }
 
     public void addTelemetry(Telemetry telemetry){
-        telemetry.addLine()
+        /*telemetry.addLine()
                 .addData("status", new Func<String>() {
                     @Override public String value() {
                         return imu.getSystemStatus().toShortString();
@@ -107,6 +112,7 @@ public class HardwareGyro {
                         return imu.getCalibrationStatus().toString();
                     }
                 });
+                */
         telemetry.addLine()
                 .addData("heading", new Func<String>() {
                     @Override
@@ -124,6 +130,25 @@ public class HardwareGyro {
                         return formatedAngleX();
                     }
                 });
+        telemetry.addLine()
+                .addData("AccelerationX", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(currentAccelerationX) ;
+                    }
+                })
+                .addData("AccelerationY", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(currentAccelerationY) ;
+                    }
+                }).addData("AccelerationZ", new Func<String>() {
+            @Override
+            public String value() {
+                return FormatHelper.formatDouble(currentAccelerationZ) ;
+            }
+        });
+
     }
 
     public void Update (){
@@ -141,6 +166,12 @@ public class HardwareGyro {
     }
     public String formatedAngleX() {
         return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingX);
+    }
+    public void UpdateAcceleration () {
+        acceleration = imu.getLinearAcceleration().toUnit(DistanceUnit.CM);
+        currentAccelerationZ = acceleration.zAccel ;
+        currentAccelerationY = acceleration.yAccel ;
+        currentAccelerationX = acceleration.xAccel ;
     }
 
 }

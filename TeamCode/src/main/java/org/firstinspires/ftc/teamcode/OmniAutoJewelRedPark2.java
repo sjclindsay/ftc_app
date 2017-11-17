@@ -131,7 +131,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM;
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
-                OmniBot.setBotMovement((double) 0.3, (double) -0.3, (double) 0.3, (double) -0.3);
+                OmniBot.setBotMovement((double) 0.3, (double) 0.3, (double) 0.3, (double) 0.3);
                 if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
                     nextState = MotorState.DRIVETOSAFEZONE ;
                 }

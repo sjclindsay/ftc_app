@@ -273,6 +273,7 @@ public class HardwareOmniBot
     public double getcurrentHeading() {
         return(gyroScope.currentHeadingZ);
     }
+    public double getCurrentAccelerationY () {return (gyroScope.currentAccelerationY) ; }
 
     public void resetFirstPIDDrive () { FirstCallPIDDrive = true; }
 
@@ -523,6 +524,7 @@ public class HardwareOmniBot
         period.reset();
         if(gyroConnected) {
             gyroScope.Update();
+            gyroScope.UpdateAcceleration();
         }
 
 
