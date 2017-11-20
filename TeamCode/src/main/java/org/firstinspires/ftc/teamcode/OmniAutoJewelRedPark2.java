@@ -138,7 +138,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 break;
             case DRIVETOSAFEZONE:
                 //OmniBot.driveOmniBot( (float) 0.2, 0, targetHeading, PIDAxis.gyro);
-                if (OmniBot.crypto.cryptoBoxEndTouch.getState()) {
+                if (OmniBot.crypto.cryptoBoxEndTouch.getState() || WaitTimer.time() >= 5000) {
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;

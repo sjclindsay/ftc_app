@@ -15,20 +15,20 @@ import org.firstinspires.ftc.robotcore.external.Func;
 //@Disable
 public class OmniAutoJewelBluePark2 extends OpMode {
     public enum MotorState{
-        WAIT_START,
-        CHECK_COLOR,
-        TURN_COUNTERCLOCKWISE,
-        TURN_CLOCKWISE,
-        STOP_MOVING,
-        HitWait,
-        DELAY,
-        INITIALIZE,
-        INITIALIZEDRIVEOFFPLATFORM,
-        DRIVEOFFPLATFORM,
-        DRIVETOSAFEZONE,
-        STOPROBOT,
-        WAIT,
-        ERROR_STATE
+        WAIT_START,  //0
+        CHECK_COLOR,  //1
+        TURN_COUNTERCLOCKWISE,  //2
+        TURN_CLOCKWISE,  //3
+        STOP_MOVING,  //4
+        HitWait, //5
+        DELAY,  //6
+        INITIALIZE, //7
+        INITIALIZEDRIVEOFFPLATFORM,  //8
+        DRIVEOFFPLATFORM,  //9
+        DRIVETOSAFEZONE,  //10
+        STOPROBOT,  //11
+        WAIT,  //12
+        ERROR_STATE  //13
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
@@ -138,27 +138,27 @@ public class OmniAutoJewelBluePark2 extends OpMode {
                 break;
             case DRIVEOFFPLATFORM:
                 if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2.5 ) {
-                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
-                    StabilizationTimer.reset();
+                    OmniBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
+                    WaitTimer.reset();
                     nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.DRIVETOSAFEZONE;
                 }
                 break;
             case DRIVETOSAFEZONE:
-                OmniBot.driveOmniBot( (float) -0.1, 0, 0, PIDAxis.gyro);
-                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100) {
-                    OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
+                OmniBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
+                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 5000) {
+                    OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case STOPROBOT:
-                OmniBot.driveOmniBot(0, 0, 0, PIDAxis.gyro);
+                OmniBot.setBotMovement(0, 0, 0, 0);
                 RobotLog.i("robot stopped") ;
                 break;
             case WAIT:
                 if (WaitTimer.time() >= 500) {
                     nextState = stateAfterNext ;
-                    WaitTimer.reset();
+                    StabilizationTimer.reset();
                 }
                 break;
             case ERROR_STATE:
@@ -183,10 +183,10 @@ public class OmniAutoJewelBluePark2 extends OpMode {
     }
     void composeTelemetry() {
         telemetry.addLine()
-                .addData("Waittime ", new Func<String>() {
+                .addData("State" , new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(waitTimer);
+                        return String.valueOf(currentState);
                     }
                 })
                 .addData("current ", new Func<String>() {

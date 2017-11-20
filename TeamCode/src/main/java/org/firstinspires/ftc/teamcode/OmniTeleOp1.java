@@ -130,7 +130,7 @@ public class OmniTeleOp1 extends OpMode {
             //motorLifterPower = Range.clip(motorLifterPower, -1, 0) ;
         }
         if (OmniBot.lifter.lifterRangeLower.getState()) {
-            motorLifterPower = Range.clip(motorLifterPower,0,1) ;
+            //motorLifterPower = Range.clip(motorLifterPower,0,1) ;
         }
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
