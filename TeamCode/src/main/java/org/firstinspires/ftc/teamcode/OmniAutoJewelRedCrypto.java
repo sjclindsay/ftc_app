@@ -11,24 +11,26 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelBluePark2", group="Omni")
+@Autonomous(name="Omni: AutoJewelRedCrypto", group="Omni")
 //@Disable
-public class OmniAutoJewelBluePark2 extends OpMode {
+public class OmniAutoJewelRedCrypto extends OpMode {
     public enum MotorState{
-        WAIT_START,  //0
-        CHECK_COLOR,  //1
-        TURN_COUNTERCLOCKWISE,  //2
-        TURN_CLOCKWISE,  //3
-        STOP_MOVING,  //4
-        HitWait, //5
-        DELAY,  //6
-        INITIALIZE, //7
-        INITIALIZEDRIVEOFFPLATFORM,  //8
-        DRIVEOFFPLATFORM,  //9
-        DRIVETOSAFEZONE,  //10
-        STOPROBOT,  //11
-        WAIT,  //12
-        ERROR_STATE  //13
+        WAIT_START,
+        CHECK_COLOR,
+        TURN_COUNTERCLOCKWISE,
+        TURN_CLOCKWISE,
+        STOP_MOVING,
+        HitWait,
+        DELAY,
+        RESETONPLATFORM,
+        INITIALIZEDRIVEOFFPLATFORM,
+        DRIVEOFFPLATFORM,
+        DRIVETOWALL,
+        SQUARETOWALL,
+        PREPCRYPTOCOUNT,
+        WAIT,
+        STOPROBOT,
+        ERROR_STATE
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
@@ -36,6 +38,7 @@ public class OmniAutoJewelBluePark2 extends OpMode {
     float direction = 90 ;
     double delay_time = 0;
     double currentHeading = 0 ;
+    double squareHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterCryptoJewel;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -66,6 +69,7 @@ public class OmniAutoJewelBluePark2 extends OpMode {
 
     @Override
     public void loop() {
+        waitTimer = WaitTimer.milliseconds();
         if(currentState != nextState) {
             RobotLog.i("Change State to " + nextState);
         }
@@ -94,73 +98,86 @@ public class OmniAutoJewelBluePark2 extends OpMode {
                 RobotLog.i("In CHECK_COLOR");
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
                 OmniBot.jewelSystem.led_low();
-                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Blue) {
+                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
-                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Red) {
+                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
+
+                //if (StabilizationTimer.time() > 5000) {
+                //    nextState = stateAfterNext ;
+                //}
                 break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
-                WaitTimer.reset();
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
                 targetHeading = (float) (currentHeading - 100.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
-                WaitTimer.reset();
                 nextState = MotorState.HitWait ;
                 break;
             case HitWait:
-                if (WaitTimer.time() > 1000){
+                if (WaitTimer.time() > 5000){
                     nextState = MotorState.STOP_MOVING   ;
-                } else if (Math.abs(currentHeading - targetHeading) <= 3) {
+                } else if (currentHeading == targetHeading) {
                     RobotLog.i("Reach Target Heading" + targetHeading);
                     nextState = MotorState.STOP_MOVING;
                 }
                 break;
             case STOP_MOVING:
                 OmniBot.jewelSystem.setJewelUp();
-                OmniBot.crypto.lowerCryptoServo();
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
-                nextState = MotorState.WAIT ;
-                stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM;
+                nextState = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
+                break;
+            case RESETONPLATFORM:
+                targetHeading = 0 ;
+                OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
+                if (Math.abs(currentHeading - targetHeading) <= 3) {
+                    nextState =MotorState.WAIT ;
+                    stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
+                }
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
-                //red side (i think)
-                OmniBot.setBotMovement((double) -0.3, (double) -0.3, (double) -0.3, (double) -0.3);
-                if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
+                OmniBot.setBotMovement(0.1, 0.1, 0.1, 0.1);
+                if (Math.abs(OmniBot.gyroScope.currentHeadingY) >= 3 ) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
                 break;
             case DRIVEOFFPLATFORM:
-                if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2.5 ) {
-                    OmniBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
-                    WaitTimer.reset();
+                if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2) {
+                    OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.DRIVETOSAFEZONE;
+                    stateAfterNext = MotorState.DRIVETOWALL ;
                 }
                 break;
-            case DRIVETOSAFEZONE:
-                OmniBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
-                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 5000) {
-                        OmniBot.setBotMovement(0, 0, 0, 0);
-                    nextState = MotorState.STOPROBOT ;
+            case DRIVETOWALL:
+                OmniBot.driveOmniBot((float) 0.1, 0, 0, PIDAxis.gyro);
+                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 100) {
+                    nextState = MotorState.WAIT ;
+                    stateAfterNext = MotorState.SQUARETOWALL ;
                 }
                 break;
-            case STOPROBOT:
-                OmniBot.setBotMovement(0, 0, 0, 0);
-                RobotLog.i("robot stopped") ;
+            case SQUARETOWALL:
+                OmniBot.setBotMovement(0.1, 0.1, 0.1 , 0.1);
+                if (WaitTimer.time() >= 1000) {
+                    squareHeading = currentHeading ;
+                    nextState = MotorState.PREPCRYPTOCOUNT ;
+                }
+                break;
+            case PREPCRYPTOCOUNT:
+                OmniBot.driveOmniBot((float) -0.1, 0, (float) squareHeading, PIDAxis.gyro);
                 break;
             case WAIT:
-                if (WaitTimer.time() >= 500) {
+                if (WaitTimer.time() >= 500){
                     nextState = stateAfterNext ;
-                    StabilizationTimer.reset();
+                    WaitTimer.reset();
+                    RobotLog.i("Robot waited for " + WaitTimer.time() + " milliseconds") ;
                 }
                 break;
             case ERROR_STATE:
@@ -185,10 +202,10 @@ public class OmniAutoJewelBluePark2 extends OpMode {
     }
     void composeTelemetry() {
         telemetry.addLine()
-                .addData("State" , new Func<String>() {
+                .addData("Waittime ", new Func<String>() {
                     @Override
                     public String value() {
-                        return String.valueOf(currentState);
+                        return FormatHelper.formatDouble(waitTimer);
                     }
                 })
                 .addData("current ", new Func<String>() {

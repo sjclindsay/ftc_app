@@ -157,6 +157,8 @@ public class HardwareGyro {
         currentHeadingY = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
         currentHeadingX = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.thirdAngle));
         gravity = imu.getGravity();
+
+        RobotLog.i("Gyro Heading: Z " + formatedAngleZ() + ", Y " + formatedAngleY() + ", X " + formatedAngleX() ) ;
     }
     public String formatedAngleZ() {
         return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingZ);

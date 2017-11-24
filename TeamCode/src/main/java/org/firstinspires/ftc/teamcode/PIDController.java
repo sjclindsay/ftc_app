@@ -56,6 +56,7 @@ public class PIDController
         double output = (kp_ * error) + (ki_ * errorSum_) + (kd_ * derError);
 
         RobotLog.i("PID error is " + error);
+        RobotLog.i("PID output is " + output) ;
 
         lastError_ = error;
         lastTime_ = time;

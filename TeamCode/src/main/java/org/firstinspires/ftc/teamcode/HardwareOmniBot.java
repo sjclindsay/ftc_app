@@ -75,6 +75,10 @@ public class HardwareOmniBot
     protected DcMotor  Motor10   = null;
     protected DcMotor  Motor11  = null;
     protected Servo servoJewel = null ;
+    protected double power00 = 0 ;
+    protected double power01 = 0 ;
+    protected double power10 = 0 ;
+    protected double power11 = 0 ;
     protected static final float motorPowerMin = -1 ;
     protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
@@ -263,6 +267,11 @@ public class HardwareOmniBot
         motorPower01 = Range.clip(motorPower01, motorPowerMin, motorPowerMax);
         motorPower10 = Range.clip(motorPower10, motorPowerMin, motorPowerMax);
         motorPower11 = Range.clip(motorPower11, motorPowerMin, motorPowerMax);
+
+        power00 = motorPower00 ;
+        power01 = motorPower01 ;
+        power10 = motorPower10 ;
+        power11 = motorPower11 ;
 
         Motor00.setPower(motorPower00);
         Motor01.setPower(motorPower01);
@@ -508,6 +517,7 @@ public class HardwareOmniBot
      * @param periodMs  Length of wait cycle in mSec.
      */
 
+
     public void waitForTick(long periodMs) {
         long  remaining = periodMs - (long)period.milliseconds();
 
@@ -526,6 +536,8 @@ public class HardwareOmniBot
             gyroScope.Update();
             gyroScope.UpdateAcceleration();
         }
+
+        RobotLog.i("Motor Powers: 00: " + power00 + ", 01: " + power01 + ", 10: " + power10 + ", 11: " + power11) ;
 
 
     }

@@ -106,18 +106,20 @@ public class OmniAutoJewelRedPark2 extends OpMode {
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                WaitTimer.reset();
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
                 targetHeading = (float) (currentHeading - 100.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                WaitTimer.reset();
                 nextState = MotorState.HitWait ;
                 break;
             case HitWait:
-                if (WaitTimer.time() > 5000){
+                if (WaitTimer.time() > 1000){
                     nextState = MotorState.STOP_MOVING   ;
-                } else if (currentHeading == targetHeading) {
+                } else if (Math.abs(currentHeading - targetHeading) <= 3) {
                     RobotLog.i("Reach Target Heading" + targetHeading);
                     nextState = MotorState.STOP_MOVING;
                 }
