@@ -50,7 +50,7 @@ public class PIDController
         long time = System.currentTimeMillis();
         long period = time - lastTime_;
         double error  = setPoint_ - newInput;
-        errorSum_ += (error * period);
+        errorSum_ +=  0 ; // (error * period);
         double derError = 0;//(error - lastError_) / period;
 
         double output = (kp_ * error) + (ki_ * errorSum_) + (kd_ * derError);

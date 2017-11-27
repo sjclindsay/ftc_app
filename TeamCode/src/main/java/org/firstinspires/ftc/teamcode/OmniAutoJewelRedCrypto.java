@@ -25,6 +25,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
         RESETONPLATFORM,
         INITIALIZEDRIVEOFFPLATFORM,
         DRIVEOFFPLATFORM,
+        INITIALIZEDRIVETOWALL,
         DRIVETOWALL,
         SQUARETOWALL,
         PREPCRYPTOCOUNT,
@@ -39,6 +40,8 @@ public class OmniAutoJewelRedCrypto extends OpMode {
     double delay_time = 0;
     double currentHeading = 0 ;
     double squareHeading = 0 ;
+    double initialHeading = 0 ;
+    double initialGyroYHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterCryptoJewel;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -71,9 +74,9 @@ public class OmniAutoJewelRedCrypto extends OpMode {
     public void loop() {
         waitTimer = WaitTimer.milliseconds();
         if(currentState != nextState) {
-            RobotLog.i("Change State to " + nextState);
+            //RobotLog.i("Change State to " + nextState);
         }
-
+        RobotLog.i("current state is " + currentState) ;
 
         currentHeading = OmniBot.getcurrentHeading() ;
 
@@ -88,6 +91,8 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 }
                 break;
             case WAIT_START:
+                initialHeading = currentHeading ;
+                initialGyroYHeading = OmniBot.gyroScope.currentHeadingY ;
                 OmniBot.jewelSystem.setJewelDown();
                 nextState = MotorState.DELAY;
                 delay_time = 0.5;
@@ -111,20 +116,22 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 //}
                 break;
             case TURN_COUNTERCLOCKWISE:
-                targetHeading = (float) (currentHeading + 100.0);
+                targetHeading = (float) (currentHeading + 10.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                WaitTimer.reset();
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 100.0);
+                targetHeading = (float) (currentHeading - 10.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                WaitTimer.reset();
                 nextState = MotorState.HitWait ;
                 break;
             case HitWait:
                 if (WaitTimer.time() > 5000){
                     nextState = MotorState.STOP_MOVING   ;
-                } else if (currentHeading == targetHeading) {
+                } else if (Math.abs(currentHeading - targetHeading) <= 1) {
                     RobotLog.i("Reach Target Heading" + targetHeading);
                     nextState = MotorState.STOP_MOVING;
                 }
@@ -133,34 +140,43 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 OmniBot.jewelSystem.setJewelUp();
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
-                nextState = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
+                nextState = MotorState.RESETONPLATFORM ;
                 break;
             case RESETONPLATFORM:
-                targetHeading = 0 ;
+                 targetHeading =  (float) initialHeading ;
+                RobotLog.i("initial heading " + initialHeading) ;
                 OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
-                if (Math.abs(currentHeading - targetHeading) <= 3) {
+                if (Math.abs(currentHeading - targetHeading) <= 0.3) {
+                    OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState =MotorState.WAIT ;
                     stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
                 }
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 OmniBot.setBotMovement(0.1, 0.1, 0.1, 0.1);
-                if (Math.abs(OmniBot.gyroScope.currentHeadingY) >= 3 ) {
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) >= 3 ) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
                 break;
             case DRIVEOFFPLATFORM:
-                if (Math.abs(OmniBot.gyroScope.currentHeadingY) <= 2) {
-                    OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) <= 1 ) {
+                    OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.DRIVETOWALL ;
+                    WaitTimer.reset();
+                    stateAfterNext = MotorState.INITIALIZEDRIVETOWALL ;
                 }
                 break;
+            case INITIALIZEDRIVETOWALL:
+                OmniBot.driveOmniBot((float) 0.1, 0, (float) initialHeading, PIDAxis.gyro);
+                nextState = MotorState.WAIT ;
+                stateAfterNext = MotorState.DRIVETOWALL ;
+                break;
             case DRIVETOWALL:
-                OmniBot.driveOmniBot((float) 0.1, 0, 0, PIDAxis.gyro);
                 if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 100) {
+                    OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.SQUARETOWALL ;
+                    WaitTimer.reset();
+                    stateAfterNext = MotorState.STOPROBOT ;
                 }
                 break;
             case SQUARETOWALL:
@@ -179,6 +195,10 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                     WaitTimer.reset();
                     RobotLog.i("Robot waited for " + WaitTimer.time() + " milliseconds") ;
                 }
+                break;
+            case STOPROBOT:
+                OmniBot.setBotMovement(0, 0, 0, 0);
+                RobotLog.i("Stopped bot");
                 break;
             case ERROR_STATE:
                 RobotLog.i("Error_State");
@@ -201,6 +221,13 @@ public class OmniAutoJewelRedCrypto extends OpMode {
 
     }
     void composeTelemetry() {
+        telemetry.addLine()
+                .addData("State ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.valueOf(currentState);
+                    }
+                }) ;
         telemetry.addLine()
                 .addData("Waittime ", new Func<String>() {
                     @Override
