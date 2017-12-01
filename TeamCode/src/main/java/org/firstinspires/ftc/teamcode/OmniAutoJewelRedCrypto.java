@@ -85,14 +85,14 @@ public class OmniAutoJewelRedCrypto extends OpMode {
         switch(nextState) {
             case DELAY:
                 current_delay = getRuntime() - last_time;
+                initialHeading = currentHeading ;
+                initialGyroYHeading = OmniBot.gyroScope.currentHeadingY ;
                 //RobotLog.i("Delay Time " + current_delay);
                 if(current_delay >= delay_time) {
                     nextState = stateAfterNext;
                 }
                 break;
             case WAIT_START:
-                initialHeading = currentHeading ;
-                initialGyroYHeading = OmniBot.gyroScope.currentHeadingY ;
                 OmniBot.jewelSystem.setJewelDown();
                 nextState = MotorState.DELAY;
                 delay_time = 0.5;
@@ -129,11 +129,12 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 nextState = MotorState.HitWait ;
                 break;
             case HitWait:
-                if (WaitTimer.time() > 5000){
+                if (WaitTimer.time() >= 5000){
                     nextState = MotorState.STOP_MOVING   ;
                 } else if (Math.abs(currentHeading - targetHeading) <= 1) {
                     RobotLog.i("Reach Target Heading" + targetHeading);
                     nextState = MotorState.STOP_MOVING;
+                    OmniBot.setBotMovement(0,0,0,0);
                 }
                 break;
             case STOP_MOVING:
@@ -141,12 +142,15 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
                 nextState = MotorState.RESETONPLATFORM ;
+                RobotLog.i("initial heading " + initialHeading) ;
+
                 break;
             case RESETONPLATFORM:
                  targetHeading =  (float) initialHeading ;
-                RobotLog.i("initial heading " + initialHeading) ;
+                OmniBot.resetFirstPIDDrive();
                 OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
-                if (Math.abs(currentHeading - targetHeading) <= 0.3) {
+                RobotLog.i("corrector is " + OmniBot.correction) ;
+                if (Math.abs(currentHeading - targetHeading) <= 3) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState =MotorState.WAIT ;
                     stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
@@ -154,12 +158,13 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 OmniBot.setBotMovement(0.1, 0.1, 0.1, 0.1);
-                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) >= 3 ) {
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) >= 4 ) {
+                    RobotLog.i("initial gyro heading is " + initialGyroYHeading) ;
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }
                 break;
             case DRIVEOFFPLATFORM:
-                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) <= 1 ) {
+                if ( Math.abs(OmniBot.gyroScope.currentHeadingY - initialGyroYHeading) <= 3 ) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
                     WaitTimer.reset();
@@ -167,12 +172,15 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 }
                 break;
             case INITIALIZEDRIVETOWALL:
-                OmniBot.driveOmniBot((float) 0.1, 0, (float) initialHeading, PIDAxis.gyro);
-                nextState = MotorState.WAIT ;
-                stateAfterNext = MotorState.DRIVETOWALL ;
+                OmniBot.resetFirstPIDDrive();
+                OmniBot.driveOmniBot((float) 0.2, 0, (float) initialHeading, PIDAxis.gyro);
+                OmniBot.crypto.lowerCryptoServo();
+                nextState = MotorState.DRIVETOWALL ;
                 break;
             case DRIVETOWALL:
-                if (Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 100) {
+                OmniBot.resetFirstPIDDrive();
+                OmniBot.driveOmniBot((float) 0.2, 0, (float) initialHeading, PIDAxis.gyro);
+                if ( OmniBot.crypto.cryptoBoxEndTouch.getState() /*Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 2 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 2 || OmniBot.gyroScope.currentAccelerationZ >= 2*/) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
                     WaitTimer.reset();

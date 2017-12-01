@@ -170,7 +170,7 @@ public class HardwareGyro {
         return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingX);
     }
     public void UpdateAcceleration () {
-        acceleration = imu.getLinearAcceleration().toUnit(DistanceUnit.CM);
+        acceleration = imu.getLinearAcceleration().toUnit(DistanceUnit.METER);
         currentAccelerationZ = acceleration.zAccel ;
         currentAccelerationY = acceleration.yAccel ;
         currentAccelerationX = acceleration.xAccel ;
