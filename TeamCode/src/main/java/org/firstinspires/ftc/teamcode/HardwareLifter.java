@@ -70,9 +70,11 @@ public class HardwareLifter {
     public  void setLifterGrabber (float lifterSpeed) {
         motorLifter.setPower(lifterSpeed);
     }
-    public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
+    public void setLifterGrabber (float lifterSpeed, double grabberPosition1, double grabberPosition2) {
         motorLifter.setPower(lifterSpeed);
-        grabber.setServoGrabberPosition(grabberPosition);
+        grabber.setServoGrabber1Position(grabberPosition1);
+        grabber.setServoGrabber2Position(grabberPosition2);
+
     }
 
     public void addTelemetry(Telemetry telemetry) {

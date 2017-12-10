@@ -134,7 +134,7 @@ public class OmniTeleOp1 extends OpMode {
         }
 
             OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-            OmniBot.setLifterGrabber(motorLifterPower, gamepad2.left_trigger);
+            OmniBot.setLifterGrabber(motorLifterPower, gamepad2.left_trigger, gamepad2.right_trigger);
 
 
         OmniBot.waitForTick(40);

@@ -96,7 +96,7 @@ public class HardwareOmniBot
     protected HardwareCryptoBox crypto = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
-    private boolean FirstCallPIDDrive = true;
+    protected boolean FirstCallPIDDrive = true;
     public double correction = 0.0 ;
 
 
@@ -181,7 +181,7 @@ public class HardwareOmniBot
         Motor01  = hwMap.dcMotor.get("drive_wheel_01");
         Motor10  = hwMap.dcMotor.get("drive_wheel_10");
         Motor11  = hwMap.dcMotor.get("drive_wheel_11");
-        servoJewel = hwMap.servo.get("servoJewel") ;
+
 
         Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -212,7 +212,7 @@ public class HardwareOmniBot
         if (jewelConnected){
             jewelSystem = new HardwareJewel();
             RobotLog.i("Jewel Defined");
-            jewelSystem.init(hwMap);
+            jewelSystem.init(hwMap, "servoJewelRed");
         }
 
         // Set all motors to zero power
@@ -220,7 +220,7 @@ public class HardwareOmniBot
         Motor01.setPower(0);
         Motor10.setPower(0);
         Motor11.setPower(0);
-        servoJewel.setPosition(0);
+
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -406,17 +406,17 @@ public class HardwareOmniBot
 
     public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
         if (axis == PIDAxis.gyro) {
-
             float yValue = (float) Math.cos( direction*(Math.PI/180) ) ;
             float xValue = (float) Math.sin( direction*(Math.PI/180) ) ;
 
             RobotLog.i("cos is " + yValue);
             RobotLog.i("sin is " + xValue);
 
-            float power00 = (yValue - xValue)*magnitude ;
-            float power01 = (yValue + xValue)*magnitude ;
-            float power10 = (yValue + xValue)*magnitude ;
-            float power11 = (yValue - xValue)*magnitude ;
+            double power00 = (yValue - xValue)*magnitude ;
+            double power01 = (yValue + xValue)*magnitude ;
+            double power10 = (yValue + xValue)*magnitude ;
+            double power11 = (yValue - xValue)*magnitude ;
+
 
             gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
         } else if (axis == PIDAxis.ty) {
@@ -433,9 +433,9 @@ public class HardwareOmniBot
     public void setLifterGrabber (float lifterSpeed) {
         lifter.setLifterGrabber(lifterSpeed);
     }
-    public void setLifterGrabber (float lifterSpeed, double grabberPosition) {
+    public void setLifterGrabber (float lifterSpeed, double grabberPosition1, double grabberPosition2) {
 
-        lifter.setLifterGrabber(lifterSpeed, grabberPosition);
+        lifter.setLifterGrabber(lifterSpeed, grabberPosition1, grabberPosition2);
     }
 
     public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}

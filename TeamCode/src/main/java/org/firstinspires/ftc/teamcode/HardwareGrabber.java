@@ -15,8 +15,8 @@ public class HardwareGrabber {
 
     Servo servoGrabber1 = null;
     Servo servoGrabber2 = null;
-    public static float servoGrabberMaxPosition = (float) 0.8;
-    public static float servoGrabberMinPosition = (float) 0.57;
+    public static float servoGrabberMaxPosition = (float) 0.6;
+    public static float servoGrabberMinPosition = (float) 0.3;
     public static float servoGrabberStartPosition = servoGrabberMinPosition;
 
     HardwareMap hwMap = null;
@@ -34,8 +34,8 @@ public class HardwareGrabber {
         servoGrabber1 = hwMap.servo.get("servoGrabber1");
         servoGrabber2 = hwMap.servo.get("servoGrabber2");
 
-        servoGrabber1.setPosition(servoGrabberStartPosition);
-        servoGrabber2.setPosition(1-servoGrabberStartPosition);
+        servoGrabber1.setPosition(0.8);
+        servoGrabber2.setPosition(0.8);
 
     }
 
@@ -45,15 +45,22 @@ public class HardwareGrabber {
 
     //put functions here
 
-    public void setServoGrabberPosition(double position) {
+    public void setServoGrabber1Position(double position) {
 
-        position = position * 0.3 + 0.5;
+        position = position * 0.3 + 0.3;
 
-        position = Range.clip(position, 0.5, servoGrabberMaxPosition);
+        position = Range.clip(position, servoGrabberMinPosition, servoGrabberMaxPosition);
 
         servoGrabber1.setPosition(position);
-        servoGrabber2.setPosition(1 - position);
+    }
 
+    public void setServoGrabber2Position(double position) {
+
+        position = position * 0.3 + 0.3;
+
+        position = Range.clip(position, servoGrabberMinPosition, servoGrabberMaxPosition);
+
+        servoGrabber2.setPosition(position);
     }
 
     public void addTelemetry(Telemetry telemetry) {

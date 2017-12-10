@@ -29,6 +29,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
         DRIVETOWALL,
         FINDCRYPTOBAR,
         COUNTCRYPTOBAR,
+        RElEIVECRYPTOTENSION,
         PASSOVERCRYPTOBAR,
         SQUARETOWALL,
         PREPCRYPTOCOUNT,
@@ -71,12 +72,13 @@ public class OmniAutoJewelRedCrypto extends OpMode {
     @Override
     public void start() {
 
+        OmniBot.setLifterGrabber(0, 0.3, 0.3);
         OmniBot.start();
     }
 
     @Override
     public void loop() {
-        waitTimer = WaitTimer.milliseconds();
+        waitTimer = WaitTimer.time();
         if(currentState != nextState) {
             //RobotLog.i("Change State to " + nextState);
         }
@@ -121,19 +123,20 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 //}
                 break;
             case TURN_COUNTERCLOCKWISE:
-                targetHeading = (float) (currentHeading + 10.0);
+                targetHeading = (float) (currentHeading + 180.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 WaitTimer.reset();
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 10.0);
+                targetHeading = (float) (currentHeading - 180);
                 RobotLog.i("Start Turn " + currentHeading);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 WaitTimer.reset();
                 nextState = MotorState.HitWait ;
                 break;
             case HitWait:
+                /*
                 if (WaitTimer.time() >= 5000){
                     nextState = MotorState.STOP_MOVING   ;
                 } else if (Math.abs(currentHeading - targetHeading) <= 1.5) {
@@ -141,6 +144,8 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                     nextState = MotorState.STOP_MOVING;
                     OmniBot.setBotMovement(0,0,0,0);
                 }
+                */
+                nextState = MotorState.STOP_MOVING;
                 break;
             case STOP_MOVING:
                 OmniBot.jewelSystem.setJewelUp();
@@ -197,10 +202,11 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 break;
             case FINDCRYPTOBAR:
                 OmniBot.driveOmniBot((float) 0.1, 90, (float) squareHeading, PIDAxis.gyro );
-                if ( WaitTimer.time() >= 3000 ) {
+                RobotLog.i("touch 2 is " + OmniBot.crypto.cryptoBoxTouchValue2) ;
+                if ( WaitTimer.milliseconds() >=3000 ) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.STOPROBOT ;
-                } else if (OmniBot.crypto.cryptoBoxTouchValue1 || OmniBot.crypto.cryptoBoxTouchValue2 ) {
+                } else if (OmniBot.crypto.cryptoBoxTouch2.getState() == true) {
                     nextState = MotorState.COUNTCRYPTOBAR ;
                     OmniBot.crypto.raiseCryptoServo();
                 }
@@ -211,12 +217,24 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 OmniBot.setBotMovement(0, 0, 0, 0);
                 WaitTimer.reset();
                 nextState = MotorState.WAIT ;
-                stateAfterNext = MotorState.PASSOVERCRYPTOBAR ;
+                stateAfterNext = MotorState.RElEIVECRYPTOTENSION;
+                break;
+            case RElEIVECRYPTOTENSION:
+                OmniBot.driveOmniBot((float) 0.1, 90,(float) squareHeading, PIDAxis.gyro);
+                if (!OmniBot.crypto.cryptoBoxTouchValue2) {
+                    OmniBot.setBotMovement(0, 0, 0, 0);
+                    OmniBot.resetFirstPIDDrive();
+                    nextState = MotorState.WAIT;
+                    stateAfterNext = MotorState.PASSOVERCRYPTOBAR ;
+                }
                 break;
             case PASSOVERCRYPTOBAR:
                 OmniBot.driveOmniBot((float) 0.1, 90, (float) squareHeading, PIDAxis.gyro);
-                if (WaitTimer.time() >= 1000) {
+                if (WaitTimer.time() >= 750) {
+                    WaitTimer.reset();
+                    OmniBot.resetFirstPIDDrive();
                     nextState = MotorState.FINDCRYPTOBAR ;
+                    OmniBot.crypto.lowerCryptoServo();
                 }
                 break;
             case WAIT:
@@ -266,7 +284,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 .addData("Waittime ", new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(waitTimer);
+                        return FormatHelper.formatDouble(WaitTimer.time());
                     }
                 })
                 .addData("current ", new Func<String>() {

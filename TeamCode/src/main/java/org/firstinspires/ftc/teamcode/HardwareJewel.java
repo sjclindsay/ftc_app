@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class HardwareJewel {
 
-    Servo servoJewel = null;
-    HardwareColorSensor jewelSensor;
+    private Servo servoJewel = null;
+    private HardwareColorSensor jewelSensor;
 
 
     public static float servoJewelMaxPosition = (float) 1.0;
@@ -31,16 +31,17 @@ public class HardwareJewel {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap,String servoJewelName) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        servoJewel = hwMap.servo.get("servoJewel") ;
+        servoJewel = hwMap.servo.get(servoJewelName) ;
         servoJewel.setPosition(servoJewelInitalPosition);
 
 
         jewelSensor = new HardwareColorSensor();
         jewelSensor.init(hwMap);
+
     }
 
     public void start() {
@@ -57,6 +58,10 @@ public class HardwareJewel {
 
         servoJewel.setPosition(position);
     }
+    public void reverseServo () {
+        servoJewel.setDirection(Servo.Direction.REVERSE);
+    }
+
     public HardwareColorSensor.Color WhatColor (){
         return jewelSensor.WhatColor();
     }
