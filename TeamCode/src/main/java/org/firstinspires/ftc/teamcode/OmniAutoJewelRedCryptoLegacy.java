@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -11,9 +13,9 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelRedCrypto", group="Omni")
-//@Disable
-public class OmniAutoJewelRedCrypto extends OpMode {
+@Autonomous(name="Omni: AutoJewelRedCryptoLegacy", group="Omni")
+@Disabled
+public class OmniAutoJewelRedCryptoLegacy extends OpMode {
     public enum MotorState{
         WAIT_START,
         CHECK_COLOR,
@@ -151,18 +153,19 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 OmniBot.jewelSystem.setJewelUp();
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
-                nextState = MotorState.RESETONPLATFORM ;
-                OmniBot.resetFirstPIDDrive();
-                targetHeading = (float) initialHeading ;
+                nextState = MotorState.WAIT ;
+                stateAfterNext = MotorState.RESETONPLATFORM ;
                 RobotLog.i("initial heading " + initialHeading) ;
 
                 break;
             case RESETONPLATFORM:
+                 targetHeading =  (float) initialHeading ;
+                OmniBot.resetFirstPIDDrive();
                 OmniBot.driveOmniBot(0, 0, targetHeading, PIDAxis.gyro);
                 RobotLog.i("corrector is " + OmniBot.correction) ;
                 if (Math.abs(currentHeading - targetHeading) <= 3) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
-                    nextState =MotorState.WAIT ;
+                    nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
                 }
                 break;

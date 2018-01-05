@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PWMOutput;
+import com.qualcomm.robotcore.util.RobotLog;
 
 
 public class HardwareColorSensor {
@@ -33,6 +34,10 @@ public class HardwareColorSensor {
     }
 
     public Color WhatColor (){
+
+        RobotLog.i("color blue " + colorSensor.blue()) ;
+        RobotLog.i("color red " + colorSensor.red()) ;
+
         if (colorSensor.red() > colorSensor.blue()) {
             return Color.Red ;
         }

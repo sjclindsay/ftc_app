@@ -50,13 +50,12 @@ public class PIDController
         long time = System.currentTimeMillis();
         long period = time - lastTime_;
         double error  = setPoint_ - newInput;
-        errorSum_ +=  0 ; // (error * period);
+        errorSum_ +=  (error * period);
         double derError = 0;//(error - lastError_) / period;
 
         double output = (kp_ * error) + (ki_ * errorSum_) + (kd_ * derError);
 
-        RobotLog.i("PID error is " + error);
-        RobotLog.i("PID output is " + output) ;
+        RobotLog.i("PID error is " + error + "; PID output is " + output + "; errorsum is " + errorSum_);
 
         lastError_ = error;
         lastTime_ = time;
