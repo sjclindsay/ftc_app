@@ -23,17 +23,6 @@ public class PIDController
     private PIDController() {}
 
     /* Constructor */
-    public PIDController(double setPoint){
-        setPoint_ = setPoint;
-        lastError_ = 0;
-        lastTime_ = System.currentTimeMillis();
-        errorSum_ = 0;
-
-        kp_ = (float)0.0004 ;
-        ki_ = (float)0;
-        kd_ = (float)0;
-    }
-
     public PIDController(double setPoint, double kp, double ki, double kd){
         setPoint_ = setPoint;
         lastError_ = 0;

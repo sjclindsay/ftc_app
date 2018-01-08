@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -31,16 +32,23 @@ public class HardwareJewel {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap,String servoJewelName) {
+    public void init(HardwareMap ahwMap,HardwareColorSensor.Color targColor) {
+        String servoJewelName = "";
         // Save reference to Hardware map
         hwMap = ahwMap;
-
+        if(targColor == HardwareColorSensor.Color.Red) {
+            servoJewelName = "servoJewelRed";
+        } else if(targColor == HardwareColorSensor.Color.Blue) {
+            servoJewelName = "servoJewelBlue";
+        } else {
+            RobotLog.e("No Target Color Passed");
+        }
         servoJewel = hwMap.servo.get(servoJewelName) ;
         servoJewel.setPosition(servoJewelInitalPosition);
 
 
         jewelSensor = new HardwareColorSensor();
-        jewelSensor.init(hwMap);
+        jewelSensor.init(hwMap, targColor);
 
     }
 

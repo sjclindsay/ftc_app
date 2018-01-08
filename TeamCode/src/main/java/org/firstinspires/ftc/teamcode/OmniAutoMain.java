@@ -48,7 +48,7 @@ public class OmniAutoMain extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
 
         int count = 0;
 

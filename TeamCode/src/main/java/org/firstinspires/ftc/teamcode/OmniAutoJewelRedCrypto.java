@@ -61,7 +61,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
@@ -82,11 +82,12 @@ public class OmniAutoJewelRedCrypto extends OpMode {
         if(currentState != nextState) {
             //RobotLog.i("Change State to " + nextState);
         }
-        RobotLog.i("current state is " + currentState) ;
+
 
         currentHeading = OmniBot.getcurrentHeading() ;
 
         currentState = nextState;
+        RobotLog.i("current state is " + currentState) ;
 
         switch(nextState) {
             case DELAY:
@@ -123,7 +124,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 //}
                 break;
             case TURN_COUNTERCLOCKWISE:
-                targetHeading = (float) (currentHeading + 180.0);
+                targetHeading = (float) (currentHeading + 180);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 WaitTimer.reset();
                 nextState = MotorState.HitWait;
@@ -191,7 +192,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 break;
             case DRIVETOWALL:
                 OmniBot.driveOmniBot((float) 0.1, 0, (float) initialHeading, PIDAxis.gyro);
-                if ( OmniBot.crypto.cryptoBoxEndTouch.getState() /*Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 2 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 2 || OmniBot.gyroScope.currentAccelerationZ >= 2*/) {
+                if ( OmniBot.crypto.isEndTouched() /*Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 2 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 2 || OmniBot.gyroScope.currentAccelerationZ >= 2*/) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
                     WaitTimer.reset();
@@ -255,7 +256,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 break;
         }
 
-        if (OmniBot.crypto.cryptoBoxEndTouch.getState()) {
+        if (OmniBot.crypto.isEndTouched()) {
             RobotLog.i("End crypto touch is hit" ) ;
         }
 

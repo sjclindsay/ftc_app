@@ -17,14 +17,27 @@ public class HardwareColorSensor {
     ColorSensor colorSensor;   // Hardware Device Object
     HardwareMap hwMap = null;
 
-    public void init (HardwareMap ahwMap){
+    public void init (HardwareMap ahwMap, HardwareColorSensor.Color targColor){
+        String smackerSensorName = "";
+        String smackerLEDName = "";
         hwMap = ahwMap ;
 
-        sensorLED = hwMap.pwmOutput.get("LED");
+        if(targColor == Color.Red) {
+            smackerSensorName = "SmackerColorSensor";
+            smackerLEDName = "LED";
+        } else if(targColor == Color.Blue) {
+            smackerSensorName = "SmackerColorSensorBlue";
+            smackerLEDName = "LEDBlue";
+        } else {
+            RobotLog.e("ERROR: No target Color passed");
+        }
+
+        sensorLED = hwMap.pwmOutput.get(smackerLEDName);
         sensorLED.setPulseWidthPeriod(20000);
         sensorLED.setPulseWidthOutputTime(10);
 
-        colorSensor = hwMap.colorSensor.get ("SmackerColorSensor") ;
+
+        colorSensor = hwMap.colorSensor.get (smackerSensorName) ;
     }
 
     public enum Color {

@@ -93,7 +93,7 @@ public class HardwareOmniBot
     protected HardwareLifter lifter = null ;
     public HardwareVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
-    protected HardwareCryptoBox crypto = null ;
+    protected HardwareCryptoBoxLegacy crypto = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     protected boolean FirstCallPIDDrive = true;
@@ -171,7 +171,7 @@ public class HardwareOmniBot
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, HardwareColorSensor.Color targColor) {
 
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -205,14 +205,14 @@ public class HardwareOmniBot
             RobotLog.i("Init COmplete Lifter");
         }
         if (cryptoConnected) {
-            crypto = new HardwareCryptoBox() ;
+            crypto = new HardwareCryptoBoxLegacy() ;
             RobotLog.i("defined crypto class") ;
             crypto.init(hwMap) ;
         }
         if (jewelConnected){
             jewelSystem = new HardwareJewel();
             RobotLog.i("Jewel Defined");
-            jewelSystem.init(hwMap, "servoJewelRed");
+            jewelSystem.init(hwMap, targColor);
         }
 
         // Set all motors to zero power
@@ -284,7 +284,10 @@ public class HardwareOmniBot
     }
     public double getCurrentAccelerationY () {return (gyroScope.currentAccelerationY) ; }
 
-    public void resetFirstPIDDrive () { FirstCallPIDDrive = true; }
+    public void resetFirstPIDDrive () {
+        RobotLog.i("ResetFirstCall FIxed");
+        FirstCallPIDDrive = true;
+    }
 
     public void gyroDriveStaight(double Speed, double targetHeading) {
         double correction = 0.0;
@@ -292,7 +295,7 @@ public class HardwareOmniBot
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
-            motorPID = new PIDController(targetHeading);
+            motorPID = new PIDController(targetHeading, 0.008, 0.000010, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -319,7 +322,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
 
-            motorPID = new PIDController(targetHeading, 0.0040, 0.00010, 0);
+            motorPID = new PIDController(targetHeading, 0.0008, 0.000010, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -350,7 +353,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingTY);
 
-            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -374,7 +377,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingRY);
 
-            motorPID = new PIDController(targetHeading, 0.003, 0, 0);
+            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -396,7 +399,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingTZ);
 
-            motorPID = new PIDController(targetHeading, 0.002, 0, 0);
+            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
             FirstCallPIDDrive = false;
         }
 

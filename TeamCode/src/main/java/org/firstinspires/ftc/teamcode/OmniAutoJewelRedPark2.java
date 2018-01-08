@@ -51,7 +51,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
@@ -140,7 +140,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 break;
             case DRIVETOSAFEZONE:
                 //OmniBot.driveOmniBot( (float) 0.2, 0, targetHeading, PIDAxis.gyro);
-                if (OmniBot.crypto.cryptoBoxEndTouch.getState() || WaitTimer.time() >= 5000) {
+                if (OmniBot.crypto.isEndTouched() || WaitTimer.time() >= 5000) {
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;

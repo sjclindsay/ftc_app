@@ -68,7 +68,7 @@ public class SBDVuMarkHW extends OpMode {
     @Override
     public void init () {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
 
         composeTelemetry();
 

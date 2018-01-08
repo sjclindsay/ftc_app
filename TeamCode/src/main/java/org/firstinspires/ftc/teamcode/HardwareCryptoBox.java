@@ -60,7 +60,7 @@ public class HardwareCryptoBox {
     public boolean updateCryptoTouch2() {
         return cryptoBoxTouch2.getState();
     }
-    public boolean updateCryptoEndTouch() {
+    public boolean isEndTouched() {
         return cryptoBoxEndTouch.getState();
     }
 

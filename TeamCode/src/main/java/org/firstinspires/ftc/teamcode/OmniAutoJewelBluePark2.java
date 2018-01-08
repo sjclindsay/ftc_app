@@ -50,7 +50,7 @@ public class OmniAutoJewelBluePark2 extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Blue);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
