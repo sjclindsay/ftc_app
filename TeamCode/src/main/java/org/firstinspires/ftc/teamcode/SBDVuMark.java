@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
@@ -54,7 +54,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
  * is explained in {@ link ConceptVuforiaNavigation}.
  */
 @TeleOp(name="Omni: SBDVuMark", group="Omni")
-
+@Disabled
 
 public class SBDVuMark extends OpMode {
 

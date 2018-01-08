@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 /**
  * Created by conno on 8/17/2017.
  */
 
 @TeleOp(name="Omni: AutoOp1", group="Omni")
-
+@Disabled
 
 public class OmniAutoOp1 extends OpMode {
     public enum MotorState{

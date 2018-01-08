@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by conno on 8/17/2017.
  */
 
 @TeleOp(name="Omni: AutoOp2", group="Omni")
-
+@Disabled
 
 public class OmniAutoOp2 extends OpMode {
     public enum MotorState{

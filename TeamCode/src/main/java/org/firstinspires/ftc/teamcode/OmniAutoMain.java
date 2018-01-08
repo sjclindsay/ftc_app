@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by conno on 8/17/2017.
  */
 
 @TeleOp(name="Omni: Auto Main", group="Omni")
-
+@Disabled
 
 public class OmniAutoMain extends OpMode {
     public enum MotorState{
