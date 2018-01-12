@@ -97,6 +97,8 @@ public class HardwareOmniBot
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     protected boolean FirstCallPIDDrive = true;
+    protected double kp = 0.0055 ;
+    protected double ki = 0.000010 ;
     public double correction = 0.0 ;
 
 
@@ -284,9 +286,12 @@ public class HardwareOmniBot
     }
     public double getCurrentAccelerationY () {return (gyroScope.currentAccelerationY) ; }
 
-    public void resetFirstPIDDrive () {
+    public void resetFirstPIDDrive (double kp_, double ki_) {
         RobotLog.i("ResetFirstCall FIxed");
         FirstCallPIDDrive = true;
+
+        kp = kp_ ;
+        ki = ki_ ;
     }
 
     public void gyroDriveStaight(double Speed, double targetHeading) {
@@ -295,7 +300,7 @@ public class HardwareOmniBot
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
-            motorPID = new PIDController(targetHeading, 0.008, 0.000010, 0);
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
             FirstCallPIDDrive = false;
         }
 
@@ -539,7 +544,7 @@ public class HardwareOmniBot
         period.reset();
         if(gyroConnected) {
             gyroScope.Update();
-            gyroScope.UpdateAcceleration();
+            //gyroScope.UpdateAcceleration();
         }
 
         RobotLog.i("Motor Powers: 00: " + power00 + ", 01: " + power01 + ", 10: " + power10 + ", 11: " + power11) ;

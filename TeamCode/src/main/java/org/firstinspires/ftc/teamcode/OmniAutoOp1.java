@@ -47,7 +47,7 @@ public class OmniAutoOp1 extends OpMode {
         leftStickY = -gamepad1.left_stick_y ;
 
         if ((gamepad1.a && !controller1) || (gamepad2.a && !controller2)) {
-            OmniBot.resetFirstPIDDrive();
+            OmniBot.resetFirstPIDDrive(0.0055, 0);
         }
 
         if (gamepad1.a || controller1) {

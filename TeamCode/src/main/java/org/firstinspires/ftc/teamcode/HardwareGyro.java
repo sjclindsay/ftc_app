@@ -96,7 +96,7 @@ public class HardwareGyro {
     public void start() {
 
 
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
+        //imu.startAccelerationIntegration(new Position(), new Velocity(), 200);
     }
 
     public void addTelemetry(Telemetry telemetry){
@@ -130,7 +130,7 @@ public class HardwareGyro {
                         return formatedAngleX();
                     }
                 });
-        telemetry.addLine()
+        /*telemetry.addLine()
                 .addData("AccelerationX", new Func<String>() {
                     @Override
                     public String value() {
@@ -147,11 +147,13 @@ public class HardwareGyro {
             public String value() {
                 return FormatHelper.formatDouble(currentAccelerationZ) ;
             }
-        });
+        }) */
+        ;
 
     }
 
     public void Update (){
+
         angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         currentHeadingZ = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
         currentHeadingY = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.secondAngle));
@@ -169,11 +171,13 @@ public class HardwareGyro {
     public String formatedAngleX() {
         return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingX);
     }
+    /*
     public void UpdateAcceleration () {
         acceleration = imu.getLinearAcceleration().toUnit(DistanceUnit.METER);
         currentAccelerationZ = acceleration.zAccel ;
         currentAccelerationY = acceleration.yAccel ;
         currentAccelerationX = acceleration.xAccel ;
     }
+   */
 
 }
