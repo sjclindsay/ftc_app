@@ -13,6 +13,7 @@ public class HardwareColorSensor {
 
     private int RED_Threshold = 30000;
     private int BLUE_Threshold = 30000;
+    public static int counter = 0 ;
     public PWMOutput sensorLED = null;
     ColorSensor colorSensor;   // Hardware Device Object
     HardwareMap hwMap = null;
@@ -48,8 +49,11 @@ public class HardwareColorSensor {
 
     public Color WhatColor (){
 
+
         RobotLog.i("color blue " + colorSensor.blue()) ;
         RobotLog.i("color red " + colorSensor.red()) ;
+
+        counter++ ;
 
         if (colorSensor.red() > colorSensor.blue()) {
             return Color.Red ;

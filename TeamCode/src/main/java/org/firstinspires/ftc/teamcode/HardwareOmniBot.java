@@ -251,8 +251,8 @@ public class HardwareOmniBot
         }
     }
 
-    public void lowerServoJewel () { servoJewel.setPosition(0.5) ; }
-    public void raiseServoJewel () { servoJewel.setPosition(0) ; }
+    public void lowerServoJewel () { jewelSystem.lowerServoJewel(); }
+    public void raiseServoJewel () { jewelSystem.raiseServoJewel(); }
 
 
     public boolean updateCryptoTouch1() {
@@ -294,31 +294,6 @@ public class HardwareOmniBot
         ki = ki_ ;
     }
 
-    public void gyroDriveStaight(double Speed, double targetHeading) {
-        double correction = 0.0;
-        double currentDiff = 0.0;
-        if(FirstCallPIDDrive) {
-            RobotLog.i("Set up PID Target " + targetHeading);
-            RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
-            motorPID = new PIDController(targetHeading, kp, ki, 0);
-            FirstCallPIDDrive = false;
-        }
-
-        currentDiff = targetHeading - gyroScope.currentHeadingZ;
-        correction = motorPID.Update(gyroScope.currentHeadingZ);
-
-        double motorPower00 = Range.clip(Speed-correction, motorPowerMin, motorPowerMax);
-        double motorPower01 = Range.clip(Speed-correction, motorPowerMin, motorPowerMax);
-        double motorPower10 = Range.clip(Speed+correction, motorPowerMin, motorPowerMax);
-        double motorPower11 = Range.clip(Speed+correction, motorPowerMin, motorPowerMax);
-
-        Motor00.setPower(motorPower00);
-        Motor01.setPower(motorPower01);
-        Motor10.setPower(motorPower10);
-        Motor11.setPower(motorPower11);
-
-
-    }
 
     public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
         double currentDiff = 0.0;
@@ -327,7 +302,7 @@ public class HardwareOmniBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
 
-            motorPID = new PIDController(targetHeading, 0.0008, 0.000010, 0);
+            motorPID = new PIDController(targetHeading, kp, 0, 0);
             FirstCallPIDDrive = false;
         }
 

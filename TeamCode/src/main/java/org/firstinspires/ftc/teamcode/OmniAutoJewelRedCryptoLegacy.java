@@ -111,6 +111,7 @@ public class OmniAutoJewelRedCryptoLegacy extends OpMode {
             case CHECK_COLOR:
                 RobotLog.i("In CHECK_COLOR");
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
+                OmniBot.resetFirstPIDDrive(1.0, 0.000010);
                 OmniBot.jewelSystem.led_low();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
@@ -262,8 +263,10 @@ public class OmniAutoJewelRedCryptoLegacy extends OpMode {
             RobotLog.i("End crypto touch is hit" ) ;
         }
 
-        telemetry.update();
+        //telemetry.update();
         OmniBot.waitForTick(40);
+
+        RobotLog.i("end loop") ;
     }
 
     @Override

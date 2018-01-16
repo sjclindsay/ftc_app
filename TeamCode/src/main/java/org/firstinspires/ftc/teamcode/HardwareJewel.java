@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class HardwareJewel {
 
     private Servo servoJewel = null;
+    private Servo unimportantServoJewel = null ;
     private HardwareColorSensor jewelSensor;
 
 
@@ -34,18 +35,32 @@ public class HardwareJewel {
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap,HardwareColorSensor.Color targColor) {
         String servoJewelName = "";
+        String servoNullName =  "" ;
         // Save reference to Hardware map
         hwMap = ahwMap;
         if(targColor == HardwareColorSensor.Color.Red) {
             servoJewelName = "servoJewelRed";
+            servoNullName = "servoJewelBlue";
         } else if(targColor == HardwareColorSensor.Color.Blue) {
             servoJewelName = "servoJewelBlue";
+            servoNullName = "servoJewelRed" ;
         } else {
             RobotLog.e("No Target Color Passed");
         }
         servoJewel = hwMap.servo.get(servoJewelName) ;
-        servoJewel.setPosition(servoJewelInitalPosition);
+        unimportantServoJewel = hwMap.servo.get(servoNullName) ;
 
+        if (targColor == HardwareColorSensor.Color.Red) {
+            servoJewel.setPosition(servoJewelInitalPosition);
+        } else if (targColor == HardwareColorSensor.Color.Blue) {
+            servoJewel.setPosition(1);
+        }
+
+        if (targColor == HardwareColorSensor.Color.Red) {
+            unimportantServoJewel.setPosition(1);
+        } else if (targColor == HardwareColorSensor.Color.Blue) {
+            unimportantServoJewel.setPosition(0);
+        }
 
         jewelSensor = new HardwareColorSensor();
         jewelSensor.init(hwMap, targColor);
@@ -57,6 +72,22 @@ public class HardwareJewel {
     }
 
     //put functions here
+
+    public void raiseServoJewel() {
+        if (servoJewel.getDeviceName() == "servoJewelRed") {
+            servoJewel.setPosition(0);
+        } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
+            servoJewel.setPosition(0);
+        }
+    }
+
+    public void lowerServoJewel() {
+        if (servoJewel.getDeviceName() == "servoJewelRed") {
+            servoJewel.setPosition(0.5);
+        } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
+            servoJewel.setPosition(0.5);
+        }
+    }
 
     public void setServoJewelPosition(double position) {
 

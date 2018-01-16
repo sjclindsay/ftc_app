@@ -66,7 +66,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
         int count = 0;
         currentState = MotorState.WAIT_START;
         nextState = MotorState.WAIT_START;
-        composeTelemetry();
+        //composeTelemetry();
     }
 
     @Override
@@ -78,6 +78,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
 
     @Override
     public void loop() {
+
         waitTimer = WaitTimer.time();
         if(currentState != nextState) {
             //RobotLog.i("Change State to " + nextState);
@@ -110,6 +111,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
             case CHECK_COLOR:
                 RobotLog.i("In CHECK_COLOR");
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
+                OmniBot.resetFirstPIDDrive(1, 0.000010);
                 OmniBot.jewelSystem.led_low();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
@@ -117,6 +119,8 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
+                } else {
+                    HardwareColorSensor.counter = 0 ;
                 }
 
                 //if (StabilizationTimer.time() > 5000) {
@@ -191,7 +195,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 nextState = MotorState.DRIVETOWALL ;
                 break;
             case DRIVETOWALL:
-                OmniBot.driveOmniBot((float) 0.1, 0, (float) initialHeading, PIDAxis.gyro);
+                OmniBot.driveOmniBot((float) 0.15, 0, (float) initialHeading, PIDAxis.gyro);
                 if ( OmniBot.crypto.isEndTouched() /*Math.abs(OmniBot.gyroScope.currentAccelerationY) >= 2 || Math.abs(OmniBot.gyroScope.currentAccelerationX) >= 2 || OmniBot.gyroScope.currentAccelerationZ >= 2*/) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.WAIT ;
@@ -260,8 +264,9 @@ public class OmniAutoJewelRedCrypto extends OpMode {
             RobotLog.i("End crypto touch is hit" ) ;
         }
 
-        telemetry.update();
+        //telemetry.update();
         OmniBot.waitForTick(40);
+        RobotLog.i("end loop") ;
     }
 
     @Override
