@@ -77,7 +77,7 @@ public class HardwareJewel {
         if (servoJewel.getDeviceName() == "servoJewelRed") {
             servoJewel.setPosition(0);
         } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
-            servoJewel.setPosition(0);
+            servoJewel.setPosition(1);
         }
     }
 
