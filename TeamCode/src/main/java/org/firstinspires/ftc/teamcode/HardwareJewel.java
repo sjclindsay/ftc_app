@@ -50,17 +50,15 @@ public class HardwareJewel {
         servoJewel = hwMap.servo.get(servoJewelName) ;
         unimportantServoJewel = hwMap.servo.get(servoNullName) ;
 
-        if (targColor == HardwareColorSensor.Color.Red) {
-            servoJewel.setPosition(servoJewelInitalPosition);
-        } else if (targColor == HardwareColorSensor.Color.Blue) {
-            servoJewel.setPosition(1);
-        }
 
         if (targColor == HardwareColorSensor.Color.Red) {
-            unimportantServoJewel.setPosition(1);
+            servoJewel.setPosition(servoJewelInitalPosition);
+            unimportantServoJewel.setPosition(servoJewelDownPosition);
         } else if (targColor == HardwareColorSensor.Color.Blue) {
-            unimportantServoJewel.setPosition(0);
+            servoJewel.setPosition(servoJewelDownPosition);
+            unimportantServoJewel.setPosition(servoJewelInitalPosition);
         }
+
 
         jewelSensor = new HardwareColorSensor();
         jewelSensor.init(hwMap, targColor);
@@ -77,7 +75,7 @@ public class HardwareJewel {
         if (servoJewel.getDeviceName() == "servoJewelRed") {
             servoJewel.setPosition(0);
         } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
-            servoJewel.setPosition(1);
+            servoJewel.setPosition(0);
         }
     }
 
