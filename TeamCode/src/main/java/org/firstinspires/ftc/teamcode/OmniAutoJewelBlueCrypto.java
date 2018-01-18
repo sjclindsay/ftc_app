@@ -11,9 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelRedCrypto", group="Omni")
+@Autonomous(name="Omni: AutoJewelBlueCrypto", group="Omni")
 //@Disable
-public class OmniAutoJewelRedCrypto extends OpMode {
+public class OmniAutoJewelBlueCrypto extends OpMode {
     public enum MotorState{
         WAIT_START,
         CHECK_COLOR,
@@ -61,7 +61,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Blue);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
@@ -113,10 +113,10 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
                 OmniBot.resetFirstPIDDrive(1, 0.000010);
                 OmniBot.jewelSystem.led_low();
-                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
+                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Blue) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
-                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
+                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Red) {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 } else {
@@ -167,7 +167,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 RobotLog.i("corrector is " + OmniBot.correction) ;
                 if (Math.abs(currentHeading - targetHeading) <= 3) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
-                    nextState =MotorState.WAIT ;
+                    nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM ;
                 }
                 break;
@@ -205,7 +205,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 }
                 break;
             case FINDCRYPTOBAR:
-                OmniBot.driveOmniBot((float) 0.1, 90, (float) squareHeading, PIDAxis.gyro );
+                OmniBot.driveOmniBot((float) -0.1, 90, (float) squareHeading, PIDAxis.gyro );
                 RobotLog.i("touch 2 is " + OmniBot.crypto.cryptoBoxTouchValue2) ;
                 if ( WaitTimer.milliseconds() >=3000 ) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
@@ -224,7 +224,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 stateAfterNext = MotorState.RElEIVECRYPTOTENSION;
                 break;
             case RElEIVECRYPTOTENSION:
-                OmniBot.driveOmniBot((float) -0.1, 90,(float) squareHeading, PIDAxis.gyro);
+                OmniBot.driveOmniBot((float) 0.1, 90,(float) squareHeading, PIDAxis.gyro);
                 if (!OmniBot.crypto.cryptoBoxTouchValue2) {
                     OmniBot.setBotMovement(0, 0, 0, 0);
                     OmniBot.resetFirstPIDDrive(0.0008, 0.000010);
@@ -233,7 +233,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 }
                 break;
             case PASSOVERCRYPTOBAR:
-                OmniBot.driveOmniBot((float) 0.1, 90, (float) squareHeading, PIDAxis.gyro);
+                OmniBot.driveOmniBot((float) -0.1, 90, (float) squareHeading, PIDAxis.gyro);
                 if (WaitTimer.time() >= 750) {
                     WaitTimer.reset();
                     OmniBot.resetFirstPIDDrive(0.0008, 0.000010);

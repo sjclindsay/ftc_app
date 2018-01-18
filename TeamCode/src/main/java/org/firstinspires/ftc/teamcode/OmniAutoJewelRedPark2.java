@@ -86,7 +86,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 }
                 break;
             case WAIT_START:
-                OmniBot.jewelSystem.setJewelDown();
+                OmniBot.jewelSystem.lowerServoJewel();
                 nextState = MotorState.DELAY;
                 delay_time = 0.5;
                 stateAfterNext = MotorState.CHECK_COLOR;
@@ -126,7 +126,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 }
                 break;
             case STOP_MOVING:
-                OmniBot.jewelSystem.setJewelUp();
+                OmniBot.jewelSystem.raiseServoJewel();
                 OmniBot.crypto.lowerCryptoServo();
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();

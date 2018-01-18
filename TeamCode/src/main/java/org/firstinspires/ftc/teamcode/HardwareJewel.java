@@ -13,11 +13,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Created by matth on 9/16/2017.
  */
 
+enum connectedColor {
+    RED,
+    BLUE
+}
+
 public class HardwareJewel {
 
     private Servo servoJewel = null;
     private Servo unimportantServoJewel = null ;
     private HardwareColorSensor jewelSensor;
+    private connectedColor colorSide = null ;
 
 
     public static float servoJewelMaxPosition = (float) 1.0;
@@ -41,9 +47,11 @@ public class HardwareJewel {
         if(targColor == HardwareColorSensor.Color.Red) {
             servoJewelName = "servoJewelRed";
             servoNullName = "servoJewelBlue";
+            colorSide = connectedColor.RED ;
         } else if(targColor == HardwareColorSensor.Color.Blue) {
             servoJewelName = "servoJewelBlue";
             servoNullName = "servoJewelRed" ;
+            colorSide = connectedColor.BLUE ;
         } else {
             RobotLog.e("No Target Color Passed");
         }
@@ -72,18 +80,18 @@ public class HardwareJewel {
     //put functions here
 
     public void raiseServoJewel() {
-        if (servoJewel.getDeviceName() == "servoJewelRed") {
-            servoJewel.setPosition(0);
-        } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
-            servoJewel.setPosition(0);
+        if (colorSide == connectedColor.RED) {
+            servoJewel.setPosition(servoJewelInitalPosition);
+        } else if (colorSide == connectedColor.BLUE ){
+            servoJewel.setPosition(0.7);
         }
     }
 
     public void lowerServoJewel() {
-        if (servoJewel.getDeviceName() == "servoJewelRed") {
-            servoJewel.setPosition(0.5);
-        } else if (servoJewel.getDeviceName() == "servoJewelBlue" ){
-            servoJewel.setPosition(0.5);
+        if (colorSide == connectedColor.RED) {
+            servoJewel.setPosition(servoJewelDownPosition);
+        } else if ( colorSide == connectedColor.BLUE){
+            servoJewel.setPosition(0);
         }
     }
 
@@ -113,13 +121,6 @@ public class HardwareJewel {
         jewelSensor.sensorLED.setPulseWidthOutputTime(100);
     }
 
-    public void setJewelDown() {
-        setServoJewelPosition(servoJewelDownPosition);
-    }
-
-    public void setJewelUp() {
-        servoJewel.setPosition(servoJewelInitalPosition);
-    }
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
