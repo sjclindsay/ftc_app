@@ -30,7 +30,7 @@ public class PIDController
         errorSum_ = 0;
 
         kp_ = kp;
-        ki_ = ki;
+        ki_ = ki ;
         kd_ = kd;
     }
 

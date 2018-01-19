@@ -74,7 +74,7 @@ public class OmniAutoJewelBlue extends OpMode {
             case DELAY:
                 current_delay = getRuntime() - last_time;
                 RobotLog.i("Delay Time " + current_delay);
-                if(current_delay >= delay_time) {
+                if(OmniBot.gyroScope.gyroInitialized) {
                     nextState = stateAfterNext;
                 }
                 break;
@@ -88,7 +88,8 @@ public class OmniAutoJewelBlue extends OpMode {
             case CHECK_COLOR:
                 RobotLog.i("In CHECK_COLOR");
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
-                OmniBot.jewelSystem.led_low();
+                OmniBot.resetFirstPIDDrive(1, 0.000010);
+                OmniBot.jewelSystem.led_high();
                 if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
@@ -98,12 +99,12 @@ public class OmniAutoJewelBlue extends OpMode {
                 }
                 break;
             case TURN_COUNTERCLOCKWISE:
-                targetHeading = (float) (currentHeading + 100.0);
+                targetHeading = (float) (currentHeading + 180.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 100.0);
+                targetHeading = (float) (currentHeading - 180.0);
                 OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
                 nextState = MotorState.HitWait ;
                 break;

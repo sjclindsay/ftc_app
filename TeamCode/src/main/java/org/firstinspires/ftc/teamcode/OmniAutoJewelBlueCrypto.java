@@ -97,7 +97,7 @@ public class OmniAutoJewelBlueCrypto extends OpMode {
                 initialGyroYHeading = OmniBot.gyroScope.currentHeadingY ;
                 squareHeading = currentHeading ;
                 //RobotLog.i("Delay Time " + current_delay);
-                if(current_delay >= delay_time) {
+                if(OmniBot.gyroScope.gyroInitialized) {
                     nextState = stateAfterNext;
                 }
                 break;

@@ -483,7 +483,7 @@ public class HardwareOmniBot
             lifter.addTelemetry(telemetry);
         }
         if(jewelConnected) {
-            jewelSystem.addTelemetry(telemetry);
+            //jewelSystem.addTelemetry(telemetry);
         }
         if(cryptoConnected) {
             crypto.addTelemetry(telemetry);

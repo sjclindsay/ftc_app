@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  */
 
 @Autonomous(name="Omni: AutoJewelRedPark2", group="Omni")
-//@Disable
+@Disabled
 public class OmniAutoJewelRedPark2 extends OpMode {
     public enum MotorState{
         WAIT_START,

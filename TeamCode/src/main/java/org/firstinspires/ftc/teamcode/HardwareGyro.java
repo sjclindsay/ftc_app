@@ -41,6 +41,7 @@ public class HardwareGyro {
     public double currentAccelerationZ = 0.0;
     public double currentAccelerationY = 0.0;
     public double currentAccelerationX = 0.0;
+    public boolean gyroInitialized = false ;
     private Orientation angles = null;
     private Acceleration acceleration = null ;
     private Acceleration gravity = null;
@@ -79,6 +80,7 @@ public class HardwareGyro {
             imu.initialize(parameters);
 
             RobotLog.i("gyro initialized");
+            gyroInitialized = true ;
         }
     } ;
 

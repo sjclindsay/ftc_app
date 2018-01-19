@@ -97,7 +97,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 initialGyroYHeading = OmniBot.gyroScope.currentHeadingY ;
                 squareHeading = currentHeading ;
                 //RobotLog.i("Delay Time " + current_delay);
-                if(current_delay >= delay_time) {
+                if(OmniBot.gyroScope.gyroInitialized) {
                     nextState = stateAfterNext;
                 }
                 break;
@@ -157,7 +157,7 @@ public class OmniAutoJewelRedCrypto extends OpMode {
                 OmniBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
                 nextState = MotorState.RESETONPLATFORM ;
-                OmniBot.resetFirstPIDDrive(0.0008, 0.000010);
+                OmniBot.resetFirstPIDDrive(0.0055, 0.000010);
                 targetHeading = (float) initialHeading ;
                 RobotLog.i("initial heading " + initialHeading) ;
 
