@@ -15,8 +15,8 @@ public class HardwareGrabber {
 
     Servo servoGrabber1 = null;
     Servo servoGrabber2 = null;
-    public static float servoGrabberMaxPosition = (float) 0.7;
-    public static float servoGrabberMinPosition = (float) 0.19;
+    public static float servoGrabberMaxPosition = (float) 1.0;
+    public static float servoGrabberMinPosition = (float) 0.0;
     public static float servoGrabberStartPosition = servoGrabberMinPosition;
 
     HardwareMap hwMap = null;
@@ -56,7 +56,7 @@ public class HardwareGrabber {
 
     public void setServoGrabber2Position(double position) {
 
-        position = position * 0.35 + 0.21;
+        position = position * 0.35 + 0.30  ; //0.21;
 
         position = Range.clip(position, servoGrabberMinPosition, servoGrabberMaxPosition);
 

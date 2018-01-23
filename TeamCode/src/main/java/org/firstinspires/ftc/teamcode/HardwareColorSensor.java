@@ -26,9 +26,11 @@ public class HardwareColorSensor {
         if(targColor == Color.Red) {
             smackerSensorName = "SmackerColorSensor";
             smackerLEDName = "LED";
+            RobotLog.i("init to red") ;
         } else if(targColor == Color.Blue) {
             smackerSensorName = "SmackerColorSensorBlue";
             smackerLEDName = "LEDBlue";
+            RobotLog.i("init to blue") ;
         } else {
             RobotLog.e("ERROR: No target Color passed");
         }
@@ -39,6 +41,7 @@ public class HardwareColorSensor {
 
 
         colorSensor = hwMap.colorSensor.get (smackerSensorName) ;
+        RobotLog.i(" init the color") ;
     }
 
     public enum Color {

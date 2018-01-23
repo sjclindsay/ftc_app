@@ -89,11 +89,11 @@ public class OmniAutoJewelBlue extends OpMode {
                 RobotLog.i("In CHECK_COLOR");
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
                 OmniBot.resetFirstPIDDrive(1, 0.000010);
-                OmniBot.jewelSystem.led_high();
-                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
+                OmniBot.jewelSystem.led_low();
+                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Blue) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
-                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
+                } else if (OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
                 }
@@ -171,7 +171,7 @@ public class OmniAutoJewelBlue extends OpMode {
                     public String value() {
                         return FormatHelper.formatDouble(StabilizationTimer.milliseconds());
                     }
-                }) ;
+                });
         OmniBot.addTelemetry(telemetry);
 
     }
