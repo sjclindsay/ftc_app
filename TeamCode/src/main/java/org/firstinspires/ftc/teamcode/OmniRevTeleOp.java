@@ -27,10 +27,10 @@ import java.util.Locale;
  * Created by conno on 8/17/2017.
  */
 
-@TeleOp(name="Omni: TeleOp1", group="Omni")
+@TeleOp(name="Omni: RevTeleOp", group="Omni")
 
 
-public class OmniTeleOp1 extends OpMode {
+public class OmniRevTeleOp extends OpMode {
 
     float motorLeft1power = 0;
     float motorLeft2power = 0;
