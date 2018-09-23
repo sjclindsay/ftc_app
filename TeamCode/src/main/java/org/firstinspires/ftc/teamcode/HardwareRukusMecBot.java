@@ -49,7 +49,8 @@ enum robotHWconnected {
     MotorGyroLifterVuforCrypto,
     MotorLifterVufor,
     MotorJewel,
-    MotorVufor
+    MotorVufor,
+    VuforOnly
 
 }
 
@@ -81,6 +82,7 @@ public class HardwareRukusMecBot
     protected static final float motorPowerMax = 1 ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
     protected  double maxPower = 1;
+    protected boolean mototConnected = false;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
     protected boolean vuForConnected = false ;
@@ -110,28 +112,37 @@ public class HardwareRukusMecBot
     }
 
     public HardwareRukusMecBot(robotHWconnected ConnectedParts){
+        if(ConnectedParts == robotHWconnected.MotorOnly) {
+            mototConnected = true;
+        }
         if((ConnectedParts == robotHWconnected.MotorGyro) || (ConnectedParts == robotHWconnected.MotorGyroServo)){
+            mototConnected = true;
             gyroConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorLifter) {
+            mototConnected = true;
             lifterConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVufor) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforJewel) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
             jewelConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCryptoJewel) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
@@ -139,34 +150,44 @@ public class HardwareRukusMecBot
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterCrypto) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterCryptoJewel) {
+            mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
             cryptoConnected = true ;
             jewelConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterCrypto) {
+            mototConnected = true;
             lifterConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterCryptoJewel) {
+            mototConnected = true;
             lifterConnected = true ;
             jewelConnected = true ;
             cryptoConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
+            mototConnected = true;
             vuForConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterVufor) {
+            mototConnected = true;
             vuForConnected = true ;
             lifterConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorJewel) {
+            mototConnected = true;
             jewelConnected = true;
+        }
+        if(ConnectedParts == robotHWconnected.VuforOnly) {
+            vuForConnected = true;
         }
     }
 
@@ -176,15 +197,17 @@ public class HardwareRukusMecBot
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
-        Motor00  = hwMap.dcMotor.get("drive_wheel_00");
-        Motor01  = hwMap.dcMotor.get("drive_wheel_01");
-        Motor10  = hwMap.dcMotor.get("drive_wheel_10");
-        Motor11  = hwMap.dcMotor.get("drive_wheel_11");
+        if(mototConnected) {
+            // Define and Initialize Motors
+            Motor00 = hwMap.dcMotor.get("drive_wheel_00");
+            Motor01 = hwMap.dcMotor.get("drive_wheel_01");
+            Motor10 = hwMap.dcMotor.get("drive_wheel_10");
+            Motor11 = hwMap.dcMotor.get("drive_wheel_11");
 
 
-        Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+            Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+            Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        }
         // colorSensor = hwMap.colorSensor.get("colorSensor1");
         if(gyroConnected) {
             gyroScope = new HardwareGyro();
@@ -215,20 +238,21 @@ public class HardwareRukusMecBot
             jewelSystem.init(hwMap, targColor);
         }
 
-        // Set all motors to zero power
-        Motor00.setPower(0);
-        Motor01.setPower(0);
-        Motor10.setPower(0);
-        Motor11.setPower(0);
+        if(mototConnected) {
+            // Set all motors to zero power
+            Motor00.setPower(0);
+            Motor01.setPower(0);
+            Motor10.setPower(0);
+            Motor11.setPower(0);
 
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        Motor00.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Motor10.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Motor11.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+            // Set all motors to run without encoders.
+            // May want to use RUN_USING_ENCODERS if encoders are installed.
+            Motor00.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            Motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            Motor10.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            Motor11.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
 
     public void start() {
@@ -261,7 +285,6 @@ public class HardwareRukusMecBot
     }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
-
 
         motorPower00 = Range.clip(motorPower00, motorPowerMin, motorPowerMax);
         motorPower01 = Range.clip(motorPower01, motorPowerMin, motorPowerMax);
@@ -450,33 +473,34 @@ public class HardwareRukusMecBot
                         }}) ;
 
         }
-
-        telemetry.addLine()
-                .addData("Motor Power 00", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(Motor00.getPower());
-                    }
-                })
-                .addData("Motor Power 01", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(Motor01.getPower());
-                    }
-                });
-        telemetry.addLine()
-                .addData("Motor Power 10", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(Motor10.getPower());
-                    }
-                })
-                .addData("Motor Power 11", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(Motor11.getPower());
-                    }
-                }) ;
+        if(mototConnected) {
+            telemetry.addLine()
+                    .addData("Motor Power 00", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(Motor00.getPower());
+                        }
+                    })
+                    .addData("Motor Power 01", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(Motor01.getPower());
+                        }
+                    });
+            telemetry.addLine()
+                    .addData("Motor Power 10", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(Motor10.getPower());
+                        }
+                    })
+                    .addData("Motor Power 11", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(Motor11.getPower());
+                        }
+                    });
+        }
         if(lifterConnected) {
             lifter.addTelemetry(telemetry);
         }

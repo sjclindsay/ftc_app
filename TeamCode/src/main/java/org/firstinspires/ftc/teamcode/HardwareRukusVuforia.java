@@ -155,7 +155,7 @@ public class HardwareRukusVuforia {
 
         // Load the data sets that for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsRoverRuckus = this.vuforia.loadTrackablesFromAsset("RoverRuckus");
+        targetsRoverRuckus = this.vuforia.loadTrackablesFromAsset("RoverRuckus");
         VuforiaTrackable blueRover = targetsRoverRuckus.get(0);
         blueRover.setName("Blue-Rover");
         VuforiaTrackable redFootprint = targetsRoverRuckus.get(1);
@@ -333,6 +333,10 @@ public class HardwareRukusVuforia {
         }
     }
 
+    public  java.lang.String getTrackableName() {
+        return(currentTrackable.getName());
+    }
+
     public void updateVuforiaCoords(){
 
       OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
@@ -429,46 +433,51 @@ public class HardwareRukusVuforia {
                 // to do that in each of the three items that need that info, as that's
                 // three times the necessary expense.
                 UpdateLocation();
-             }
+            }
         });
-        telemetry.addLine()
-                .addData("Visible Target", currentTrackable.getName());
-        telemetry.addLine()
-                .addData("X Vuforia ", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tX));
-                    }
-                })
-                .addData("X Rot Vuforia ", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rX));
-                    }
-                })
-                .addData("Y Vuforia ", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tY));
-                    }
-                })
-                .addData("Y Rot Vuforia ", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rY));
-                    }
-                }).addData("Z Vuforia ", new Func<String>() {
-            @Override
-            public String value() {
-                return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tZ));
-                }}).addData("Z Rot Vuforia ", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rZ));
-                    }
-                });
-        telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-        telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        if (targetVisible) {
+            telemetry.addLine()
+                    .addData("Visible Target", currentTrackable.getName());
+            telemetry.addLine()
+                    .addData("X Vuforia ", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tX));
+                        }
+                    })
+                    .addData("X Rot Vuforia ", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rX));
+                        }
+                    })
+                    .addData("Y Vuforia ", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tY));
+                        }
+                    })
+                    .addData("Y Rot Vuforia ", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rY));
+                        }
+                    }).addData("Z Vuforia ", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.tZ));
+                }
+            }).addData("Z Rot Vuforia ", new Func<String>() {
+                @Override
+                public String value() {
+                    return FormatHelper.formatDouble(getVuforiaCoords(vuForiaCoord.rZ));
+                }
+            });
+            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        } else {
+            telemetry.addData("Visible Target", "none");
+        }
     }
 }

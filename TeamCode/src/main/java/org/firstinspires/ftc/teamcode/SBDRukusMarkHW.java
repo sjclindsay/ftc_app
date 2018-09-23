@@ -60,7 +60,7 @@ public class SBDRukusMarkHW extends OpMode {
 
 
 
-    private robotHWconnected autoConnectedHW = robotHWconnected.MotorVufor;
+    private robotHWconnected autoConnectedHW = robotHWconnected.VuforOnly;
     private HardwareRukusMecBot MecBot ;
     private boolean targetVisible = false;
     private static final float mmPerInch        = 25.4f;
@@ -91,13 +91,14 @@ public class SBDRukusMarkHW extends OpMode {
     @Override
     public void loop () {
         MecBot.VuReader.UpdateLocation();
-//        RelicRecoveryVuMark vuMark;
+        //        RelicRecoveryVuMark vuMark;
         targetVisible = MecBot.VuReader.isTargetVisible();
 //        OmniBot.VuReader.updateVuforiaCoords();
 
         RobotLog.i("X value is " + MecBot.VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tZ));
         RobotLog.i("X value Rot is " + MecBot.VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rZ));
         if(targetVisible) {
+            telemetry.addData("Visible Target", MecBot.VuReader.getTrackableName());
             VectorF translation = MecBot.VuReader.getTranslation();
             telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                     translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
