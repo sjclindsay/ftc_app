@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.provider.Telephony;
-
-import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,10 +33,37 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
  */
 
+enum robotHWconnected {
+    MotorOnly,
+    MotorLifter,
+    MotorGyro,
+    MotorGyroServo,
+    MotorGyroLifter,
+    MotorGyroLifterVufor,
+    MotorGyroLifterVuforJewel,
+    MotorGyroLifterVuforCryptoJewel,
+    MotorGyroLifterCrypto,
+    MotorGyroLifterCryptoJewel,
+    MotorLifterCrypto,
+    MotorLifterCryptoJewel,
+    MotorGyroLifterVuforCrypto,
+    MotorLifterVufor,
+    MotorJewel,
+    MotorVufor
 
+}
 
+enum PIDAxis {
+    gyro,
+    tx,
+    ty,
+    tz,
+    rx,
+    ry,
+    rz
+}
 
-public class HardwareOmniBot
+public class HardwareRukusMecBot
 {
 
     /* Public OpMode members. */
@@ -64,7 +89,7 @@ public class HardwareOmniBot
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
-    public HardwareVuforia VuReader = null ;
+    public HardwareRukusVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBoxLegacy crypto = null ;
     protected double TargetHeading = 0.0;
@@ -81,10 +106,10 @@ public class HardwareOmniBot
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwareOmniBot(){
+    public HardwareRukusMecBot(){
     }
 
-    public HardwareOmniBot(robotHWconnected ConnectedParts){
+    public HardwareRukusMecBot(robotHWconnected ConnectedParts){
         if((ConnectedParts == robotHWconnected.MotorGyro) || (ConnectedParts == robotHWconnected.MotorGyroServo)){
             gyroConnected = true;
         }
@@ -168,7 +193,7 @@ public class HardwareOmniBot
             RobotLog.i("Init Complete Gyro");
         }
         if (vuForConnected) {
-            VuReader = new HardwareVuforia();
+            VuReader = new HardwareRukusVuforia();
             VuReader.init(hwMap);
             RobotLog.i("defined Vufor") ;
             RobotLog.i("Init Complete Vuforia");
@@ -298,7 +323,7 @@ public class HardwareOmniBot
         double currentHeadingTY = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingTY = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tY) ;
+        currentHeadingTY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY) ;
 
 
 
@@ -320,7 +345,7 @@ public class HardwareOmniBot
         double currentHeadingRY = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingRY = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rY) ;
+        currentHeadingRY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rY) ;
 
 
 
@@ -344,7 +369,7 @@ public class HardwareOmniBot
         double currentHeadingTZ = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingTZ = VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ) ;
+        currentHeadingTZ = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tZ) ;
 
 
 
@@ -396,7 +421,7 @@ public class HardwareOmniBot
         lifter.setLifterGrabber(lifterSpeed, grabberPosition1, grabberPosition2);
     }
 
-    public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
+    public double vuforiaCoordinates (HardwareRukusVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
 
     public void addTelemetry(Telemetry telemetry) {
 

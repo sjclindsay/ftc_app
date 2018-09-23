@@ -28,13 +28,12 @@
  */
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 
@@ -56,19 +55,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained in {@ link ConceptVuforiaNavigation}.
  */
-@TeleOp(name="Omni: SBDVuMarkHW", group="Omni")
-public class SBDVuMarkHW extends OpMode {
+@TeleOp(name="Omni: SBDRukusMarkHW", group="Omni")
+public class SBDRukusMarkHW extends OpMode {
 
 
 
     private robotHWconnected autoConnectedHW = robotHWconnected.MotorVufor;
-    private HardwareOmniBot OmniBot ;
+    private HardwareRukusMecBot MecBot ;
+    private boolean targetVisible = false;
+    private static final float mmPerInch        = 25.4f;
+    private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
+    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+
 
 
     @Override
     public void init () {
-        OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        MecBot = new HardwareRukusMecBot(autoConnectedHW) ;
+        MecBot.init(hardwareMap, HardwareColorSensor.Color.Red);
 
         composeTelemetry();
 
@@ -77,7 +81,7 @@ public class SBDVuMarkHW extends OpMode {
     @Override
     public void start() {
 
-        OmniBot.start();
+        MecBot.start();
 
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
@@ -86,23 +90,28 @@ public class SBDVuMarkHW extends OpMode {
 
     @Override
     public void loop () {
-
-        RelicRecoveryVuMark vuMark;
-
+        MecBot.VuReader.UpdateLocation();
+//        RelicRecoveryVuMark vuMark;
+        targetVisible = MecBot.VuReader.isTargetVisible();
 //        OmniBot.VuReader.updateVuforiaCoords();
 
-        RobotLog.i("X value is " + OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.tZ));
-        RobotLog.i("X value Rot is " + OmniBot.VuReader.getVuforiaCoords(HardwareVuforia.vuForiaCoord.rZ));
-
-        vuMark =  OmniBot.VuReader.GetLocation();
-        telemetry.addData("VuMark", "%s visible", vuMark);
-
+        RobotLog.i("X value is " + MecBot.VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tZ));
+        RobotLog.i("X value Rot is " + MecBot.VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rZ));
+        if(targetVisible) {
+            VectorF translation = MecBot.VuReader.getTranslation();
+            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+            Orientation rotation = MecBot.VuReader.getRotation();
+            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        } else {
+            telemetry.addData("Visible Target", "none");
+        }
         telemetry.update();
     }
 
     void composeTelemetry() {
 
-        OmniBot.addTelemetry(telemetry);
+        MecBot.addTelemetry(telemetry);
         //OmniBot.getTelemetry(telemetry);
     }
 }
