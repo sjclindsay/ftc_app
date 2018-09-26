@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.internal.vuforia.externalprovider.VuforiaWebcam;
 
 import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
@@ -50,7 +51,8 @@ enum robotHWconnected {
     MotorLifterVufor,
     MotorJewel,
     MotorVufor,
-    VuforOnly
+    VuforOnly,
+    VuforWebcam
 
 }
 
@@ -110,8 +112,17 @@ public class HardwareRukusMecBot
     /* Constructor */
     public HardwareRukusMecBot(){
     }
+/*
+    public HardwareRukusMecBot(robotHWconnected ConnectedParts, Boolean We){
+        setConnectedHW(ConnectedParts);
+    }
+*/
 
-    public HardwareRukusMecBot(robotHWconnected ConnectedParts){
+    public HardwareRukusMecBot(robotHWconnected ConnectedParts) {
+        setConnectedHW(ConnectedParts);
+    }
+
+    private void setConnectedHW(robotHWconnected ConnectedParts) {
         if(ConnectedParts == robotHWconnected.MotorOnly) {
             mototConnected = true;
         }
