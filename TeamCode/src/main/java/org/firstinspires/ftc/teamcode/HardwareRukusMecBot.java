@@ -40,7 +40,7 @@ enum robotHWconnected {
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
-    MotorGyroLifterVufor,
+    MotorGyroLifterVuforLocal,
     MotorGyroLifterVuforJewel,
     MotorGyroLifterVuforCryptoJewel,
     MotorGyroLifterCrypto,
@@ -70,7 +70,7 @@ public class HardwareRukusMecBot
 {
 
     /* Public OpMode members. */
-    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVufor;
+    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
@@ -87,9 +87,10 @@ public class HardwareRukusMecBot
     protected boolean mototConnected = false;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
-    protected boolean vuForConnected = false ;
+    protected boolean vuForLocalConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
+    protected boolean vuForWebConnected = true;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
@@ -139,24 +140,24 @@ public class HardwareRukusMecBot
             gyroConnected = true ;
             lifterConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVufor) {
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforLocal) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforJewel) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             jewelConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCryptoJewel) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             jewelConnected = true ;
             cryptoConnected = true ;
         }
@@ -186,11 +187,11 @@ public class HardwareRukusMecBot
         }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
             mototConnected = true;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterVufor) {
             mototConnected = true;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             lifterConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorJewel) {
@@ -198,7 +199,10 @@ public class HardwareRukusMecBot
             jewelConnected = true;
         }
         if(ConnectedParts == robotHWconnected.VuforOnly) {
-            vuForConnected = true;
+            vuForLocalConnected = true;
+        }
+        if(ConnectedParts == robotHWconnected.VuforWebcam){
+            vuForWebConnected = true;
         }
     }
 
@@ -226,8 +230,14 @@ public class HardwareRukusMecBot
             gyroScope.init(hwMap);
             RobotLog.i("Init Complete Gyro");
         }
-        if (vuForConnected) {
+        if (vuForLocalConnected) {
             VuReader = new HardwareRukusVuforia();
+            VuReader.init(hwMap);
+            RobotLog.i("defined Vufor") ;
+            RobotLog.i("Init Complete Vuforia");
+        }
+        if (vuForWebConnected) {
+            VuReader = new HardwareRukusVuforia("Webcam 1");
             VuReader.init(hwMap);
             RobotLog.i("defined Vufor") ;
             RobotLog.i("Init Complete Vuforia");
@@ -273,7 +283,7 @@ public class HardwareRukusMecBot
         if (lifterConnected) {
             lifter.start();
         }
-        if (vuForConnected) {
+        if (vuForLocalConnected || vuForWebConnected) {
             VuReader.start();
         }
         if (cryptoConnected) {
@@ -521,7 +531,7 @@ public class HardwareRukusMecBot
         if(cryptoConnected) {
             crypto.addTelemetry(telemetry);
         }
-        if(vuForConnected) {
+        if(vuForLocalConnected || vuForWebConnected) {
             VuReader.addTelemetry(telemetry);
         }
     }

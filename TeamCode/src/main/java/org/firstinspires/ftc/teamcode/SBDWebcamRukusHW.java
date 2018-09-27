@@ -54,8 +54,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained in {@ link ConceptVuforiaNavigation}.
  */
-@TeleOp(name="Omni: SBDWebcamRukusMarkHW", group="Omni")
-public class SBDWebcamRukusMarkHW extends OpMode {
+@TeleOp(name="Mec: SBDWebcamRukusHW", group="Omni")
+public class SBDWebcamRukusHW extends OpMode {
 
 
 
