@@ -55,7 +55,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained in {@ link ConceptVuforiaNavigation}.
  */
-@TeleOp(name="Omni: SBDRukusMarkHW", group="Omni")
+@TeleOp(name="Mec: SBDRukusMarkHW", group="Mec")
 public class SBDRukusMarkHW extends OpMode {
 
 
