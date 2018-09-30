@@ -42,7 +42,7 @@ public class OmniAutoMain extends OpMode {
 
     MotorState nextState = null ;
     MotorState stateAfterNext = null ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 

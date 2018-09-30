@@ -42,7 +42,7 @@ public class HardwareOmniBot
 {
 
     /* Public OpMode members. */
-    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVufor;
+    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
@@ -95,7 +95,7 @@ public class HardwareOmniBot
             gyroConnected = true ;
             lifterConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVufor) {
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforLocal) {
             gyroConnected = true ;
             lifterConnected = true ;
             vuForConnected = true ;
