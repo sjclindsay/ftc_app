@@ -139,7 +139,7 @@ public class HardwareRukusVuforia {
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
 
-        webcamName = ahwMap.get(WebcamName.class, webCamDeviceName);
+        webcamName = ahwMap.get(WebcamName.class, "Webcam 1");
 
 
         int cameraMonitorViewId = ahwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", ahwMap.appContext.getPackageName());

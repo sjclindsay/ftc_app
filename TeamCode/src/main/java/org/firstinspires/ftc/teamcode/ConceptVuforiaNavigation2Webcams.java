@@ -133,10 +133,10 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
          */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters2 = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View, to save power
-        VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters();
+        //VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters();
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -150,20 +150,19 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code on the next line, between the double quotes.
          */
-        parameters1.vuforiaLicenseKey = "AdN8DU3/////AAABmQ/dUsRwkUmdhO1NgtnuZVw0CylAO1tY1lqGEWdg5a5+41KHLK3UJVHmeOGom8bxbonz72IVRobln4H9HhE6Sb+N1CLkGDZXFJGo2SqKmuizaBbxks84g/7b8nazNwZe8SB++OJCbx4zJKHduNQFOr+BRa4PLP+vsRdyat7xfrsVCVhSqy2PDmTFWV350G+mMtF3NXvpZYPlDVP5LU7cdKTkHUfgGPYYuw8X/ryNA+OWnL+d17S7zMbjGeyzHuV5+BnPq5AqdS6QLRpWQtkO6m0cRub5hTiJOSFkzb+rcZG+ZODf5976lST5P401gxp6pN3BJBvS3hOEMURJolf8OcEOkM/RA+fqUzGxpLDnCblW";
-        parameters2.vuforiaLicenseKey = "AdN8DU3/////AAABmQ/dUsRwkUmdhO1NgtnuZVw0CylAO1tY1lqGEWdg5a5+41KHLK3UJVHmeOGom8bxbonz72IVRobln4H9HhE6Sb+N1CLkGDZXFJGo2SqKmuizaBbxks84g/7b8nazNwZe8SB++OJCbx4zJKHduNQFOr+BRa4PLP+vsRdyat7xfrsVCVhSqy2PDmTFWV350G+mMtF3NXvpZYPlDVP5LU7cdKTkHUfgGPYYuw8X/ryNA+OWnL+d17S7zMbjGeyzHuV5+BnPq5AqdS6QLRpWQtkO6m0cRub5hTiJOSFkzb+rcZG+ZODf5976lST5P401gxp6pN3BJBvS3hOEMURJolf8OcEOkM/RA+fqUzGxpLDnCblW";
+        parameters.vuforiaLicenseKey = "AdN8DU3/////AAABmQ/dUsRwkUmdhO1NgtnuZVw0CylAO1tY1lqGEWdg5a5+41KHLK3UJVHmeOGom8bxbonz72IVRobln4H9HhE6Sb+N1CLkGDZXFJGo2SqKmuizaBbxks84g/7b8nazNwZe8SB++OJCbx4zJKHduNQFOr+BRa4PLP+vsRdyat7xfrsVCVhSqy2PDmTFWV350G+mMtF3NXvpZYPlDVP5LU7cdKTkHUfgGPYYuw8X/ryNA+OWnL+d17S7zMbjGeyzHuV5+BnPq5AqdS6QLRpWQtkO6m0cRub5hTiJOSFkzb+rcZG+ZODf5976lST5P401gxp6pN3BJBvS3hOEMURJolf8OcEOkM/RA+fqUzGxpLDnCblW";
+        //parameters2.vuforiaLicenseKey = "AdN8DU3/////AAABmQ/dUsRwkUmdhO1NgtnuZVw0CylAO1tY1lqGEWdg5a5+41KHLK3UJVHmeOGom8bxbonz72IVRobln4H9HhE6Sb+N1CLkGDZXFJGo2SqKmuizaBbxks84g/7b8nazNwZe8SB++OJCbx4zJKHduNQFOr+BRa4PLP+vsRdyat7xfrsVCVhSqy2PDmTFWV350G+mMtF3NXvpZYPlDVP5LU7cdKTkHUfgGPYYuw8X/ryNA+OWnL+d17S7zMbjGeyzHuV5+BnPq5AqdS6QLRpWQtkO6m0cRub5hTiJOSFkzb+rcZG+ZODf5976lST5P401gxp6pN3BJBvS3hOEMURJolf8OcEOkM/RA+fqUzGxpLDnCblW";
 
         /**
          * We also indicate which camera on the RC we wish to use.
          */
-        parameters1.cameraName = webcamName1;
-        parameters2.cameraName = webcamName2;
+        parameters.cameraName = webcamName1;
 
         /**
          * Instantiate the Vuforia engine
          */
-        vuforia1 = ClassFactory.getInstance().createVuforia(parameters1);
-        vuforia2 = ClassFactory.getInstance().createVuforia(parameters2);
+        vuforia1 = ClassFactory.getInstance().createVuforia(parameters);
+//        vuforia2 = ClassFactory.getInstance().createVuforia(parameters2);
 
         /**
          * Because this opmode processes frames in order to write them to a file, we tell Vuforia
@@ -171,7 +170,7 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
          * see.
          */
         vuforia1.enableConvertFrameToBitmap();
-        vuforia2.enableConvertFrameToBitmap();
+//        vuforia2.enableConvertFrameToBitmap();
 
         /** @see #captureFrameToFile() */
         AppUtil.getInstance().ensureDirectoryExists(captureDirectory);
@@ -186,22 +185,22 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
          * documentation directory.
          */
         VuforiaTrackables stonesAndChips1 = vuforia1.loadTrackablesFromAsset("StonesAndChips");
-        VuforiaTrackables stonesAndChips2 = vuforia2.loadTrackablesFromAsset("StonesAndChips");
+//        VuforiaTrackables stonesAndChips2 = vuforia2.loadTrackablesFromAsset("StonesAndChips");
         VuforiaTrackable redTarget1 = stonesAndChips1.get(0);
-        VuforiaTrackable redTarget2 = stonesAndChips2.get(0);
+//        VuforiaTrackable redTarget2 = stonesAndChips2.get(0);
         redTarget1.setName("RedTarget");  // Stones
-        redTarget2.setName("RedTarget");  // Stones
+//        redTarget2.setName("RedTarget");  // Stones
 
         VuforiaTrackable blueTarget1  = stonesAndChips1.get(1);
-        VuforiaTrackable blueTarget2  = stonesAndChips1.get(1);
+//        VuforiaTrackable blueTarget2  = stonesAndChips1.get(1);
         blueTarget1.setName("BlueTarget");  // Chips
-        blueTarget2.setName("BlueTarget");  // Chips
+//        blueTarget2.setName("BlueTarget");  // Chips
 
         /** For convenience, gather together all the trackable objects in one easily-iterable collection */
         List<VuforiaTrackable> allTrackables1 = new ArrayList<VuforiaTrackable>();
-        List<VuforiaTrackable> allTrackables2 = new ArrayList<VuforiaTrackable>();
+//        List<VuforiaTrackable> allTrackables2 = new ArrayList<VuforiaTrackable>();
         allTrackables1.addAll(stonesAndChips1);
-        allTrackables2.addAll(stonesAndChips2);
+//        allTrackables2.addAll(stonesAndChips2);
 
         /**
          * We use units of mm here because that's the recommended units of measurement for the
@@ -280,7 +279,7 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 90, 0));
         redTarget1.setLocationFtcFieldFromTarget(redTargetLocationOnField);
-        redTarget2.setLocationFtcFieldFromTarget(redTargetLocationOnField);
+//        redTarget2.setLocationFtcFieldFromTarget(redTargetLocationOnField);
         RobotLog.ii(TAG, "Red Target=%s", format(redTargetLocationOnField));
 
        /*
@@ -297,7 +296,7 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         blueTarget1.setLocationFtcFieldFromTarget(blueTargetLocationOnField);
-        blueTarget2.setLocationFtcFieldFromTarget(blueTargetLocationOnField);
+//        blueTarget2.setLocationFtcFieldFromTarget(blueTargetLocationOnField);
         RobotLog.ii(TAG, "Blue Target=%s", format(blueTargetLocationOnField));
 
         /**
@@ -377,10 +376,10 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
          * listener is a {@link VuforiaTrackableDefaultListener} and can so safely cast because
          * we have not ourselves installed a listener of a different type.
          */
-        ((VuforiaTrackableDefaultListener)redTarget1.getListener()).setCameraLocationOnRobot(parameters1.cameraName, robotFromCamera1);
-        ((VuforiaTrackableDefaultListener)redTarget2.getListener()).setCameraLocationOnRobot(parameters2.cameraName, robotFromCamera2);
-        ((VuforiaTrackableDefaultListener)blueTarget1.getListener()).setCameraLocationOnRobot(parameters1.cameraName, robotFromCamera1);
-        ((VuforiaTrackableDefaultListener)blueTarget2.getListener()).setCameraLocationOnRobot(parameters2.cameraName, robotFromCamera2);
+        ((VuforiaTrackableDefaultListener)redTarget1.getListener()).setCameraLocationOnRobot(parameters.cameraName, robotFromCamera1);
+//        ((VuforiaTrackableDefaultListener)redTarget2.getListener()).setCameraLocationOnRobot(parameters2.cameraName, robotFromCamera2);
+        ((VuforiaTrackableDefaultListener)blueTarget1.getListener()).setCameraLocationOnRobot(parameters.cameraName, robotFromCamera1);
+//        ((VuforiaTrackableDefaultListener)blueTarget2.getListener()).setCameraLocationOnRobot(parameters2.cameraName, robotFromCamera2);
 
         /**
          * A brief tutorial: here's how all the math is going to work:
@@ -408,7 +407,7 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
 
         /** Start tracking the data sets we care about. */
         stonesAndChips1.activate();
-        stonesAndChips2.activate();
+//        stonesAndChips2.activate();
 
         boolean buttonPressed = false;
         while (opModeIsActive()) {
@@ -418,6 +417,10 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
                 }
             buttonPressed = gamepad1.a;
 */
+
+            parameters.cameraName = webcamName2;
+            ((VuforiaTrackableDefaultListener)redTarget1.getListener()).setCameraLocationOnRobot(parameters.cameraName, robotFromCamera2);
+            ((VuforiaTrackableDefaultListener)blueTarget1.getListener()).setCameraLocationOnRobot(parameters.cameraName, robotFromCamera2);
 
             for (VuforiaTrackable trackable : allTrackables1) {
                 /**
@@ -432,12 +435,13 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
                     lastLocation1 = robotLocationTransform;
                 }
             }
-            for (VuforiaTrackable trackable : allTrackables2) {
+//            for (VuforiaTrackable trackable : allTrackables2) {
                 /**
                  * getUpdatedRobotLocation() will return null if no new information is available since
                  * the last time that call was made, or if the trackable is not currently visible.
                  * getRobotLocation() will return null if the trackable is not currently visible.
                  */
+/*
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
@@ -445,6 +449,7 @@ public class ConceptVuforiaNavigation2Webcams extends LinearOpMode {
                     lastLocation2 = robotLocationTransform;
                 }
             }
+*/
             /**
              * Provide feedback as to where the robot was last located (if we know).
              */
