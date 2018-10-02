@@ -204,6 +204,10 @@ public class HardwareRukusMecBot
             Motor10 = hwMap.dcMotor.get("drive_wheel_10");
             Motor11 = hwMap.dcMotor.get("drive_wheel_11");
 
+            Motor00.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor01.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor10.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor11.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
             Motor11.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
