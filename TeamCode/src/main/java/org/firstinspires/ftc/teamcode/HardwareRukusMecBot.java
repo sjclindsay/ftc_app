@@ -51,6 +51,7 @@ enum robotHWconnected {
     MotorLifterVufor,
     MotorJewel,
     MotorVufor,
+    MotorVuforWebcam,
     VuforOnly,
     VuforWebcam
 
@@ -90,7 +91,7 @@ public class HardwareRukusMecBot
     protected boolean vuForLocalConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
-    protected boolean vuForWebConnected = true;
+    protected boolean vuForWebConnected = false;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
@@ -189,6 +190,10 @@ public class HardwareRukusMecBot
             mototConnected = true;
             vuForLocalConnected = true ;
         }
+        if (ConnectedParts == robotHWconnected.MotorVuforWebcam) {
+            mototConnected = true;
+            vuForWebConnected = true ;
+        }
         if (ConnectedParts == robotHWconnected.MotorLifterVufor) {
             mototConnected = true;
             vuForLocalConnected = true ;
@@ -218,6 +223,10 @@ public class HardwareRukusMecBot
             Motor01 = hwMap.dcMotor.get("drive_wheel_01");
             Motor10 = hwMap.dcMotor.get("drive_wheel_10");
             Motor11 = hwMap.dcMotor.get("drive_wheel_11");
+            Motor00.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor01.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor10.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor11.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
             Motor10.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -337,7 +346,7 @@ public class HardwareRukusMecBot
     }
 
 
-    public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
+    public void gyroDriveStaight(double power00, double power01, double power10, double power11, double targetHeading) {
         double currentDiff = 0.0;
 
         if(FirstCallPIDDrive) {
@@ -363,7 +372,7 @@ public class HardwareRukusMecBot
 
     }
 
-    public void tySquareOmniBot ( float targetHeading ) {
+    public void tySquareBot ( float targetHeading ) {
         double currentHeadingTY = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -385,7 +394,7 @@ public class HardwareRukusMecBot
         setBotMovement(correction, correction, correction, correction) ;
     }
 
-    public void rySquareOmniBot ( float targetHeading ) {
+    public void rySquareBot ( float targetHeading ) {
         double currentHeadingRY = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -409,7 +418,7 @@ public class HardwareRukusMecBot
         setBotMovement(-correction, -correction, correction, correction) ;
     }
 
-    public void tzSquareOmniBot ( float targetHeading ) {
+    public void tzSquareBot ( float targetHeading ) {
         double currentHeadingTZ = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -431,7 +440,7 @@ public class HardwareRukusMecBot
         setBotMovement(correction, -correction, -correction, correction) ;
     }
 
-    public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
+    public void driveBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
         if (axis == PIDAxis.gyro) {
             float yValue = (float) Math.cos( direction*(Math.PI/180) ) ;
             float xValue = (float) Math.sin( direction*(Math.PI/180) ) ;
@@ -445,13 +454,13 @@ public class HardwareRukusMecBot
             double power11 = (yValue - xValue)*magnitude ;
 
 
-            gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
+            gyroDriveStaight(power00, power01, power10, power11, targetHeading);
         } else if (axis == PIDAxis.ty) {
-            tySquareOmniBot(targetHeading);
+            tySquareBot(targetHeading);
         } else if (axis == PIDAxis.ry) {
-            rySquareOmniBot(targetHeading);
+            rySquareBot(targetHeading);
         } else if (axis == PIDAxis.tz) {
-            tzSquareOmniBot(targetHeading);
+            tzSquareBot(targetHeading);
         }
 
 

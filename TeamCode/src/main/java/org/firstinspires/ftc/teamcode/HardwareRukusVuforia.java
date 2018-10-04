@@ -121,6 +121,7 @@ public class HardwareRukusVuforia {
     }
 
     public HardwareRukusVuforia(String Camera) {
+        webcamName = null;
         webCamConnected = true;
         webCamDeviceName = Camera;
     }

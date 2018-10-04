@@ -60,7 +60,7 @@ public class SBDRukusMarkHW extends OpMode {
 
 
 
-    private robotHWconnected autoConnectedHW = robotHWconnected.VuforOnly;
+    private robotHWconnected autoConnectedHW = robotHWconnected.VuforWebcam;
     private HardwareRukusMecBot MecBot ;
     private boolean targetVisible = false;
     private static final float mmPerInch        = 25.4f;
