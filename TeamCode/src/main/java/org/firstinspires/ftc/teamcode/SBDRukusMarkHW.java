@@ -72,7 +72,7 @@ public class SBDRukusMarkHW extends OpMode {
     @Override
     public void init () {
         MecBot = new HardwareRukusMecBot(autoConnectedHW) ;
-        MecBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        MecBot.init(hardwareMap, Color.Red);
 
         composeTelemetry();
 

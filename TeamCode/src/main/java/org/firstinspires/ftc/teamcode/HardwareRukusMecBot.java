@@ -67,10 +67,17 @@ enum PIDAxis {
     rz
 }
 
+enum Color {
+    Blue,
+    Red,
+    None
+}
+
 public class HardwareRukusMecBot
 {
 
     /* Public OpMode members. */
+    private Color targetSide = Color.Blue;
     private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
@@ -212,11 +219,11 @@ public class HardwareRukusMecBot
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, HardwareColorSensor.Color targColor) {
+    public void init(HardwareMap ahwMap, Color targColor) {
 
         // Save reference to Hardware map
         hwMap = ahwMap;
-
+        targetSide = targColor;
         if(mototConnected) {
             // Define and Initialize Motors
             Motor00 = hwMap.dcMotor.get("drive_wheel_00");
@@ -303,9 +310,18 @@ public class HardwareRukusMecBot
         }
     }
 
-    public void lowerServoJewel () { jewelSystem.lowerServoJewel(); }
-    public void raiseServoJewel () { jewelSystem.raiseServoJewel(); }
+    public void lowerRobot() {
 
+    }
+    public boolean robotDown() {
+        return true;
+    }
+    public void releaseHook() {
+
+    }
+    public boolean hookReleased() {
+        return true;
+    }
 
     public boolean updateCryptoTouch1() {
         return crypto.updateCryptoTouch1() ;

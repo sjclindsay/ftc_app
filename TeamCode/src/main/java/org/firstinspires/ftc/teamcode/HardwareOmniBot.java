@@ -146,7 +146,7 @@ public class HardwareOmniBot
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, HardwareColorSensor.Color targColor) {
+    public void init(HardwareMap ahwMap, Color targColor) {
 
         // Save reference to Hardware map
         hwMap = ahwMap;

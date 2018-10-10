@@ -43,7 +43,7 @@ public class MecRevTeleOp2 extends OpMode {
     public void init() {
 
         MecBot = new HardwareRukusMecBot(robotHWconnected.MotorOnly) ;
-        MecBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
         dPadScalar = 1 ;

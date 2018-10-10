@@ -30,10 +30,10 @@ public class FormatHelper
     public static String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-    public static String formatColor(HardwareColorSensor.Color currentColor) {
-        if(currentColor == HardwareColorSensor.Color.Red) {
+    public static String formatColor(Color currentColor) {
+        if(currentColor == Color.Red) {
             return("RED");
-        } else if(currentColor == HardwareColorSensor.Color.Blue){
+        } else if(currentColor == Color.Blue){
             return("BLUE");
         } else {
             return ("None");

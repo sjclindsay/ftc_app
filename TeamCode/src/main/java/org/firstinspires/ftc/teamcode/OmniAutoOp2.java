@@ -41,7 +41,7 @@ public class OmniAutoOp2 extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        OmniBot.init(hardwareMap, Color.Red);
 
         int count = 0;
         currentState = MotorState.WAIT_START_PERIOD;
