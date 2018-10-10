@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.internal.vuforia.externalprovider.VuforiaWebcam;
 
 import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
@@ -39,7 +40,7 @@ enum robotHWconnected {
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
-    MotorGyroLifterVufor,
+    MotorGyroLifterVuforLocal,
     MotorGyroLifterVuforJewel,
     MotorGyroLifterVuforCryptoJewel,
     MotorGyroLifterCrypto,
@@ -50,7 +51,9 @@ enum robotHWconnected {
     MotorLifterVufor,
     MotorJewel,
     MotorVufor,
-    VuforOnly
+    MotorVuforWebcam,
+    VuforOnly,
+    VuforWebcam
 
 }
 
@@ -64,11 +67,18 @@ enum PIDAxis {
     rz
 }
 
+enum Color {
+    Blue,
+    Red,
+    None
+}
+
 public class HardwareRukusMecBot
 {
 
     /* Public OpMode members. */
-    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVufor;
+    private Color targetSide = Color.Blue;
+    private robotHWconnected connectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     protected DcMotor Motor00   = null;
     protected DcMotor  Motor01  = null;
     protected DcMotor  Motor10   = null;
@@ -85,9 +95,10 @@ public class HardwareRukusMecBot
     protected boolean mototConnected = false;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
-    protected boolean vuForConnected = false ;
+    protected boolean vuForLocalConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
+    protected boolean vuForWebConnected = false;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
@@ -110,8 +121,17 @@ public class HardwareRukusMecBot
     /* Constructor */
     public HardwareRukusMecBot(){
     }
+/*
+    public HardwareRukusMecBot(robotHWconnected ConnectedParts, Boolean We){
+        setConnectedHW(ConnectedParts);
+    }
+*/
 
-    public HardwareRukusMecBot(robotHWconnected ConnectedParts){
+    public HardwareRukusMecBot(robotHWconnected ConnectedParts) {
+        setConnectedHW(ConnectedParts);
+    }
+
+    private void setConnectedHW(robotHWconnected ConnectedParts) {
         if(ConnectedParts == robotHWconnected.MotorOnly) {
             mototConnected = true;
         }
@@ -128,24 +148,24 @@ public class HardwareRukusMecBot
             gyroConnected = true ;
             lifterConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVufor) {
+        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforLocal) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforJewel) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             jewelConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCryptoJewel) {
             mototConnected = true;
             gyroConnected = true ;
             lifterConnected = true ;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             jewelConnected = true ;
             cryptoConnected = true ;
         }
@@ -175,11 +195,15 @@ public class HardwareRukusMecBot
         }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
             mototConnected = true;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorVuforWebcam) {
+            mototConnected = true;
+            vuForWebConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorLifterVufor) {
             mototConnected = true;
-            vuForConnected = true ;
+            vuForLocalConnected = true ;
             lifterConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorJewel) {
@@ -187,22 +211,29 @@ public class HardwareRukusMecBot
             jewelConnected = true;
         }
         if(ConnectedParts == robotHWconnected.VuforOnly) {
-            vuForConnected = true;
+            vuForLocalConnected = true;
+        }
+        if(ConnectedParts == robotHWconnected.VuforWebcam){
+            vuForWebConnected = true;
         }
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap, HardwareColorSensor.Color targColor) {
+    public void init(HardwareMap ahwMap, Color targColor) {
 
         // Save reference to Hardware map
         hwMap = ahwMap;
-
+        targetSide = targColor;
         if(mototConnected) {
             // Define and Initialize Motors
             Motor00 = hwMap.dcMotor.get("drive_wheel_00");
             Motor01 = hwMap.dcMotor.get("drive_wheel_01");
             Motor10 = hwMap.dcMotor.get("drive_wheel_10");
             Motor11 = hwMap.dcMotor.get("drive_wheel_11");
+            Motor00.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor01.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor10.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            Motor11.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             Motor00.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             Motor01.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -219,8 +250,14 @@ public class HardwareRukusMecBot
             gyroScope.init(hwMap);
             RobotLog.i("Init Complete Gyro");
         }
-        if (vuForConnected) {
+        if (vuForLocalConnected) {
             VuReader = new HardwareRukusVuforia();
+            VuReader.init(hwMap);
+            RobotLog.i("defined Vufor") ;
+            RobotLog.i("Init Complete Vuforia");
+        }
+        if (vuForWebConnected) {
+            VuReader = new HardwareRukusVuforia("Webcam 1");
             VuReader.init(hwMap);
             RobotLog.i("defined Vufor") ;
             RobotLog.i("Init Complete Vuforia");
@@ -266,7 +303,7 @@ public class HardwareRukusMecBot
         if (lifterConnected) {
             lifter.start();
         }
-        if (vuForConnected) {
+        if (vuForLocalConnected || vuForWebConnected) {
             VuReader.start();
         }
         if (cryptoConnected) {
@@ -277,9 +314,18 @@ public class HardwareRukusMecBot
         }
     }
 
-    public void lowerServoJewel () { jewelSystem.lowerServoJewel(); }
-    public void raiseServoJewel () { jewelSystem.raiseServoJewel(); }
+    public void lowerRobot() {
 
+    }
+    public boolean robotDown() {
+        return true;
+    }
+    public void releaseHook() {
+
+    }
+    public boolean hookReleased() {
+        return true;
+    }
 
     public boolean updateCryptoTouch1() {
         return crypto.updateCryptoTouch1() ;
@@ -320,7 +366,7 @@ public class HardwareRukusMecBot
     }
 
 
-    public void gyroDriveOmniStaight(double power00, double power01, double power10, double power11, double targetHeading) {
+    public void gyroDriveStaight(double power00, double power01, double power10, double power11, double targetHeading) {
         double currentDiff = 0.0;
 
         if(FirstCallPIDDrive) {
@@ -346,7 +392,7 @@ public class HardwareRukusMecBot
 
     }
 
-    public void tySquareOmniBot ( float targetHeading ) {
+    public void tySquareBot ( float targetHeading ) {
         double currentHeadingTY = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -368,7 +414,7 @@ public class HardwareRukusMecBot
         setBotMovement(correction, correction, correction, correction) ;
     }
 
-    public void rySquareOmniBot ( float targetHeading ) {
+    public void rySquareBot ( float targetHeading ) {
         double currentHeadingRY = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -392,7 +438,7 @@ public class HardwareRukusMecBot
         setBotMovement(-correction, -correction, correction, correction) ;
     }
 
-    public void tzSquareOmniBot ( float targetHeading ) {
+    public void tzSquareBot ( float targetHeading ) {
         double currentHeadingTZ = 0.0;
 
         VuReader.updateVuforiaCoords();
@@ -414,7 +460,7 @@ public class HardwareRukusMecBot
         setBotMovement(correction, -correction, -correction, correction) ;
     }
 
-    public void driveOmniBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
+    public void driveBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
         if (axis == PIDAxis.gyro) {
             float yValue = (float) Math.cos( direction*(Math.PI/180) ) ;
             float xValue = (float) Math.sin( direction*(Math.PI/180) ) ;
@@ -428,13 +474,13 @@ public class HardwareRukusMecBot
             double power11 = (yValue - xValue)*magnitude ;
 
 
-            gyroDriveOmniStaight(power00, power01, power10, power11, targetHeading);
+            gyroDriveStaight(power00, power01, power10, power11, targetHeading);
         } else if (axis == PIDAxis.ty) {
-            tySquareOmniBot(targetHeading);
+            tySquareBot(targetHeading);
         } else if (axis == PIDAxis.ry) {
-            rySquareOmniBot(targetHeading);
+            rySquareBot(targetHeading);
         } else if (axis == PIDAxis.tz) {
-            tzSquareOmniBot(targetHeading);
+            tzSquareBot(targetHeading);
         }
 
 
@@ -514,7 +560,7 @@ public class HardwareRukusMecBot
         if(cryptoConnected) {
             crypto.addTelemetry(telemetry);
         }
-        if(vuForConnected) {
+        if(vuForLocalConnected || vuForWebConnected) {
             VuReader.addTelemetry(telemetry);
         }
     }

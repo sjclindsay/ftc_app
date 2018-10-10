@@ -18,7 +18,7 @@ public class HardwareColorSensor {
     ColorSensor colorSensor;   // Hardware Device Object
     HardwareMap hwMap = null;
 
-    public void init (HardwareMap ahwMap, HardwareColorSensor.Color targColor){
+    public void init (HardwareMap ahwMap, Color targColor){
         String smackerSensorName = "";
         String smackerLEDName = "";
         hwMap = ahwMap ;
@@ -42,12 +42,6 @@ public class HardwareColorSensor {
 
         colorSensor = hwMap.colorSensor.get (smackerSensorName) ;
         RobotLog.i(" init the color") ;
-    }
-
-    public enum Color {
-        Blue,
-        Red,
-        None
     }
 
     public Color WhatColor (){

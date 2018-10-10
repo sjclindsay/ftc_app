@@ -39,16 +39,16 @@ public class HardwareJewel {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap,HardwareColorSensor.Color targColor) {
+    public void init(HardwareMap ahwMap, Color targColor) {
         String servoJewelName = "";
         String servoNullName =  "" ;
         // Save reference to Hardware map
         hwMap = ahwMap;
-        if(targColor == HardwareColorSensor.Color.Red) {
+        if(targColor == Color.Red) {
             servoJewelName = "servoJewelRed";
             servoNullName = "servoJewelBlue";
             colorSide = connectedColor.RED ;
-        } else if(targColor == HardwareColorSensor.Color.Blue) {
+        } else if(targColor == Color.Blue) {
             servoJewelName = "servoJewelBlue";
             servoNullName = "servoJewelRed" ;
             colorSide = connectedColor.BLUE ;
@@ -59,10 +59,10 @@ public class HardwareJewel {
         unimportantServoJewel = hwMap.servo.get(servoNullName) ;
 
 
-        if (targColor == HardwareColorSensor.Color.Red) {
+        if (targColor == Color.Red) {
             servoJewel.setPosition(servoJewelInitalPosition);
             unimportantServoJewel.setPosition(servoJewelDownPosition);
-        } else if (targColor == HardwareColorSensor.Color.Blue) {
+        } else if (targColor == Color.Blue) {
             servoJewel.setPosition(servoJewelDownPosition);
             unimportantServoJewel.setPosition(servoJewelInitalPosition);
         }
@@ -107,7 +107,7 @@ public class HardwareJewel {
         servoJewel.setDirection(Servo.Direction.REVERSE);
     }
 
-    public HardwareColorSensor.Color WhatColor (){
+    public Color WhatColor (){
         return jewelSensor.WhatColor();
     }
 

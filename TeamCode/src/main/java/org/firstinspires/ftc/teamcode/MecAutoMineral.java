@@ -1,36 +1,37 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+
+import java.math.MathContext;
 
 /**
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Omni: AutoJewelRedPark2", group="Omni")
+@Autonomous(name="Mec: AutoMineral", group="Mec")
 @Disabled
-public class OmniAutoJewelRedPark2 extends OpMode {
+public class MecAutoMineral extends OpMode {
     public enum MotorState{
-        WAIT_START,
-        CHECK_COLOR,
-        TURN_COUNTERCLOCKWISE,
-        TURN_CLOCKWISE,
-        STOP_MOVING,
-        HitWait,
-        DELAY,
-        INITIALIZE,
-        INITIALIZEDRIVEOFFPLATFORM,
-        DRIVEOFFPLATFORM,
-        DRIVETOSAFEZONE,
-        STOPROBOT,
-        WAIT,
-        ERROR_STATE
+        WAIT_START,  //0
+        CHECK_ROBOT_DOWN,  //1
+        CHECK_HOOK_RELEASE, //2
+        TURN_COUNTERCLOCKWISE,  //3
+        TURN_CLOCKWISE,  //4
+        STOP_MOVING,  //5
+        HitWait, //6
+        DELAY,  //7
+        INITIALIZEDRIVEOFFPLATFORM,  //8
+        DRIVEOFFPLATFORM,  //9
+        DRIVETOSAFEZONE,  //10
+        STOPROBOT,  //11
+        WAIT,  //12
+        ERROR_STATE  //13
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
@@ -39,7 +40,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
     double delay_time = 0;
     double currentHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterCryptoJewel;
-    HardwareOmniBot OmniBot ;
+    HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
     double current_delay = 0;
@@ -51,8 +52,8 @@ public class OmniAutoJewelRedPark2 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        MecBot = new HardwareRukusMecBot(autoConnectedHW) ;
+        MecBot.init(hardwareMap, Color.Blue);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
@@ -62,8 +63,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
 
     @Override
     public void start() {
-
-        OmniBot.start();
+        MecBot.start();
     }
 
     @Override
@@ -72,48 +72,47 @@ public class OmniAutoJewelRedPark2 extends OpMode {
             RobotLog.i("Change State to " + nextState);
         }
 
-
-        currentHeading = OmniBot.getcurrentHeading() ;
-
+        currentHeading = MecBot.getcurrentHeading() ;
         currentState = nextState;
 
         switch(nextState) {
             case DELAY:
                 current_delay = getRuntime() - last_time;
                 //RobotLog.i("Delay Time " + current_delay);
-                if(current_delay >= delay_time) {
+                if (current_delay >= delay_time) {
                     nextState = stateAfterNext;
                 }
                 break;
             case WAIT_START:
-                OmniBot.jewelSystem.lowerServoJewel();
-                nextState = MotorState.DELAY;
-                delay_time = 0.5;
-                stateAfterNext = MotorState.CHECK_COLOR;
+                MecBot.lowerRobot();
+                nextState = MotorState.CHECK_ROBOT_DOWN;
+                stateAfterNext = MotorState.CHECK_ROBOT_DOWN;
                 last_time = getRuntime();
                 break;
-            case CHECK_COLOR:
-                RobotLog.i("In CHECK_COLOR");
-                RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
-                OmniBot.jewelSystem.led_low();
-                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
-                    //OmniBot.Red_LEDon();
-                    nextState = MotorState.TURN_COUNTERCLOCKWISE;
-                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
-                    //OmniBot.Blue_LEDon();
-                    nextState = MotorState.TURN_CLOCKWISE;
+            case CHECK_ROBOT_DOWN:
+                if (MecBot.robotDown()) {
+                    MecBot.releaseHook();
+                    nextState = MotorState.CHECK_HOOK_RELEASE;
+                    stateAfterNext = MotorState.CHECK_HOOK_RELEASE;
+                }
+                break;
+            case CHECK_HOOK_RELEASE:
+                if (MecBot.hookReleased()) {
+                    MecBot.releaseHook();
+                    nextState = MotorState.CHECK_HOOK_RELEASE;
+                    stateAfterNext = MotorState.CHECK_HOOK_RELEASE;
                 }
                 break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
-                OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
                 WaitTimer.reset();
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
                 targetHeading = (float) (currentHeading - 100.0);
                 RobotLog.i("Start Turn " + currentHeading);
-                OmniBot.driveOmniBot(0,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
                 WaitTimer.reset();
                 nextState = MotorState.HitWait ;
                 break;
@@ -126,61 +125,66 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                 }
                 break;
             case STOP_MOVING:
-                OmniBot.jewelSystem.raiseServoJewel();
-                OmniBot.crypto.lowerCryptoServo();
-                OmniBot.setBotMovement(0,0,0,0);
+                MecBot.setBotMovement(0,0,0,0);
                 WaitTimer.reset();
                 nextState = MotorState.WAIT ;
                 stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM;
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
-                OmniBot.setBotMovement((double) 0.3, (double) 0.3, (double) 0.3, (double) 0.3);
-                if ( Math.abs(OmniBot.gyroScope.currentHeadingY) >= 2.5) {
-                    nextState = MotorState.DRIVETOSAFEZONE ;
+                //red side (i think)
+                MecBot.setBotMovement((double) -0.3, (double) -0.3, (double) -0.3, (double) -0.3);
+                if ( Math.abs(MecBot.gyroScope.currentHeadingY) >= 2.5) {
+                    nextState = MotorState.DRIVEOFFPLATFORM ;
+                }
+                break;
+            case DRIVEOFFPLATFORM:
+                if (Math.abs(MecBot.gyroScope.currentHeadingY) <= 2.5 ) {
+                    MecBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
+                    WaitTimer.reset();
+                    nextState = MotorState.WAIT ;
+                    stateAfterNext = MotorState.DRIVETOSAFEZONE;
                 }
                 break;
             case DRIVETOSAFEZONE:
-                //OmniBot.driveOmniBot( (float) 0.2, 0, targetHeading, PIDAxis.gyro);
-                if (OmniBot.crypto.isEndTouched() || WaitTimer.time() >= 5000) {
+                MecBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
+                if (Math.abs(MecBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(MecBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 5000) {
+                    MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case STOPROBOT:
-                OmniBot.setBotMovement(0,0,0,0);
+                MecBot.setBotMovement(0, 0, 0, 0);
                 RobotLog.i("robot stopped") ;
                 break;
             case WAIT:
                 if (WaitTimer.time() >= 500) {
                     nextState = stateAfterNext ;
-                    WaitTimer.reset();
+                    StabilizationTimer.reset();
                 }
                 break;
             case ERROR_STATE:
                 RobotLog.i("Error_State");
             default:
-                OmniBot.setBotMovement(0,0,0,0);
+                MecBot.setBotMovement(0,0,0,0);
                 RobotLog.i("error no case");
                 break;
         }
 
         telemetry.update();
-        OmniBot.waitForTick(40);
+        MecBot.waitForTick(40);
     }
 
     @Override
     public void stop() {
-        //OmniBot.Red_LEDoff();
-        //OmniBot.Blue_LEDoff();
-        OmniBot.jewelSystem.led_off();
-        OmniBot.setBotMovement(0,0,0,0);
-
+        MecBot.setBotMovement(0,0,0,0);
     }
+
     void composeTelemetry() {
         telemetry.addLine()
-                .addData("Waittime ", new Func<String>() {
+                .addData("State" , new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(waitTimer);
+                        return String.valueOf(currentState);
                     }
                 })
                 .addData("current ", new Func<String>() {
@@ -208,11 +212,7 @@ public class OmniAutoJewelRedPark2 extends OpMode {
                         return FormatHelper.formatDouble(StabilizationTimer.milliseconds());
                     }
                 }) ;
-        OmniBot.addTelemetry(telemetry);
+        MecBot.addTelemetry(telemetry);
 
     }
-
-
-
-
 }

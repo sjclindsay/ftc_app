@@ -61,7 +61,7 @@ public class OmniAutoJewelBlueCrypto extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Blue);
+        OmniBot.init(hardwareMap, Color.Blue);
 
         int count = 0;
         currentState = MotorState.WAIT_START;
@@ -113,10 +113,10 @@ public class OmniAutoJewelBlueCrypto extends OpMode {
                 RobotLog.i("Found " + OmniBot.jewelSystem.WhatColor());
                 OmniBot.resetFirstPIDDrive(1, 0.000010);
                 OmniBot.jewelSystem.led_low();
-                if(OmniBot.jewelSystem.WhatColor() == HardwareColorSensor.Color.Red) {
+                if(OmniBot.jewelSystem.WhatColor() == Color.Red) {
                     //OmniBot.Red_LEDon();
                     nextState = MotorState.TURN_COUNTERCLOCKWISE;
-                } else if (OmniBot.jewelSystem.WhatColor()== HardwareColorSensor.Color.Blue) {
+                } else if (OmniBot.jewelSystem.WhatColor()== Color.Blue) {
                     //OmniBot.Blue_LEDon();
                     nextState = MotorState.TURN_CLOCKWISE;
                 } else {

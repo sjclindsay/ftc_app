@@ -30,7 +30,7 @@ public class OmniAutoOp2 extends OpMode {
     float magnitude = 0 ;
     float direction = 90 ;
     double currentHeading = 0 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVufor;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterVuforLocal;
     HardwareOmniBot OmniBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     ElapsedTime WaitTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -41,7 +41,7 @@ public class OmniAutoOp2 extends OpMode {
     @Override
     public void init() {
         OmniBot = new HardwareOmniBot(autoConnectedHW) ;
-        OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+        OmniBot.init(hardwareMap, Color.Red);
 
         int count = 0;
         currentState = MotorState.WAIT_START_PERIOD;

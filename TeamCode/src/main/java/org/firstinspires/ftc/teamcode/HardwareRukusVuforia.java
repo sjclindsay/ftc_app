@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -22,6 +23,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Hardware;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -73,8 +75,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
  */
 
 public class HardwareRukusVuforia {
-    private double [][] VuforiaCoords = { {0, 0, 0},
-                                         {0, 0, 0} } ;
+    private double[][] VuforiaCoords = {{0, 0, 0},
+            {0, 0, 0}};
     public OpenGLMatrix lastLocation = null;
     private VuforiaTrackable currentTrackable;
     private VectorF translation = null;
@@ -92,15 +94,16 @@ public class HardwareRukusVuforia {
         rY,
         rZ
     }
+
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float mmPerInch = 25.4f;
+    private static final float mmFTCFieldWidth = (12 * 6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
+    private static final float mmTargetHeight = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
     // Valid choices are:  BACK or FRONT
@@ -108,6 +111,20 @@ public class HardwareRukusVuforia {
 
 
     private boolean targetVisible = false;
+    private boolean webCamConnected = false;
+
+    private WebcamName webcamName;
+    private String webCamDeviceName;
+
+    public  HardwareRukusVuforia(){
+        webcamName = null;
+    }
+
+    public HardwareRukusVuforia(String Camera) {
+        webcamName = null;
+        webCamConnected = true;
+        webCamDeviceName = Camera;
+    }
 
     public VuforiaLocalizer vuforia;
 
@@ -122,6 +139,10 @@ public class HardwareRukusVuforia {
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
+
+        webcamName = ahwMap.get(WebcamName.class, "Webcam 1");
+
+
         int cameraMonitorViewId = ahwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", ahwMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -141,15 +162,16 @@ public class HardwareRukusVuforia {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code on the next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = "Af9ksOb/////AAAAGeC5pTEf7UNjuhNNYISpFKpt8KPEneyWRu3u6EqzGuTPAuvL51N5ilizvCYpiViD5i2WeURlXcPZ6PcAmOelb9gJrNXs6SaMhCfuoLdWhQ63QnoTv3RWAest5W1vfgnhn7JQz2R3itmAu9fhSipQEBzeLIguiXDDR0E3ne22sb8F1YMj3WTN+htbOMNtRTWfV3PUrHKAjA/rdBKbG1vEOGiyltjxNVBK0cwIS5wvA6T8wFIfbdK5xcIKE78vZRgNptVTqs99R12P0N/Si0Pd9VdHVyhjcIKA5gVE7seUsa2trMl2hg7ZHV91m3WOwvmJamGDq3bbxlm+544v24bY7Erya5mhAGI2HL1fxJlmDW0z";
+        parameters.vuforiaLicenseKey = "AdN8DU3/////AAABmQ/dUsRwkUmdhO1NgtnuZVw0CylAO1tY1lqGEWdg5a5+41KHLK3UJVHmeOGom8bxbonz72IVRobln4H9HhE6Sb+N1CLkGDZXFJGo2SqKmuizaBbxks84g/7b8nazNwZe8SB++OJCbx4zJKHduNQFOr+BRa4PLP+vsRdyat7xfrsVCVhSqy2PDmTFWV350G+mMtF3NXvpZYPlDVP5LU7cdKTkHUfgGPYYuw8X/ryNA+OWnL+d17S7zMbjGeyzHuV5+BnPq5AqdS6QLRpWQtkO6m0cRub5hTiJOSFkzb+rcZG+ZODf5976lST5P401gxp6pN3BJBvS3hOEMURJolf8OcEOkM/RA+fqUzGxpLDnCblW";
 
         /*
          * We also indicate which camera on the RC that we wish to use.
          * Here we chose the Front (LowRes) camera (for greater range), but
          * for a competition robot, the front camera might be more convenient.
          */
-        parameters.cameraDirection   = CAMERA_CHOICE;
-
+        if (webCamConnected) {
+            parameters.cameraName = webcamName;
+        }
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 

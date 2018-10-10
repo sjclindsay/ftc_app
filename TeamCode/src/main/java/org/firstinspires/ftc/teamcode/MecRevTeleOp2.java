@@ -1,36 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-
-import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.FormatHelper;
-
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.util.Locale;
 
 /**
  * Created by conno on 8/17/2017.
  */
 
-@TeleOp(name="Omni: TeleOp1", group="Omni")
+@TeleOp(name="Mec: RevTeleOp2", group="Mec")
 
 
-public class OmniTeleOp1 extends OpMode {
+public class MecRevTeleOp2 extends OpMode {
 
     float motorLeft1power = 0;
     float motorLeft2power = 0;
@@ -42,7 +23,7 @@ public class OmniTeleOp1 extends OpMode {
     boolean controller1 = true;
     boolean controller2 = false ;
     float dPadScalar = 1 ;
-    HardwareOmniBot OmniBot ;
+    HardwareRukusMecBot MecBot ;
     boolean waitForUpRelease = false ;
     boolean waitForDownRelease = false ;
     protected  float gamePad1LeftStickMagnitude = 0 ;
@@ -60,8 +41,9 @@ public class OmniTeleOp1 extends OpMode {
 
     @Override
     public void init() {
-        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifterCryptoJewel) ;
-        OmniBot.init(hardwareMap, Color.Red);
+
+        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorOnly) ;
+        MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
         dPadScalar = 1 ;
@@ -76,7 +58,7 @@ public class OmniTeleOp1 extends OpMode {
     @Override
     public void start() {
 
-        OmniBot.start();
+        MecBot.start();
     }
 
     @Override
@@ -117,27 +99,27 @@ public class OmniTeleOp1 extends OpMode {
                 motorRight1power = 0 ;
                 motorRight2power = 0 ;
             } */
-
-            if ((gamepad2.left_bumper) && (!gamepad2.right_bumper)) {
-                motorLifterPower = (float) 1.0;
-            } else if ((gamepad2.right_bumper) && (!gamepad2.left_bumper)){
-                motorLifterPower = (float)-1.0 ;
-            } else {
-                motorLifterPower = (float) 0.0;
+            if(MecBot.lifterConnected) {
+                if ((gamepad2.left_bumper) && (!gamepad2.right_bumper)) {
+                    motorLifterPower = (float) 1.0;
+                } else if ((gamepad2.right_bumper) && (!gamepad2.left_bumper)) {
+                    motorLifterPower = (float) -1.0;
+                } else {
+                    motorLifterPower = (float) 0.0;
+                }
+                if (MecBot.lifter.lifterRangeUpper.getState()) {
+                    motorLifterPower = Range.clip(motorLifterPower, -1, 0) ;
+                }
+                if (MecBot.lifter.lifterRangeLower.getState()) {
+                    motorLifterPower = Range.clip(motorLifterPower,0,1) ;
+                }
+            }
+            MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
+            if(MecBot.lifterConnected) {
+                MecBot.setLifterGrabber(motorLifterPower, gamepad2.right_trigger, gamepad2.left_trigger);
             }
 
-        if (OmniBot.lifter.lifterRangeUpper.getState()) {
-            //motorLifterPower = Range.clip(motorLifterPower, -1, 0) ;
-        }
-        if (OmniBot.lifter.lifterRangeLower.getState()) {
-            //motorLifterPower = Range.clip(motorLifterPower,0,1) ;
-        }
-
-            OmniBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
-            OmniBot.setLifterGrabber(motorLifterPower, gamepad2.right_trigger, gamepad2.left_trigger);
-
-
-        OmniBot.waitForTick(40);
+        MecBot.waitForTick(40);
         telemetry.update();
 
     }
@@ -147,7 +129,7 @@ public class OmniTeleOp1 extends OpMode {
 
     }
     void composeTelemetry() {
-        OmniBot.addTelemetry(telemetry);
+        MecBot.addTelemetry(telemetry);
     }
 
 

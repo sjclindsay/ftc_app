@@ -60,8 +60,13 @@ public class OmniRevTeleOp extends OpMode {
 
     @Override
     public void init() {
+<<<<<<< HEAD
         OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyro) ;
         OmniBot.init(hardwareMap, HardwareColorSensor.Color.Red);
+=======
+        OmniBot = new HardwareOmniBot(robotHWconnected.MotorGyroLifterCryptoJewel) ;
+        OmniBot.init(hardwareMap, Color.Red);
+>>>>>>> 351e4009de576559ceddd5683e0c3e73ab23b82d
         waitForUpRelease = false ;
         waitForUpRelease = false ;
         dPadScalar = 1 ;
