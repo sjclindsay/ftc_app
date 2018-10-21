@@ -15,7 +15,6 @@ import java.math.MathContext;
  */
 
 @Autonomous(name="Mec: AutoMineral", group="Mec")
-@Disabled
 public class MecAutoMineral extends OpMode {
     public enum MotorState{
         WAIT_START,  //0
@@ -31,7 +30,10 @@ public class MecAutoMineral extends OpMode {
         DRIVETOSAFEZONE,  //10
         STOPROBOT,  //11
         WAIT,  //12
-        ERROR_STATE  //13
+        ERROR_STATE,  //13
+        RAISE_ROBOT,
+        CHECK_ROBOT_UP,
+        DRIVE_TO_VUFORIA
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
@@ -39,7 +41,7 @@ public class MecAutoMineral extends OpMode {
     float direction = 90 ;
     double delay_time = 0;
     double currentHeading = 0 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroLifterCryptoJewel;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
     HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
@@ -99,10 +101,19 @@ public class MecAutoMineral extends OpMode {
             case CHECK_HOOK_RELEASE:
                 if (MecBot.hookReleased()) {
                     MecBot.releaseHook();
-                    nextState = MotorState.CHECK_HOOK_RELEASE;
+                    nextState = MotorState.RAISE_ROBOT;
                     stateAfterNext = MotorState.CHECK_HOOK_RELEASE;
                 }
                 break;
+            case RAISE_ROBOT:
+                MecBot.raiseRobot();
+                nextState = MotorState.CHECK_ROBOT_UP;
+                break;
+            case CHECK_ROBOT_UP:
+                if (MecBot.robotUp()) {
+                    MecBot.lifterStop();
+                    nextState = MotorState.TURN_CLOCKWISE;
+                }
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
@@ -110,11 +121,17 @@ public class MecAutoMineral extends OpMode {
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 100.0);
+                targetHeading = (float) (currentHeading - 50.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
-                WaitTimer.reset();
-                nextState = MotorState.HitWait ;
+                delay_time = 2000;
+                nextState = MotorState.DELAY ;
+                stateAfterNext = MotorState.DRIVE_TO_VUFORIA;
+                break;
+            case DRIVE_TO_VUFORIA:
+                if(MecBot.VuRukusSeen()){
+                    nextState = MotorState.STOP_MOVING;
+                }
                 break;
             case HitWait:
                 if (WaitTimer.time() > 1000){

@@ -53,7 +53,9 @@ enum robotHWconnected {
     MotorVufor,
     MotorVuforWebcam,
     VuforOnly,
-    VuforWebcam
+    VuforWebcam,
+    MotorGyroVuforWebcam
+
 
 }
 
@@ -216,6 +218,11 @@ public class HardwareRukusMecBot
         if(ConnectedParts == robotHWconnected.VuforWebcam){
             vuForWebConnected = true;
         }
+        if(ConnectedParts == robotHWconnected.MotorGyroVuforWebcam){
+            vuForWebConnected = true;
+            mototConnected = true;
+            gyroConnected = true;
+        }
     }
 
     /* Initialize standard Hardware interfaces */
@@ -315,7 +322,9 @@ public class HardwareRukusMecBot
     }
 
     public void lowerRobot() {
-
+        if (lifterConnected) {
+            lifter.setLifterGrabber((float)-0.5);
+        }
     }
     public boolean robotDown() {
         return true;
@@ -325,6 +334,27 @@ public class HardwareRukusMecBot
     }
     public boolean hookReleased() {
         return true;
+    }
+    public void raiseRobot() {
+        if (lifterConnected) {
+            lifter.setLifterGrabber((float)0.5);
+        }
+    }
+    public boolean robotUp() {
+        return true;
+    }
+    public void lifterStop() {
+        if(lifterConnected) {
+            lifter.setLifterGrabber(0);
+        }
+    }
+    public boolean VuRukusSeen() {
+        if (vuForWebConnected) {
+            return (VuReader.isTargetVisible());
+        }
+        else {
+            return (true);
+        }
     }
 
     public boolean updateCryptoTouch1() {
