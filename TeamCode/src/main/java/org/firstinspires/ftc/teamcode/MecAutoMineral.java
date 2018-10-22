@@ -41,7 +41,7 @@ public class MecAutoMineral extends OpMode {
     float direction = 90 ;
     double delay_time = 0;
     double currentHeading = 0 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyro;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
     HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
@@ -80,7 +80,7 @@ public class MecAutoMineral extends OpMode {
         switch(nextState) {
             case DELAY:
                 current_delay = getRuntime() - last_time;
-                //RobotLog.i("Delay Time " + current_delay);
+                RobotLog.i("Delay Time " + current_delay);
                 if (current_delay >= delay_time) {
                     nextState = stateAfterNext;
                 }
@@ -114,6 +114,7 @@ public class MecAutoMineral extends OpMode {
                     MecBot.lifterStop();
                     nextState = MotorState.TURN_CLOCKWISE;
                 }
+                break;
             case TURN_COUNTERCLOCKWISE:
                 targetHeading = (float) (currentHeading + 100.0);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
@@ -124,28 +125,14 @@ public class MecAutoMineral extends OpMode {
                 targetHeading = (float) (currentHeading - 50.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
-                delay_time = 2000;
+                delay_time = 5;
                 nextState = MotorState.DELAY ;
                 stateAfterNext = MotorState.DRIVE_TO_VUFORIA;
                 break;
             case DRIVE_TO_VUFORIA:
                 if(MecBot.VuRukusSeen()){
-                    nextState = MotorState.STOP_MOVING;
+                    nextState = MotorState.STOPROBOT;
                 }
-                break;
-            case HitWait:
-                if (WaitTimer.time() > 1000){
-                    nextState = MotorState.STOP_MOVING   ;
-                } else if (Math.abs(currentHeading - targetHeading) <= 3) {
-                    RobotLog.i("Reach Target Heading" + targetHeading);
-                    nextState = MotorState.STOP_MOVING;
-                }
-                break;
-            case STOP_MOVING:
-                MecBot.setBotMovement(0,0,0,0);
-                WaitTimer.reset();
-                nextState = MotorState.WAIT ;
-                stateAfterNext = MotorState.INITIALIZEDRIVEOFFPLATFORM;
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 //red side (i think)
