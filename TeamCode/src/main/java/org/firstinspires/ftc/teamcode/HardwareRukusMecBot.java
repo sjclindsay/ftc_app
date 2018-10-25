@@ -37,6 +37,7 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 enum robotHWconnected {
     MotorOnly,
     MotorLifter,
+    MotorLifterHook,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
@@ -97,6 +98,7 @@ public class HardwareRukusMecBot
     protected boolean mototConnected = false;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
+    protected boolean hookConnected = false ;
     protected boolean vuForLocalConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
@@ -104,6 +106,7 @@ public class HardwareRukusMecBot
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
+    protected HardwareHook hook = null ;
     public HardwareRukusVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBoxLegacy crypto = null ;
@@ -144,6 +147,11 @@ public class HardwareRukusMecBot
         if (ConnectedParts == robotHWconnected.MotorLifter) {
             mototConnected = true;
             lifterConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterHook) {
+            mototConnected = true;
+            lifterConnected = true ;
+            hookConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             mototConnected = true;
@@ -270,10 +278,15 @@ public class HardwareRukusMecBot
             RobotLog.i("Init Complete Vuforia");
         }
         if (lifterConnected) {
-            lifter = new HardwareLifter(LifterHWcontroller.LifterGrabber);
+            lifter = new HardwareLifter(LifterHWcontroller.Lifter);
             RobotLog.i("defined lifter");
             lifter.init(hwMap);
             RobotLog.i("Init COmplete Lifter");
+        }
+        if (hookConnected) {
+            hook = new HardwareHook() ;
+            RobotLog.i("defined hook");
+            hook.init(hwMap);
         }
         if (cryptoConnected) {
             crypto = new HardwareCryptoBoxLegacy() ;
@@ -310,6 +323,9 @@ public class HardwareRukusMecBot
         if (lifterConnected) {
             lifter.start();
         }
+        if (hookConnected) {
+            hook.start();
+        }
         if (vuForLocalConnected || vuForWebConnected) {
             VuReader.start();
         }
@@ -329,8 +345,10 @@ public class HardwareRukusMecBot
     public boolean robotDown() {
         return true;
     }
-    public void releaseHook() {
-
+    public void releaseHook(){
+        if (hookConnected) {
+            hook.setHookSpeed(0); //move backwards
+        }
     }
     public boolean hookReleased() {
         return true;
@@ -343,6 +361,11 @@ public class HardwareRukusMecBot
     public boolean robotUp() {
         return true;
     }
+    public void closeHook() {
+    if (hookConnected) {
+        hook.setHookSpeed(1); //move forwards
+    }
+}
     public void lifterStop() {
         if(lifterConnected) {
             lifter.setLifterGrabber(0);
