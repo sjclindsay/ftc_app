@@ -70,6 +70,18 @@ public class HardwareHook {
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
+                .addData("ServoHook ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(hookServo.getPosition());
+                    }
+                })
+                .addData("Red ", new Func<String>() {
+                    @Override
+                    public String value() {
+                        return FormatHelper.formatDouble(());
+                    }
+                })
                 ;
     }
 }
