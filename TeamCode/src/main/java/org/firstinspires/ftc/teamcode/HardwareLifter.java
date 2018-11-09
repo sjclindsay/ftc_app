@@ -77,6 +77,7 @@ public class HardwareLifter {
 
     }
 
+
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
                 .addData("Lifter Power ", new Func<String>() {
