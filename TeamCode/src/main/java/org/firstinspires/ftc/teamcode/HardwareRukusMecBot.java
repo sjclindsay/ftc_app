@@ -348,6 +348,30 @@ public class HardwareRukusMecBot
             lifter.setLifterGrabber(0);
         }
     }
+    public double getVuX (){
+        if (vuForWebConnected){
+            return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tX));
+        }
+        else {
+            return (0.0) ;
+        }
+    }
+    public double getVuY (){
+        if (vuForWebConnected){
+          return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY));
+        }
+        else {
+            return (0.0) ;
+        }
+    }
+    public double getVuHeading (){
+        if (vuForWebConnected){
+            return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rZ));
+        }
+        else {
+            return (0.0) ;
+        }
+    }
     public boolean VuRukusSeen() {
         if (vuForWebConnected) {
             return (VuReader.isTargetVisible());
@@ -403,7 +427,7 @@ public class HardwareRukusMecBot
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + gyroScope.currentHeadingZ);
 
-            motorPID = new PIDController(targetHeading, kp, 0, 0);
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
             FirstCallPIDDrive = false;
         }
 

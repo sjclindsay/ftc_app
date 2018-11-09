@@ -33,13 +33,19 @@ public class MecAutoMineral extends OpMode {
         ERROR_STATE,  //13
         RAISE_ROBOT,
         CHECK_ROBOT_UP,
-        DRIVE_TO_VUFORIA
+        DRIVE_TO_VUFORIA,
+        TURN_COUNTERCLOCKWISE_VU,
+        WAIT_TURN_COMPLETE,
+        DRIVE_TO_X
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
     float magnitude = 0 ;
     float direction = 90 ;
+    float target_mag = 0;
+    float target_dir = 0;
     double delay_time = 0;
+    double target_x = 200 ;
     double currentHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
     HardwareRukusMecBot MecBot ;
@@ -99,13 +105,14 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case CHECK_HOOK_RELEASE:
-                if (MecBot.hookReleased()) {
-                    MecBot.releaseHook();
-                    nextState = MotorState.RAISE_ROBOT;
-                    stateAfterNext = MotorState.CHECK_HOOK_RELEASE;
-                }
+                MecBot.setBotMovement(.5,-.5,.5,-.5);
+                delay_time = .5;
+                nextState = MotorState.DELAY;
+                stateAfterNext = MotorState.RAISE_ROBOT;
+
                 break;
             case RAISE_ROBOT:
+                MecBot.setBotMovement(0,0,0,0);
                 MecBot.raiseRobot();
                 nextState = MotorState.CHECK_ROBOT_UP;
                 break;
@@ -124,19 +131,42 @@ public class MecAutoMineral extends OpMode {
             case TURN_CLOCKWISE:
                 targetHeading = (float) (currentHeading - 50.0);
                 RobotLog.i("Start Turn " + currentHeading);
+                MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
-                delay_time = 5;
-                nextState = MotorState.DELAY ;
+                target_mag = 0;
+                target_dir= 0;
+                nextState = MotorState.WAIT_TURN_COMPLETE ;
                 stateAfterNext = MotorState.DRIVE_TO_VUFORIA;
                 break;
+            case WAIT_TURN_COMPLETE:
+                MecBot.driveBot(target_mag,target_dir, targetHeading,PIDAxis.gyro);
+                if((targetHeading-5<currentHeading) && (currentHeading<targetHeading+5)){
+                    nextState=stateAfterNext;
+                    MecBot.setBotMovement(0,0,0,0);
+                }
+                break;
             case DRIVE_TO_VUFORIA:
+                MecBot.driveBot((float)0.2,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
-                    nextState = MotorState.STOPROBOT;
+                    target_x = 0.0 ;
+                    nextState = MotorState.DRIVE_TO_X;
+                }
+                break;
+            case TURN_COUNTERCLOCKWISE_VU:
+                MecBot.setBotMovement(.2,.2,-.2,-.2);
+                if ((MecBot.getVuHeading() > 0) || (MecBot.getVuHeading() + 180) < 90) {
+                    MecBot.setBotMovement(0,0,0,0);
+                }
+                break;
+            case DRIVE_TO_X:
+                if (MecBot.getVuX() == target_x){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                 }
                 break;
             case INITIALIZEDRIVEOFFPLATFORM:
                 //red side (i think)
-                MecBot.setBotMovement((double) -0.3, (double) -0.3, (double) -0.3, (double) -0.3);
+                MecBot.setBotMovement((double) -0.2, (double) -0.2, (double) -0.2, (double) -0.2);
                 if ( Math.abs(MecBot.gyroScope.currentHeadingY) >= 2.5) {
                     nextState = MotorState.DRIVEOFFPLATFORM ;
                 }

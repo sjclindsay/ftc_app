@@ -40,9 +40,9 @@ public class PIDController
         long period = time - lastTime_;
         double error  = setPoint_ - newInput;
 
-        /* if ( (lastError_ > 0 && error < 0) || (lastError_ < 0 && error > 0) ) {
+        if ( (int)Math.signum(lastError_) != (int) Math.signum(error)) {
             errorSum_ = 0 ;
-        } */
+        }
 
         errorSum_ +=  (error * period);
         double derError = 0;//(error - lastError_) / period;
