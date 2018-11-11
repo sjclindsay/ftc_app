@@ -79,7 +79,7 @@ public class HardwareHook {
                 .addData("Red ", new Func<String>() {
                     @Override
                     public String value() {
-                        return FormatHelper.formatDouble(());
+                        return FormatHelper.formatDouble((hookServo.getPosition()));
                     }
                 })
                 ;
