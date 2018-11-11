@@ -129,7 +129,7 @@ public class MecAutoMineral extends OpMode {
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 50.0);
+                targetHeading = (float) (currentHeading + 50.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
@@ -146,7 +146,7 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case DRIVE_TO_VUFORIA:
-                MecBot.driveBot((float)0.2,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot((float)0.1,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
                     target_x = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;
@@ -159,31 +159,9 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case DRIVE_TO_X:
-                if (MecBot.getVuX() == target_x){
+                if (MecBot.getVuX() <= target_x){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
-                }
-                break;
-            case INITIALIZEDRIVEOFFPLATFORM:
-                //red side (i think)
-                MecBot.setBotMovement((double) -0.2, (double) -0.2, (double) -0.2, (double) -0.2);
-                if ( Math.abs(MecBot.gyroScope.currentHeadingY) >= 2.5) {
-                    nextState = MotorState.DRIVEOFFPLATFORM ;
-                }
-                break;
-            case DRIVEOFFPLATFORM:
-                if (Math.abs(MecBot.gyroScope.currentHeadingY) <= 2.5 ) {
-                    MecBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
-                    WaitTimer.reset();
-                    nextState = MotorState.WAIT ;
-                    stateAfterNext = MotorState.DRIVETOSAFEZONE;
-                }
-                break;
-            case DRIVETOSAFEZONE:
-                MecBot.setBotMovement(-0.1, -0.1, -0.1, -0.1);
-                if (Math.abs(MecBot.gyroScope.currentAccelerationY) >= 100 || Math.abs(MecBot.gyroScope.currentAccelerationX) >= 100 || StabilizationTimer.time() >= 5000) {
-                    MecBot.setBotMovement(0, 0, 0, 0);
-                    nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case STOPROBOT:
