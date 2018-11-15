@@ -34,6 +34,7 @@ public class MecAutoMineral extends OpMode {
         RAISE_ROBOT,
         CHECK_ROBOT_UP,
         DRIVE_TO_VUFORIA,
+        STOP_TO_VUFORIA,
         TURN_COUNTERCLOCKWISE_VU,
         WAIT_TURN_COMPLETE,
         DRIVE_TO_X
@@ -144,6 +145,7 @@ public class MecAutoMineral extends OpMode {
                 MecBot.driveBot(target_mag,target_dir, targetHeading,PIDAxis.gyro);
                 if((targetHeading-5<currentHeading) && (currentHeading<targetHeading+5)){
                     nextState=stateAfterNext;
+                    WaitTimer.reset();
                     MecBot.setBotMovement(0,0,0,0);
                 }
                 break;
@@ -152,6 +154,26 @@ public class MecAutoMineral extends OpMode {
                 if(MecBot.VuRukusSeen()){
                     target_x = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;
+                } else if (WaitTimer.milliseconds() >= 1250) {
+                    WaitTimer.reset();
+                    nextState = MotorState.STOP_TO_VUFORIA;
+                }
+                break;
+            case STOP_TO_VUFORIA:
+                MecBot.setBotMovement(0,0,0,0);
+                if(MecBot.VuRukusSeen()){
+                    target_x = 0.0 ;
+                    nextState = MotorState.DRIVE_TO_X;
+                } else if (WaitTimer.milliseconds() >= 500) {
+                    WaitTimer.reset();
+                    nextState = MotorState.DRIVE_TO_VUFORIA ;
+                }
+
+                break;
+            case DRIVE_TO_X:
+                if (MecBot.getVuX() <= target_x){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                 }
                 break;
             case TURN_COUNTERCLOCKWISE_VU:
@@ -162,12 +184,6 @@ public class MecAutoMineral extends OpMode {
                 }
                 if ((MecBot.getVuHeading() > 0) || (MecBot.getVuHeading() + 180) < 90) {
                     MecBot.setBotMovement(0,0,0,0);
-                }
-                break;
-            case DRIVE_TO_X:
-                if (MecBot.getVuX() <= target_x){
-                    MecBot.setBotMovement(0,0,0,0);
-                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                 }
                 break;
             case STOPROBOT:

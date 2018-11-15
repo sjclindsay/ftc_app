@@ -108,7 +108,6 @@ public class HardwareRukusMecBot
     protected HardwareLifter lifter = null ;
     protected HardwareHook hook = null ;
     public HardwareRukusVuforia VuReader = null ;
-    protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBoxLegacy crypto = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
@@ -469,26 +468,23 @@ public class HardwareRukusMecBot
 
     }
 
-    public void tySquareBot ( float targetHeading ) {
-        double currentHeadingTY = 0.0;
+    public void rxSquareBot ( float targetHeading ) {
+        double currentHeadingRX = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingTY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY) ;
-
-
+        currentHeadingRX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rX) ;
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
-            RobotLog.i("Current Heading" + currentHeadingTY);
+            RobotLog.i("Current Heading" + currentHeadingRX);
 
-            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
             FirstCallPIDDrive = false;
         }
 
-        correction = motorPID.Update(currentHeadingTY);
+        correction = motorPID.Update(currentHeadingRX);
 
-
-        setBotMovement(correction, correction, correction, correction) ;
+        setBotMovement(correction, correction, -correction, -correction) ; //needs corrected
     }
 
     public void rySquareBot ( float targetHeading ) {
@@ -497,41 +493,56 @@ public class HardwareRukusMecBot
         VuReader.updateVuforiaCoords();
         currentHeadingRY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rY) ;
 
-
-
-
-
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingRY);
 
-            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
             FirstCallPIDDrive = false;
         }
 
         correction = motorPID.Update(currentHeadingRY);
 
 
-        setBotMovement(-correction, -correction, correction, correction) ;
+        setBotMovement(correction, correction, -correction, -correction) ;
     }
 
-    public void tzSquareBot ( float targetHeading ) {
-        double currentHeadingTZ = 0.0;
+    public void txSquareBot ( float targetHeading ) {
+        double currentHeadingTX = 0.0;
 
         VuReader.updateVuforiaCoords();
-        currentHeadingTZ = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tZ) ;
+        currentHeadingTX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tX) ;
 
 
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
-            RobotLog.i("Current Heading" + currentHeadingTZ);
+            RobotLog.i("Current Heading" + currentHeadingTX);
 
-            motorPID = new PIDController(targetHeading, 0.0004, 0, 0);
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
             FirstCallPIDDrive = false;
         }
 
-        correction = motorPID.Update(currentHeadingTZ);
+        correction = motorPID.Update(currentHeadingTX);
+
+        setBotMovement(correction, -correction, -correction, correction) ;
+    }
+
+    public void tySquareBot ( float targetHeading ) {
+        double currentHeadingTY = 0.0;
+
+        VuReader.updateVuforiaCoords();
+        currentHeadingTY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY) ;
+
+        if(FirstCallPIDDrive) {
+            RobotLog.i("Set up PID Target " + targetHeading);
+            RobotLog.i("Current Heading" + currentHeadingTY);
+
+            motorPID = new PIDController(targetHeading, kp, ki, 0);
+            FirstCallPIDDrive = false;
+        }
+
+        correction = motorPID.Update(currentHeadingTY);
 
 
         setBotMovement(correction, -correction, -correction, correction) ;
@@ -552,12 +563,14 @@ public class HardwareRukusMecBot
 
 
             gyroDriveStaight(power00, power01, power10, power11, targetHeading);
-        } else if (axis == PIDAxis.ty) {
-            tySquareBot(targetHeading);
+        } else if (axis == PIDAxis.rx) {
+            rxSquareBot(targetHeading);
         } else if (axis == PIDAxis.ry) {
             rySquareBot(targetHeading);
-        } else if (axis == PIDAxis.tz) {
-            tzSquareBot(targetHeading);
+        } else if (axis == PIDAxis.tx) {
+            txSquareBot(targetHeading);
+        } else if (axis == PIDAxis.ty) {
+            tySquareBot(targetHeading);
         }
 
 
