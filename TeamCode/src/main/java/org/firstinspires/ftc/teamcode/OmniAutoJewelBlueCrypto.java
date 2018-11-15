@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -12,7 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Func;
  */
 
 @Autonomous(name="Omni: AutoJewelBlueCrypto", group="Omni")
-//@Disable
+@Disabled
+
 public class OmniAutoJewelBlueCrypto extends OpMode {
     public enum MotorState{
         WAIT_START,
@@ -72,7 +74,6 @@ public class OmniAutoJewelBlueCrypto extends OpMode {
     @Override
     public void start() {
 
-        OmniBot.setLifterGrabber(0, 0.3, 0.3);
         OmniBot.start();
     }
 

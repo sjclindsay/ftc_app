@@ -28,7 +28,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name="Omni: RevTeleOp", group="Omni")
-
+@Disabled
 
 public class OmniRevTeleOp extends OpMode {
 

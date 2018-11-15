@@ -14,12 +14,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class HardwareHook {
     Servo hookServo = null ;
-    public DigitalChannel hookRetracted ;
-    public DigitalChannel hookExtended ;
+    public DigitalChannel sensorRetracted ;
+    public DigitalChannel sensorExtended ;
 
-    public boolean hookOpened = false ;
-    public boolean hookClosed = false ;
-
+    public boolean hookExtended = false ;
+    public boolean hookRetracted = false ;
+    public double hook = 0.0;
+    public boolean hookClosed = false;
+    public boolean hookOpened = false;
 
     HardwareMap hwMap = null;
 
@@ -33,11 +35,8 @@ public class HardwareHook {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        hookServo = hwMap.servo.get("servoHook") ;
-        hookRetracted = hwMap.digitalChannel.get("closeLimit") ;
-        hookExtended = hwMap.digitalChannel.get("openLimit") ;
-
-        hookServo.setPosition(0.5);
+        sensorRetracted = hwMap.digitalChannel.get("retractedLimit") ;
+        sensorExtended = hwMap.digitalChannel.get("extendedLimit") ;
     }
 
     public void start() {
@@ -48,8 +47,8 @@ public class HardwareHook {
     public void setHookSpeed (double hookSpeed) {
         closeLimit();
         openLimit();
-        if (hookOpened && hookSpeed < 0.5) {
-            hookSpeed = 0.5 ;
+        if (hookExtended && hookSpeed < 0.5) {
+            hook = 0.5 ;
         }
         if (hookClosed && hookSpeed > 0.5) {
             hookSpeed = 0.5;
@@ -58,14 +57,10 @@ public class HardwareHook {
     }
 
     public void closeLimit () {
-        if (hookExtended.getState()) {
             hookClosed = true ;
-        }
     }
     public void openLimit () {
-        if (hookRetracted.getState()) {
             hookOpened = true ;
-        }
     }
 
     public void addTelemetry(Telemetry telemetry) {
