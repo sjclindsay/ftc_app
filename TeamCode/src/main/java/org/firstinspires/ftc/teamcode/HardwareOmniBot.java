@@ -388,14 +388,6 @@ public class HardwareOmniBot
 
     }
 
-    public void setLifterGrabber (float lifterSpeed) {
-        lifter.setLifterGrabber(lifterSpeed);
-    }
-    public void setLifterGrabber (float lifterSpeed, double grabberPosition1, double grabberPosition2) {
-
-        lifter.setLifterGrabber(lifterSpeed, grabberPosition1, grabberPosition2);
-    }
-
     public double vuforiaCoordinates (HardwareVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
 
     public void addTelemetry(Telemetry telemetry) {

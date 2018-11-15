@@ -116,7 +116,7 @@ public class MecRevTeleOp2 extends OpMode {
             }
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
             if(MecBot.lifterConnected) {
-                MecBot.setLifterGrabber(motorLifterPower, gamepad2.right_trigger, gamepad2.left_trigger);
+                MecBot.setLifter(motorLifterPower);
             }
 
         MecBot.waitForTick(40);

@@ -37,7 +37,6 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 enum robotHWconnected {
     MotorOnly,
     MotorLifter,
-    MotorLifterHook,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
@@ -98,7 +97,6 @@ public class HardwareRukusMecBot
     protected boolean mototConnected = false;
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
-    protected boolean hookConnected = false ;
     protected boolean vuForLocalConnected = false ;
     protected boolean cryptoConnected = false;
     protected boolean jewelConnected = false;
@@ -106,7 +104,6 @@ public class HardwareRukusMecBot
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
-    protected HardwareHook hook = null ;
     public HardwareRukusVuforia VuReader = null ;
     protected RelicRecoveryVuMark vuMark = null ;
     protected HardwareCryptoBoxLegacy crypto = null ;
@@ -147,11 +144,6 @@ public class HardwareRukusMecBot
         if (ConnectedParts == robotHWconnected.MotorLifter) {
             mototConnected = true;
             lifterConnected = true ;
-        }
-        if (ConnectedParts == robotHWconnected.MotorLifterHook) {
-            mototConnected = true;
-            lifterConnected = true ;
-            hookConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             mototConnected = true;
@@ -283,11 +275,6 @@ public class HardwareRukusMecBot
             lifter.init(hwMap);
             RobotLog.i("Init COmplete Lifter");
         }
-        if (hookConnected) {
-            hook = new HardwareHook() ;
-            RobotLog.i("defined hook");
-            hook.init(hwMap);
-        }
         if (cryptoConnected) {
             crypto = new HardwareCryptoBoxLegacy() ;
             RobotLog.i("defined crypto class") ;
@@ -323,9 +310,6 @@ public class HardwareRukusMecBot
         if (lifterConnected) {
             lifter.start();
         }
-        if (hookConnected) {
-            hook.start();
-        }
         if (vuForLocalConnected || vuForWebConnected) {
             VuReader.start();
         }
@@ -339,36 +323,28 @@ public class HardwareRukusMecBot
 
     public void lowerRobot() {
         if (lifterConnected) {
-            lifter.setLifterGrabber((float)-0.5);
+            lifter.setLifter((float)-0.5);
         }
     }
     public boolean robotDown() {
         return true;
     }
-    public void releaseHook(){
-        if (hookConnected) {
-            hook.setHookSpeed(0); //move backwards
-        }
-    }
+
     public boolean hookReleased() {
         return true;
     }
     public void raiseRobot() {
         if (lifterConnected) {
-            lifter.setLifterGrabber((float)0.5);
+            lifter.setLifter((float)0.5);
         }
     }
     public boolean robotUp() {
         return true;
     }
-    public void closeHook() {
-    if (hookConnected) {
-        hook.setHookSpeed(1); //move forwards
-    }
-}
+
     public void lifterStop() {
         if(lifterConnected) {
-            lifter.setLifterGrabber(0);
+            lifter.setLifter((float) 0.0);
         }
     }
     public double getVuX (){
@@ -563,13 +539,10 @@ public class HardwareRukusMecBot
 
     }
 
-    public void setLifterGrabber (float lifterSpeed) {
-        lifter.setLifterGrabber(lifterSpeed);
+    public void setLifter (float lifterSpeed) {
+        lifter.setLifter(lifterSpeed);
     }
-    public void setLifterGrabber (float lifterSpeed, double grabberPosition1, double grabberPosition2) {
 
-        lifter.setLifterGrabber(lifterSpeed, grabberPosition1, grabberPosition2);
-    }
 
     public double vuforiaCoordinates (HardwareRukusVuforia.vuForiaCoord axis) {return VuReader.getVuforiaCoords(axis) ;}
 

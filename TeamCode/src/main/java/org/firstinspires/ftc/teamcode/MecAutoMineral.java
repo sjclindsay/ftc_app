@@ -99,7 +99,6 @@ public class MecAutoMineral extends OpMode {
                 break;
             case CHECK_ROBOT_DOWN:
                 if (MecBot.robotDown()) {
-                    MecBot.releaseHook();
                     nextState = MotorState.CHECK_HOOK_RELEASE;
                     stateAfterNext = MotorState.CHECK_HOOK_RELEASE;
                 }
