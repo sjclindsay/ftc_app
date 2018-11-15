@@ -105,8 +105,10 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case CHECK_HOOK_RELEASE:
-                MecBot.setBotMovement(.5,-.5,.5,-.5);
-                delay_time = .5;
+                RobotLog.i("Start Turn " + currentHeading);
+                MecBot.resetFirstPIDDrive(0.0055,0.000001);
+                MecBot.driveBot((float)0.2,-90,(float) currentHeading,PIDAxis.gyro);
+                delay_time = 1;
                 nextState = MotorState.DELAY;
                 stateAfterNext = MotorState.RAISE_ROBOT;
 
@@ -129,7 +131,7 @@ public class MecAutoMineral extends OpMode {
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading + 50.0);
+                targetHeading = (float) (currentHeading - 55.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
@@ -153,7 +155,11 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case TURN_COUNTERCLOCKWISE_VU:
-                MecBot.setBotMovement(.2,.2,-.2,-.2);
+                MecBot.setBotMovement(.15,.15,-.15,-.15);
+                if (MecBot.VuRukusSeen()== false){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.STOPROBOT ;
+                }
                 if ((MecBot.getVuHeading() > 0) || (MecBot.getVuHeading() + 180) < 90) {
                     MecBot.setBotMovement(0,0,0,0);
                 }

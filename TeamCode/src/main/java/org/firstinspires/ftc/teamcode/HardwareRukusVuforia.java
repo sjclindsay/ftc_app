@@ -286,7 +286,7 @@ public class HardwareRukusVuforia {
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES,
-                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 0));
+                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 90));
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables)
@@ -351,8 +351,11 @@ public class HardwareRukusVuforia {
                 translation = lastLocation.getTranslation();
                 // express the rotation of the robot in degrees.
                 rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+
+
             }
         }
+
     }
 
     public  java.lang.String getTrackableName() {
@@ -386,6 +389,13 @@ public class HardwareRukusVuforia {
           VuforiaCoords [1] [0] = rX ;
           VuforiaCoords [1] [1] = rY ;
           VuforiaCoords [1] [2] = rZ ;
+          RobotLog.i("Vuforia Rotation: Z " + rot.thirdAngle +
+                  ", Y " + rot.secondAngle +
+                  ", X " + rot.firstAngle );
+          RobotLog.i("Vuforia Translation: Z " + trans.get (2) +
+                  ", Y " + trans.get (1) +
+                  ", X " + trans.get(0));
+
       }
   }
 
