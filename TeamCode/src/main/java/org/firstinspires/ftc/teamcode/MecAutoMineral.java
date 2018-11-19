@@ -35,6 +35,7 @@ public class MecAutoMineral extends OpMode {
         CHECK_ROBOT_UP,
         DRIVE_TO_VUFORIA,
         STOP_TO_VUFORIA,
+
         TURN_COUNTERCLOCKWISE_VU,
         WAIT_TURN_COMPLETE,
         DRIVE_TO_X
@@ -46,7 +47,7 @@ public class MecAutoMineral extends OpMode {
     float target_mag = 0;
     float target_dir = 0;
     double delay_time = 0;
-    double target_x = 200 ;
+    double target_y = 200 ;
     double currentHeading = 0 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
     HardwareRukusMecBot MecBot ;
@@ -151,7 +152,7 @@ public class MecAutoMineral extends OpMode {
             case DRIVE_TO_VUFORIA:
                 MecBot.driveBot((float)0.1,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
-                    target_x = 0.0 ;
+                    target_y = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;
                 } else if (WaitTimer.milliseconds() >= 1250) {
                     WaitTimer.reset();
@@ -161,7 +162,7 @@ public class MecAutoMineral extends OpMode {
             case STOP_TO_VUFORIA:
                 MecBot.setBotMovement(0,0,0,0);
                 if(MecBot.VuRukusSeen()){
-                    target_x = 0.0 ;
+                    target_y = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;
                 } else if (WaitTimer.milliseconds() >= 500) {
                     WaitTimer.reset();
@@ -170,20 +171,23 @@ public class MecAutoMineral extends OpMode {
 
                 break;
             case DRIVE_TO_X:
-                if (MecBot.getVuX() <= target_x){
+                MecBot.driveBot((float)0.1,0,targetHeading,PIDAxis.gyro);
+                if (MecBot.getVuY() <= target_y){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                 }
                 break;
             case TURN_COUNTERCLOCKWISE_VU:
-                MecBot.setBotMovement(.15,.15,-.15,-.15);
+                MecBot.driveBot((float) 0.15, 0, 0, PIDAxis.ry);
+                if (Math.abs(MecBot.getVuHeading()) >= 3 ) {
+                    nextState = MotorState.STOPROBOT ;
+                    RobotLog.i("Finished program!!!!!") ;
+            }
                 if (MecBot.VuRukusSeen()== false){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.STOPROBOT ;
                 }
-                if ((MecBot.getVuHeading() > 0) || (MecBot.getVuHeading() + 180) < 90) {
-                    MecBot.setBotMovement(0,0,0,0);
-                }
+
                 break;
             case STOPROBOT:
                 MecBot.setBotMovement(0, 0, 0, 0);
