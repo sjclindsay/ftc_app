@@ -43,7 +43,7 @@ public class HardwareLifter {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-       // motorLifter = hwMap.dcMotor.get("motorLifter") ;
+        motorLifter = hwMap.dcMotor.get("motorLifter") ;
         lifterRangeLower = hwMap.digitalChannel.get("topLimit") ;
         lifterRangeUpper = hwMap.digitalChannel.get("bottomLimit") ;
 
