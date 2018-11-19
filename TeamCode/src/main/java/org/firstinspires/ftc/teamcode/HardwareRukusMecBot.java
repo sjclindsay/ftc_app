@@ -364,7 +364,7 @@ public class HardwareRukusMecBot
     }
     public double getVuHeading (){
         if (vuForWebConnected){
-            return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rZ));
+            return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rY));
         }
         else {
             return (0.0) ;
@@ -460,14 +460,17 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingRX);
 
-        setBotMovement(correction, correction, -correction, -correction) ; //needs corrected
+        if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
+            setBotMovement(correction, correction, -correction, -correction) ;
+        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
+            setBotMovement(-correction, -correction, correction, correction) ;
+        }
     }
 
     public void rySquareBot ( float targetHeading ) {
         double currentHeadingRY = 0.0;
 
-        VuReader.updateVuforiaCoords();
-        currentHeadingRY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rY) ;
+        currentHeadingRY = getVuHeading() ;
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
@@ -479,8 +482,11 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingRY);
 
-
-        setBotMovement(correction, correction, -correction, -correction) ;
+        if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
+            setBotMovement(correction, correction, -correction, -correction) ;
+        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
+            setBotMovement(-correction, -correction, correction, correction) ;
+        }
     }
 
     public void txSquareBot ( float targetHeading ) {
@@ -501,7 +507,11 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingTX);
 
-        setBotMovement(correction, -correction, -correction, correction) ;
+        if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
+            setBotMovement(-correction, -correction, -correction, -correction) ;
+        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
+            setBotMovement(correction, correction, correction, correction) ;
+        }
     }
 
     public void tySquareBot ( float targetHeading ) {
@@ -521,7 +531,11 @@ public class HardwareRukusMecBot
         correction = motorPID.Update(currentHeadingTY);
 
 
-        setBotMovement(correction, -correction, -correction, correction) ;
+        if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
+            setBotMovement(correction, -correction, -correction, correction) ;
+        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
+            setBotMovement(-correction, correction, correction, -correction) ;
+        }
     }
 
     public void driveBot (float magnitude, float direction, float targetHeading, PIDAxis axis) {
@@ -655,6 +669,10 @@ public class HardwareRukusMecBot
         if(gyroConnected) {
             gyroScope.Update();
             //gyroScope.UpdateAcceleration();
+        }
+
+        if (vuForWebConnected) {
+            VuReader.updateVuforiaCoords();
         }
 
         RobotLog.i("Motor Powers: 00: " + power00 + ", 01: " + power01 + ", 10: " + power10 + ", 11: " + power11) ;

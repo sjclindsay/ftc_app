@@ -351,7 +351,12 @@ public class HardwareRukusVuforia {
                 translation = lastLocation.getTranslation();
                 // express the rotation of the robot in degrees.
                 rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-
+                RobotLog.i("Vuforia Rotation: Z " + rotation.thirdAngle +
+                        ", Y " + rotation.secondAngle +
+                        ", X " + rotation.firstAngle );
+                RobotLog.i("Vuforia Translation: Z " + translation.get (2) +
+                        ", Y " + translation.get (1) +
+                        ", X " + translation.get(0));
 
             }
         }
