@@ -447,8 +447,9 @@ public class HardwareRukusMecBot
     public void rxSquareBot ( float targetHeading ) {
         double currentHeadingRX = 0.0;
 
-        VuReader.updateVuforiaCoords();
-        currentHeadingRX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rX) ;
+ //       VuReader.updateVuforiaCoords();
+        currentHeadingRX = getVuX();
+//        currentHeadingRX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rX) ;
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
@@ -492,9 +493,9 @@ public class HardwareRukusMecBot
     public void txSquareBot ( float targetHeading ) {
         double currentHeadingTX = 0.0;
 
-        VuReader.updateVuforiaCoords();
-        currentHeadingTX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tX) ;
-
+//        VuReader.updateVuforiaCoords();
+//        currentHeadingTX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tX) ;
+        currentHeadingTX = getVuX();
 
 
         if(FirstCallPIDDrive) {
@@ -517,8 +518,9 @@ public class HardwareRukusMecBot
     public void tySquareBot ( float targetHeading ) {
         double currentHeadingTY = 0.0;
 
-        VuReader.updateVuforiaCoords();
-        currentHeadingTY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY) ;
+//        VuReader.updateVuforiaCoords();
+//        currentHeadingTY = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tY) ;
+        currentHeadingTY =  getVuY();
 
         if(FirstCallPIDDrive) {
             RobotLog.i("Set up PID Target " + targetHeading);
@@ -672,7 +674,7 @@ public class HardwareRukusMecBot
         }
 
         if (vuForWebConnected) {
-            VuReader.updateVuforiaCoords();
+            VuReader.UpdateLocation();
         }
 
         RobotLog.i("Motor Powers: 00: " + power00 + ", 01: " + power01 + ", 10: " + power10 + ", 11: " + power11) ;

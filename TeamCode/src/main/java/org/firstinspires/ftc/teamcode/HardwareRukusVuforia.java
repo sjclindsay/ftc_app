@@ -351,6 +351,25 @@ public class HardwareRukusVuforia {
                 translation = lastLocation.getTranslation();
                 // express the rotation of the robot in degrees.
                 rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+
+                // Extract the X, Y, and Z components of the offset of the target relative to the robot
+                double tX = translation.get(0);
+                double tY = translation.get(1);
+                double tZ = translation.get(2);
+
+                // Extract the rotational components of the target relative to the robot
+                double rX = rotation.firstAngle;
+                double rY = rotation.secondAngle;
+                double rZ = rotation.thirdAngle;
+
+                VuforiaCoords [0] [0] = tX ;
+                VuforiaCoords [0] [1] = tY ;
+                VuforiaCoords [0] [2] = tZ ;
+
+                VuforiaCoords [1] [0] = rX ;
+                VuforiaCoords [1] [1] = rY ;
+                VuforiaCoords [1] [2] = rZ ;
+
                 RobotLog.i("Vuforia Rotation: Z " + rotation.thirdAngle +
                         ", Y " + rotation.secondAngle +
                         ", X " + rotation.firstAngle );
@@ -367,12 +386,11 @@ public class HardwareRukusVuforia {
         return(currentTrackable.getName());
     }
 
-    public void updateVuforiaCoords(){
-
-      OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+    public void updateVuforiaCoords(OpenGLMatrix pose){
 
                 /* We further illustrate how to decompose the pose into useful rotational and
                  * translational components */
+
       if (pose != null) {
           VectorF trans = pose.getTranslation();
           Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
