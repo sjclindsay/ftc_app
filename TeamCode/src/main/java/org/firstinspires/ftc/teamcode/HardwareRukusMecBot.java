@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.internal.vuforia.externalprovider.VuforiaWebcam;
 
+import java.security.PublicKey;
+
 import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 
 /**
@@ -42,19 +44,14 @@ enum robotHWconnected {
     MotorGyroLifter,
     MotorGyroLifterVuforLocal,
     MotorGyroLifterVuforJewel,
-    MotorGyroLifterVuforCryptoJewel,
-    MotorGyroLifterCrypto,
-    MotorGyroLifterCryptoJewel,
-    MotorLifterCrypto,
-    MotorLifterCryptoJewel,
-    MotorGyroLifterVuforCrypto,
     MotorLifterVufor,
     MotorJewel,
     MotorVufor,
     MotorVuforWebcam,
     VuforOnly,
     VuforWebcam,
-    MotorGyroVuforWebcam
+    MotorGyroVuforWebcam,
+    MotorGyroVuforWebcamMarker
 
 
 }
@@ -98,14 +95,14 @@ public class HardwareRukusMecBot
     protected boolean gyroConnected = false;
     protected boolean lifterConnected = false ;
     protected boolean vuForLocalConnected = false ;
-    protected boolean cryptoConnected = false;
+    protected boolean TeamMarkerConnected = false;
     protected boolean jewelConnected = false;
     protected boolean vuForWebConnected = false;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
     public HardwareRukusVuforia VuReader = null ;
-    protected HardwareCryptoBoxLegacy crypto = null ;
+    protected HWTeamMarkerServo Markerservo = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     protected boolean FirstCallPIDDrive = true;
@@ -162,38 +159,6 @@ public class HardwareRukusMecBot
             vuForLocalConnected = true ;
             jewelConnected = true ;
         }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterVuforCryptoJewel) {
-            mototConnected = true;
-            gyroConnected = true ;
-            lifterConnected = true ;
-            vuForLocalConnected = true ;
-            jewelConnected = true ;
-            cryptoConnected = true ;
-        }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterCrypto) {
-            mototConnected = true;
-            gyroConnected = true ;
-            lifterConnected = true ;
-            cryptoConnected = true ;
-        }
-        if (ConnectedParts == robotHWconnected.MotorGyroLifterCryptoJewel) {
-            mototConnected = true;
-            gyroConnected = true ;
-            lifterConnected = true ;
-            cryptoConnected = true ;
-            jewelConnected = true;
-        }
-        if (ConnectedParts == robotHWconnected.MotorLifterCrypto) {
-            mototConnected = true;
-            lifterConnected = true ;
-            cryptoConnected = true ;
-        }
-        if (ConnectedParts == robotHWconnected.MotorLifterCryptoJewel) {
-            mototConnected = true;
-            lifterConnected = true ;
-            jewelConnected = true ;
-            cryptoConnected = true ;
-        }
         if (ConnectedParts == robotHWconnected.MotorVufor) {
             mototConnected = true;
             vuForLocalConnected = true ;
@@ -221,6 +186,12 @@ public class HardwareRukusMecBot
             vuForWebConnected = true;
             mototConnected = true;
             gyroConnected = true;
+        }
+        if(ConnectedParts == robotHWconnected.MotorGyroVuforWebcamMarker){
+            vuForWebConnected = true;
+            mototConnected = true;
+            gyroConnected = true;
+            TeamMarkerConnected = true;
         }
     }
 
@@ -274,10 +245,10 @@ public class HardwareRukusMecBot
             lifter.init(hwMap);
             RobotLog.i("Init COmplete Lifter");
         }
-        if (cryptoConnected) {
-            crypto = new HardwareCryptoBoxLegacy() ;
-            RobotLog.i("defined crypto class") ;
-            crypto.init(hwMap) ;
+        if (TeamMarkerConnected) {
+            Markerservo = new HWTeamMarkerServo() ;
+            RobotLog.i("defined Markerservo class") ;
+            Markerservo.init(hwMap) ;
         }
         if (jewelConnected){
             jewelSystem = new HardwareJewel();
@@ -312,8 +283,8 @@ public class HardwareRukusMecBot
         if (vuForLocalConnected || vuForWebConnected) {
             VuReader.start();
         }
-        if (cryptoConnected) {
-            crypto.start();
+        if (TeamMarkerConnected) {
+            Markerservo.start();
         }
         if(jewelConnected) {
             jewelSystem.start();
@@ -379,12 +350,6 @@ public class HardwareRukusMecBot
         }
     }
 
-    public boolean updateCryptoTouch1() {
-        return crypto.updateCryptoTouch1() ;
-    }
-    public boolean updateCryptoTouch2() {
-        return crypto.updateCryptoTouch2() ;
-    }
 
     public void setBotMovement (double motorPower00, double motorPower01, double motorPower10, double motorPower11) {
 
@@ -409,7 +374,15 @@ public class HardwareRukusMecBot
     }
     public double getCurrentAccelerationX () {return (gyroScope.currentAccelerationX) ; }
     public double getCurrentAccelerationY () {return (gyroScope.currentAccelerationY) ; }
-
+    public void dropmarker(){
+        Markerservo.dropTeamMarker();
+    }
+    public void liftmarker(){
+        Markerservo.liftMarkerHolder();
+    }
+    public boolean ismarkerdropped () {
+        return (Markerservo.isTeamMarkerDropped()) ;
+    }
 
     public void resetFirstPIDDrive (double kp_, double ki_) {
         RobotLog.i("ResetFirstCall FIxed");
@@ -638,8 +611,8 @@ public class HardwareRukusMecBot
         if(jewelConnected) {
             //jewelSystem.addTelemetry(telemetry);
         }
-        if(cryptoConnected) {
-            crypto.addTelemetry(telemetry);
+        if(TeamMarkerConnected) {
+            Markerservo.addTelemetry(telemetry);
         }
         if(vuForLocalConnected || vuForWebConnected) {
             VuReader.addTelemetry(telemetry);
