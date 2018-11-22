@@ -407,7 +407,9 @@ public class HardwareRukusMecBot
     public double getcurrentHeading() {
         return(gyroScope.currentHeadingZ);
     }
+    public double getCurrentAccelerationX () {return (gyroScope.currentAccelerationX) ; }
     public double getCurrentAccelerationY () {return (gyroScope.currentAccelerationY) ; }
+
 
     public void resetFirstPIDDrive (double kp_, double ki_) {
         RobotLog.i("ResetFirstCall FIxed");
@@ -686,5 +688,27 @@ public class HardwareRukusMecBot
         double power2 = Math.max(motorPower10,motorPower11) ;
         double maxPower = Math.max(power1,power2) ;
         return maxPower ;
+    }
+
+    public double angle360(double angle) {
+        if (angle < 0) {
+            angle += 360 ;
+        } else if (angle > 360){
+            angle -= 360;
+        }else {
+
+        }
+        return angle ;
+    }
+
+    public double angle180(double angle) {
+        if (angle > 180) {
+            angle -= 360 ;
+        } else if (angle < -180){
+            angle += 360 ;
+        } else {
+
+        }
+        return angle ;
     }
 }

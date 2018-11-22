@@ -107,11 +107,15 @@ public class MecRevTeleOp2 extends OpMode {
                 } else {
                     motorLifterPower = (float) 0.0;
                 }
-                if (MecBot.lifter.lifterRangeUpper.getState()) {
-                    motorLifterPower = Range.clip(motorLifterPower, -1, 0) ;
-                }
-                if (MecBot.lifter.lifterRangeLower.getState()) {
-                    motorLifterPower = Range.clip(motorLifterPower,0,1) ;
+                if (MecBot.lifter.lifterRangeLower.getState() && MecBot.lifter.lifterRangeUpper.getState()) {
+                    telemetry.addData("Error Error Holofect sensors both read ", MecBot.lifter.lifterRangeLower.getState()) ;
+                } else {
+                    if (MecBot.lifter.lifterRangeUpper.getState()) {
+                        motorLifterPower = Range.clip(motorLifterPower, -1, 0);
+                    }
+                    if (MecBot.lifter.lifterRangeLower.getState()) {
+                        motorLifterPower = Range.clip(motorLifterPower, 0, 1);
+                    }
                 }
             }
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
