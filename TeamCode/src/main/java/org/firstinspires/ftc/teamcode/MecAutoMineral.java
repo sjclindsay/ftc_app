@@ -197,11 +197,10 @@ public class MecAutoMineral extends OpMode {
             case TURN_COUNTERCLOCKWISE_VU:
                 MecBot.driveBot((float) 0.15, 0, 0, PIDAxis.ry);
                 if (Math.abs(MecBot.getVuHeading()) >= 2 ) {
-                    nextState = MotorState.DRIVE_TO_WALL ;
-                    targetHeading = (float) currentHeading ;
-                    MecBot.resetFirstPIDDrive(0.0055,0.000001);
-            }
-                if (MecBot.VuRukusSeen()== false){
+                    nextState = MotorState.DRIVE_TO_WALL;
+                    targetHeading = (float) currentHeading;
+                    MecBot.resetFirstPIDDrive(0.0055, 0.000001);
+                } else if (MecBot.VuRukusSeen()== false){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.STOPROBOT ;
                 }

@@ -462,6 +462,8 @@ public class HardwareRukusMecBot
             setBotMovement(correction, correction, -correction, -correction) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
             setBotMovement(-correction, -correction, correction, correction) ;
+        } else {
+            RobotLog.i("error null picture name") ;
         }
     }
 
