@@ -230,7 +230,16 @@ public class MecAutoMineral extends OpMode {
                 if (WaitTimer.time() > 2500) {
                     nextState = MotorState.DELIVER_PAYLOAD ;
                 }
-
+            case DELIVER_PAYLOAD:
+                //drop the servo
+                if (true/*the thing is released*/) {
+                    //pull the servo up
+                    nextState = MotorState.RETURN_TO_CRATER ;
+                }
+                break;
+            case RETURN_TO_CRATER:
+                //dont fail
+                MecBot.driveBot( (float) 0.15, 90, targetHeading, PIDAxis.gyro);
                 break;
             case STOPROBOT:
                 MecBot.setBotMovement(0, 0, 0, 0);
