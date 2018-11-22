@@ -119,7 +119,6 @@ public class MecAutoMineral extends OpMode {
                 delay_time = 1;
                 nextState = MotorState.DELAY;
                 stateAfterNext = MotorState.RAISE_ROBOT;
-
                 break;
             case RAISE_ROBOT:
                 MecBot.setBotMovement(0,0,0,0);
@@ -178,7 +177,6 @@ public class MecAutoMineral extends OpMode {
                     WaitTimer.reset();
                     nextState = MotorState.DRIVE_TO_VUFORIA ;
                 }
-
                 break;
             case DRIVE_TO_X:
                 MecBot.driveBot((float)-0.1,0,targetHeading,PIDAxis.gyro);

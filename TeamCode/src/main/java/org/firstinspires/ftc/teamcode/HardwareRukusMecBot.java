@@ -385,7 +385,7 @@ public class HardwareRukusMecBot
     }
 
     public void resetFirstPIDDrive (double kp_, double ki_) {
-        RobotLog.i("ResetFirstCall FIxed");
+        RobotLog.i("ResetFirstCall Fixed");
         FirstCallPIDDrive = true;
 
         kp = kp_ ;
@@ -436,6 +436,12 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingRX);
 
+        if(VuReader.isTargetVisible()){
+            RobotLog.i("Trackable is ", VuReader.getTrackableName());
+        } else {
+            RobotLog.i("Trackable not Visable.");
+        }
+
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
             setBotMovement(correction, correction, -correction, -correction) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
@@ -457,6 +463,12 @@ public class HardwareRukusMecBot
         }
 
         correction = motorPID.Update(currentHeadingRY);
+
+        if(VuReader.isTargetVisible()){
+            RobotLog.i("Trackable is ", VuReader.getTrackableName());
+        } else {
+            RobotLog.i("Trackable not Visable.");
+        }
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
             setBotMovement(correction, correction, -correction, -correction) ;
@@ -483,6 +495,12 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingTX);
 
+        if(VuReader.isTargetVisible()){
+            RobotLog.i("Trackable is ", VuReader.getTrackableName());
+        } else {
+            RobotLog.i("Trackable not Visable.");
+        }
+
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
             setBotMovement(-correction, -correction, -correction, -correction) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
@@ -507,6 +525,11 @@ public class HardwareRukusMecBot
 
         correction = motorPID.Update(currentHeadingTY);
 
+        if(VuReader.isTargetVisible()){
+            RobotLog.i("Trackable is ", VuReader.getTrackableName());
+        } else {
+            RobotLog.i("Trackable not Visable.");
+        }
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
             setBotMovement(correction, -correction, -correction, correction) ;
