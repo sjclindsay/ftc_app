@@ -42,13 +42,17 @@ public class MecAutoMineral extends OpMode {
         HIT_WALL,
         DRIVE_TO_RELEASE_POINT,
         DELIVER_PAYLOAD,
-        RETURN_TO_CRATER
+        RETURN_TO_CRATER,
+        BACK_AWAY_FROM_HILL,
+        SQUARE_TO_HILL,
+        CLIMB_HILL
 
 
 
     }
     MotorState currentState = MotorState.ERROR_STATE;
     float targetHeading = 0 ;
+    float targetHeadingY = 0 ;
     float magnitude = 0 ;
     float direction = 90 ;
     float target_mag = 0;
@@ -56,6 +60,8 @@ public class MecAutoMineral extends OpMode {
     double delay_time = 0;
     double target_y = 200 ;
     double currentHeading = 0 ;
+    double kp = 0.0055 ;
+    double ki = 0.000001 ;
     robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
     HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -189,11 +195,10 @@ public class MecAutoMineral extends OpMode {
             case TURN_COUNTERCLOCKWISE_VU:
                 MecBot.driveBot((float) 0.15, 0, 0, PIDAxis.ry);
                 if (Math.abs(MecBot.getVuHeading()) >= 2 ) {
-                    nextState = MotorState.DRIVE_TO_WALL ;
-                    targetHeading = (float) currentHeading ;
-                    MecBot.resetFirstPIDDrive(0.0055,0.000001);
-            }
-                if (MecBot.VuRukusSeen()== false){
+                    nextState = MotorState.DRIVE_TO_WALL;
+                    targetHeading = (float) currentHeading;
+                    MecBot.resetFirstPIDDrive(0.0055, 0.000001);
+                } else if (MecBot.VuRukusSeen()== false){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.STOPROBOT ;
                 }
@@ -209,7 +214,6 @@ public class MecAutoMineral extends OpMode {
                 }
             case DRIVE_TO_SAFE_ZONE:
                 MecBot.driveBot((float) 0.15, -90, targetHeading, PIDAxis.gyro);
-                RobotLog.i("Finished program!!!!!") ;
                 if (StabilizationTimer.time() > 1000) {
                     nextState = MotorState.HIT_WALL ;
                 }
@@ -233,11 +237,38 @@ public class MecAutoMineral extends OpMode {
                 if (true/*the thing is released*/) {
                     //pull the servo up
                     nextState = MotorState.RETURN_TO_CRATER ;
+                    targetHeadingY = MecBot.gyroScope.currentHeadingY ;
                 }
                 break;
             case RETURN_TO_CRATER:
                 //dont fail
                 MecBot.driveBot( (float) 0.15, 90, targetHeading, PIDAxis.gyro);
+                if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) > 4) {
+                    nextState = MotorState.BACK_AWAY_FROM_HILL ;
+                }
+            case BACK_AWAY_FROM_HILL:
+                MecBot.driveBot((float)0.15, -90, targetHeading, PIDAxis.gyro);
+                if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) < 2) {
+                    nextState = MotorState.SQUARE_TO_HILL ;
+                    targetHeading += 90 ;
+                }
+                break;
+            case SQUARE_TO_HILL:
+                MecBot.driveBot((float) 0.15, 0, targetHeading, PIDAxis.gyro);
+                if (Math.abs(targetHeading - MecBot.gyroScope.currentHeadingX) < 3) {
+                    nextState = MotorState.WAIT ;
+                    stateAfterNext = MotorState.CLIMB_HILL ;
+                    MecBot.resetFirstPIDDrive(kp, ki);
+                    MecBot.driveBot((float) 0.04, 0, targetHeading, PIDAxis.gyro);
+                }
+                break;
+            case CLIMB_HILL:
+                MecBot. driveBot((float) 0.4, 0, targetHeading, PIDAxis.gyro);
+                if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) < 2) {
+                    MecBot.setBotMovement(0, 0, 0, 0);
+                    nextState = MotorState.STOPROBOT ;
+                    RobotLog.i("Finished program!!!!!") ;
+                }
                 break;
             case STOPROBOT:
                 MecBot.setBotMovement(0, 0, 0, 0);
