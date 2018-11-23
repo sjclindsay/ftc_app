@@ -334,10 +334,11 @@ public class HardwareRukusMecBot
         }
     }
     public double getVuHeading (){
-        if (vuForWebConnected){
+        if (vuForWebConnected || vuForLocalConnected){
             return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rY));
         }
         else {
+            RobotLog.i("you have made a grave mistake vuforia is not connected") ;
             return (0.0) ;
         }
     }
@@ -460,8 +461,10 @@ public class HardwareRukusMecBot
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
             setBotMovement(correction, correction, -correction, -correction) ;
+            RobotLog.i("At Blue side, current heading " + currentHeadingRY) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
             setBotMovement(-correction, -correction, correction, correction) ;
+            RobotLog.i("At Red side, current heading " + currentHeadingRY) ;
         } else {
             RobotLog.i("error null picture name") ;
         }
@@ -650,8 +653,9 @@ public class HardwareRukusMecBot
             //gyroScope.UpdateAcceleration();
         }
 
-        if (vuForWebConnected) {
+        if (vuForWebConnected || vuForLocalConnected) {
             VuReader.UpdateLocation();
+            RobotLog.i("updated vuforia coordinates") ;
         }
 
         RobotLog.i("Motor Powers: 00: " + power00 + ", 01: " + power01 + ", 10: " + power10 + ", 11: " + power11) ;
