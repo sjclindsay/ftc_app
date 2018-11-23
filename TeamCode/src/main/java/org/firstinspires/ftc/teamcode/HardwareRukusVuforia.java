@@ -335,7 +335,9 @@ public class HardwareRukusVuforia {
 
     public void UpdateLocation () {
         for (VuforiaTrackable trackable : allTrackables) {
+            RobotLog.i("UpdateLocation: Current Trackable ", trackable.getName());
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                RobotLog.i("UpdateLocation: Current trackable ", trackable.getName());
                 targetVisible = true;
                 currentTrackable = trackable;
                 // getUpdatedRobotLocation() will return null if no new information is available since
@@ -347,6 +349,7 @@ public class HardwareRukusVuforia {
                 break;
             }
             if (targetVisible) {
+                RobotLog.i("UpdateLocation: Trackable is visible");
                 // express position (translation) of robot in inches.
                 translation = lastLocation.getTranslation();
                 // express the rotation of the robot in degrees.
