@@ -334,22 +334,22 @@ public class HardwareRukusVuforia {
     }
 
     public void UpdateLocation () {
+        boolean coordinatesNotUpdated = true;
+        targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
-            RobotLog.i("UpdateLocation: Current Trackable ", trackable.getName());
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                RobotLog.i("UpdateLocation: Current trackable ", trackable.getName());
                 targetVisible = true;
                 currentTrackable = trackable;
+                RobotLog.i("UpdateLocation: isVisible true Current trackable "+currentTrackable.getName());
                 // getUpdatedRobotLocation() will return null if no new information is available since
                 // the last time that call was made, or if the trackable is not currently visible.
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
-                break;
             }
-            if (targetVisible) {
-                RobotLog.i("UpdateLocation: Trackable is visible");
+            if (targetVisible && coordinatesNotUpdated) {
+                RobotLog.i("UpdateLocation: translation Trackable is visible");
                 // express position (translation) of robot in inches.
                 translation = lastLocation.getTranslation();
                 // express the rotation of the robot in degrees.
@@ -379,7 +379,7 @@ public class HardwareRukusVuforia {
                 RobotLog.i("Vuforia Translation: Z " + translation.get (2) +
                         ", Y " + translation.get (1) +
                         ", X " + translation.get(0));
-
+                coordinatesNotUpdated = false;
             }
         }
 
