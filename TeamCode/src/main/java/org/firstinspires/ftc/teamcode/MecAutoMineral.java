@@ -164,7 +164,7 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case DRIVE_TO_VUFORIA:
-                MecBot.driveBot((float) -0.1,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot((float) -0.2,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
                     target_y = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;
@@ -185,7 +185,7 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case DRIVE_TO_X:
-                MecBot.driveBot((float)-0.1,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot((float)-0.15,0,targetHeading,PIDAxis.gyro);
                 if (MecBot.getVuY() <= target_y){
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
@@ -233,9 +233,9 @@ public class MecAutoMineral extends OpMode {
                     nextState = MotorState.DELIVER_PAYLOAD ;
                 }
             case DELIVER_PAYLOAD:
-                //drop the servo
-                if (true/*the thing is released*/) {
-                    //pull the servo up
+                MecBot.dropmarker();
+                if (MecBot.ismarkerdropped()) {
+                    MecBot.liftmarker();
                     nextState = MotorState.RETURN_TO_CRATER ;
                     targetHeadingY = MecBot.gyroScope.currentHeadingY ;
                 }
@@ -256,6 +256,7 @@ public class MecAutoMineral extends OpMode {
             case SQUARE_TO_HILL:
                 MecBot.driveBot((float) 0.15, 0, targetHeading, PIDAxis.gyro);
                 if (Math.abs(targetHeading - MecBot.gyroScope.currentHeadingX) < 3) {
+                    WaitTimer.reset();
                     nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.CLIMB_HILL ;
                     MecBot.resetFirstPIDDrive(kp, ki);
