@@ -164,7 +164,7 @@ public class MecAutoMineral extends OpMode {
                 }
                 break;
             case DRIVE_TO_VUFORIA:
-                MecBot.driveBot((float) -0.2,0,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot((float) -0.15,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
                     target_y = 0.0 ;
                     nextState = MotorState.DRIVE_TO_X;

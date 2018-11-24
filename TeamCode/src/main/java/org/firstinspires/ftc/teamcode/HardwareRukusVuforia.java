@@ -279,9 +279,9 @@ public class HardwareRukusVuforia {
          * In this example, it is centered (left to right), but 110 mm forward of the middle of the robot, and 200 mm above ground level.
          */
 
-        final int CAMERA_FORWARD_DISPLACEMENT  = 110;   // eg: Camera is 110 mm in front of robot center
-        final int CAMERA_VERTICAL_DISPLACEMENT = 200;   // eg: Camera is 200 mm above ground
-        final int CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final int CAMERA_FORWARD_DISPLACEMENT  = 152;   // eg: Camera is 110 mm in front of robot center
+        final int CAMERA_VERTICAL_DISPLACEMENT = 356;   // eg: Camera is 200 mm above ground
+        final int CAMERA_LEFT_DISPLACEMENT     = 152;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -372,13 +372,14 @@ public class HardwareRukusVuforia {
                 VuforiaCoords [1] [0] = rX ;
                 VuforiaCoords [1] [1] = rY ;
                 VuforiaCoords [1] [2] = rZ ;
-
+/*
                 RobotLog.i("Vuforia Rotation: Z " + rotation.thirdAngle +
                         ", Y " + rotation.secondAngle +
                         ", X " + rotation.firstAngle );
                 RobotLog.i("Vuforia Translation: Z " + translation.get (2) +
                         ", Y " + translation.get (1) +
                         ", X " + translation.get(0));
+*/
                 coordinatesNotUpdated = false;
             }
         }
