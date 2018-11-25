@@ -190,6 +190,9 @@ public class MecAutoMineral extends OpMode {
                     MecBot.setBotMovement(0,0,0,0);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
+                } else if (MecBot.VuRukusSeen()== false){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case TURN_COUNTERCLOCKWISE_VU:
