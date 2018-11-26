@@ -317,6 +317,13 @@ public class HardwareRukusMecBot
             lifter.setLifter((float) 0.0);
         }
     }
+    public void setMarkerServoPosition(double position) {
+        Markerservo.setTeamMarkerPosition(position);
+    }
+    public double getMarkerServoPosition(){
+        return(Markerservo.getTeamMarkerServoPosition());
+    }
+
     public double getVuX (){
         if (vuForWebConnected){
             return (VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.tX));

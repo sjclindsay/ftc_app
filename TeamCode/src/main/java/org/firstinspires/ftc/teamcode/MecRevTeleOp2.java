@@ -118,6 +118,14 @@ public class MecRevTeleOp2 extends OpMode {
                     }
                 }
             }
+            if(MecBot.TeamMarkerConnected && gamepad2.a) {
+                MecBot.setMarkerServoPosition(MecBot.getMarkerServoPosition()+0.2);
+
+            }
+            if(MecBot.TeamMarkerConnected && gamepad2.x) {
+                MecBot.setMarkerServoPosition(MecBot.getMarkerServoPosition()-0.2);
+            }
+
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
             if(MecBot.lifterConnected) {
                 MecBot.setLifter(motorLifterPower);
