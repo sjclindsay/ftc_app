@@ -58,11 +58,11 @@ public class MecAutoMineral extends OpMode {
     float target_mag = 0;
     float target_dir = 0;
     double delay_time = 0;
-    double target_y = 200 ;
+    double target_x = 200 ;
     double currentHeading = 0 ;
     double kp = 0.0055 ;
     double ki = 0.000001 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcamLifter;
     HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
@@ -147,13 +147,13 @@ public class MecAutoMineral extends OpMode {
             case TURN_CLOCKWISE:
                 targetHeading = (float) (currentHeading - 55.0);
                 RobotLog.i("Start Turn " + currentHeading);
-                MecBot.resetFirstPIDDrive(0.0055,0.000001);
+                MecBot.resetFirstPIDDrive(0.0055,0.000003);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
                 target_mag = 0;
                 target_dir= 0;
                 nextState = MotorState.WAIT_TURN_COMPLETE ;
                 stateAfterNext = MotorState.DRIVE_TO_VUFORIA;
-                MecBot.resetFirstPIDDrive(0.0055, 0.000001);
+                MecBot.resetFirstPIDDrive(0.0055, 0.000003);
                 break;
             case WAIT_TURN_COMPLETE:
                 MecBot.driveBot(target_mag,target_dir, targetHeading,PIDAxis.gyro);
@@ -166,8 +166,8 @@ public class MecAutoMineral extends OpMode {
             case DRIVE_TO_VUFORIA:
                 MecBot.driveBot((float) -0.15,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
-                    target_y = 0.0 ;
-                    nextState = MotorState.DRIVE_TO_X;
+                    target_x = 0.0 ;
+                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU ;
                 } else if (WaitTimer.milliseconds() >= 1250) {
                     WaitTimer.reset();
                     nextState = MotorState.STOP_TO_VUFORIA;
@@ -176,29 +176,18 @@ public class MecAutoMineral extends OpMode {
             case STOP_TO_VUFORIA:
                 MecBot.setBotMovement(0,0,0,0);
                 if(MecBot.VuRukusSeen()){
-                    target_y = 0.0 ;
-                    nextState = MotorState.DRIVE_TO_X;
+                    target_x = 0.0 ;
+                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 } else if (WaitTimer.milliseconds() >= 500) {
                     WaitTimer.reset();
                     nextState = MotorState.DRIVE_TO_VUFORIA ;
                 }
                 break;
-            case DRIVE_TO_X:
-                MecBot.driveBot((float)-0.15,0,targetHeading,PIDAxis.gyro);
-                if (MecBot.getVuY() <= target_y){
-                    MecBot.setBotMovement(0,0,0,0);
-                    nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;
-                    MecBot.resetFirstPIDDrive(0.0055,0.000001);
-                } else if (MecBot.VuRukusSeen()== false){
-                    MecBot.setBotMovement(0,0,0,0);
-                    nextState = MotorState.STOPROBOT ;
-                }
-                break;
             case TURN_COUNTERCLOCKWISE_VU:
                 MecBot.driveBot((float) 0.15, 0, 0, PIDAxis.ry);
                 if (Math.abs(MecBot.getVuHeading()) >= 2 ) {
-                    nextState = MotorState.DRIVE_TO_WALL;
+                    nextState = MotorState.DRIVE_TO_X;
                     targetHeading = (float) currentHeading;
                     MecBot.resetFirstPIDDrive(0.0055, 0.000001);
                 } else if (MecBot.VuRukusSeen()== false){
@@ -206,9 +195,20 @@ public class MecAutoMineral extends OpMode {
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;
+            case DRIVE_TO_X:
+                MecBot.driveBot((float)-0.15,0,(float)target_x,PIDAxis.tx);
+                if (Math.abs(MecBot.getVuX()- target_x) <= 2){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.DRIVE_TO_WALL ;
+                    MecBot.resetFirstPIDDrive(0.0055,0.000001);
+                } else if (MecBot.VuRukusSeen()== false){
+                    MecBot.setBotMovement(0,0,0,0);
+                    nextState = MotorState.STOPROBOT ;
+                }
+                break;
             case DRIVE_TO_WALL:
                 MecBot.driveBot((float) -0.15, 0,targetHeading, PIDAxis.gyro);
-                if (MecBot.getVuX() > 60) {
+                if (MecBot.getVuX() > 1500) {
                     MecBot.setBotMovement(0 ,0, 0, 0);
                     WaitTimer.reset();
                     nextState = MotorState.WAIT ;

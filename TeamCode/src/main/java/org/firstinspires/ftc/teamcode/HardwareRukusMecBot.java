@@ -51,6 +51,7 @@ enum robotHWconnected {
     VuforOnly,
     VuforWebcam,
     MotorGyroVuforWebcam,
+    MotorGyroVuforWebcamLifter,
     MotorGyroVuforWebcamMarker
 
 
@@ -186,6 +187,12 @@ public class HardwareRukusMecBot
             vuForWebConnected = true;
             mototConnected = true;
             gyroConnected = true;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroVuforWebcamLifter){
+            vuForWebConnected = true;
+            mototConnected = true;
+            gyroConnected = true;
+            lifterConnected = true ;
         }
         if(ConnectedParts == robotHWconnected.MotorGyroVuforWebcamMarker){
             vuForWebConnected = true;
@@ -507,9 +514,9 @@ public class HardwareRukusMecBot
         }
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
-            setBotMovement(-correction, -correction, -correction, -correction) ;
+            setBotMovement(correction, -correction, -correction, correction) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
-            setBotMovement(correction, correction, correction, correction) ;
+            setBotMovement(-correction, correction, correction, -correction) ;
         }
     }
 
