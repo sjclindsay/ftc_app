@@ -16,8 +16,8 @@ public class HWTeamMarkerServo {
 
     Servo teamMarkerServo = null;
     DigitalChannel sensorMarkerDropped = null;
-    public static double servoMarkerDrop = 1.0;
-    public static double servoMarkerUp = 0.0;
+    public static double servoMarkerDrop = 0.4;
+    public static double servoMarkerUp = 0.95;
     public static double servoMarkStartPosition = servoMarkerUp;
 
     HardwareMap hwMap = null;

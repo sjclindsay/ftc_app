@@ -39,6 +39,7 @@ import static org.firstinspires.ftc.teamcode.FormatHelper.formatDouble;
 enum robotHWconnected {
     MotorOnly,
     MotorLifter,
+    MotorLifterMarker,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
@@ -112,7 +113,6 @@ public class HardwareRukusMecBot
     public double correction = 0.0 ;
 
 
-
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -141,6 +141,11 @@ public class HardwareRukusMecBot
         if (ConnectedParts == robotHWconnected.MotorLifter) {
             mototConnected = true;
             lifterConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterMarker) {
+            mototConnected = true;
+            lifterConnected = true ;
+            TeamMarkerConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             mototConnected = true;
@@ -442,6 +447,7 @@ public class HardwareRukusMecBot
 //        currentHeadingRX = VuReader.getVuforiaCoords(HardwareRukusVuforia.vuForiaCoord.rX) ;
 
         if(FirstCallPIDDrive) {
+
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingRX);
 
@@ -466,10 +472,20 @@ public class HardwareRukusMecBot
 
     public void rySquareBot ( float targetHeading ) {
         double currentHeadingRY = 0.0;
+        double parrallelAngle = 0.0 ;
 
         currentHeadingRY = getVuHeading() ;
 
         if(FirstCallPIDDrive) {
+
+            parrallelAngle = (1800-getVuY()) / Math.abs(getVuX()) ;
+            parrallelAngle = Math.atan(parrallelAngle)*180/Math.PI ;
+            targetHeading = (float) parrallelAngle  - 90 ;
+            if (Math.signum(getVuX()) != Math.signum(getVuY())) {
+                targetHeading = -targetHeading ;
+            }
+            TargetHeading = targetHeading ;
+
             RobotLog.i("Set up PID Target " + targetHeading);
             RobotLog.i("Current Heading" + currentHeadingRY);
 
@@ -486,10 +502,10 @@ public class HardwareRukusMecBot
         }
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
-            setBotMovement(correction, correction, -correction, -correction) ;
+            setBotMovement(0, -correction/2, correction/2, correction) ;
             RobotLog.i("At Blue side, current heading " + currentHeadingRY) ;
         } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
-            setBotMovement(-correction, -correction, correction, correction) ;
+            setBotMovement(0, correction/2, -correction/2, -correction) ;
             RobotLog.i("At Red side, current heading " + currentHeadingRY) ;
         } else {
             RobotLog.i("error null picture name") ;
@@ -521,9 +537,9 @@ public class HardwareRukusMecBot
         }
 
         if ( VuReader.getTrackableName().equals("Blue-Rover") ) {
-            setBotMovement(correction, -correction, -correction, correction) ;
-        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
             setBotMovement(-correction, correction, correction, -correction) ;
+        } else if ( VuReader.getTrackableName().equals("Red-FootPrint") ) {
+            setBotMovement(correction, -correction, -correction, correction) ;
         }
     }
 

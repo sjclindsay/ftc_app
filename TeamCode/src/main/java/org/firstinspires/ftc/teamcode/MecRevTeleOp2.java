@@ -42,7 +42,7 @@ public class MecRevTeleOp2 extends OpMode {
     @Override
     public void init() {
 
-        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorLifter) ;
+        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorLifterMarker) ;
         MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
