@@ -40,6 +40,7 @@ enum robotHWconnected {
     MotorOnly,
     MotorLifter,
     MotorLifterMarker,
+    MotorLifterMarkerGrabber,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
@@ -99,10 +100,12 @@ public class HardwareRukusMecBot
     protected boolean vuForLocalConnected = false ;
     protected boolean TeamMarkerConnected = false;
     protected boolean jewelConnected = false;
+    protected boolean grabberConnected = false;
     protected boolean vuForWebConnected = false;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
+    protected HardwareGrabber grabber = null;
     public HardwareRukusVuforia VuReader = null ;
     protected HWTeamMarkerServo Markerservo = null ;
     protected double TargetHeading = 0.0;
@@ -146,6 +149,12 @@ public class HardwareRukusMecBot
             mototConnected = true;
             lifterConnected = true ;
             TeamMarkerConnected = true;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterMarkerGrabber) {
+            mototConnected = true;
+            lifterConnected = true ;
+            TeamMarkerConnected = true;
+            grabberConnected = true;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             mototConnected = true;
@@ -256,6 +265,11 @@ public class HardwareRukusMecBot
             RobotLog.i("defined lifter");
             lifter.init(hwMap);
             RobotLog.i("Init COmplete Lifter");
+        }
+        if (grabberConnected) {
+            grabber = new HardwareGrabber();
+            RobotLog.i("defined Grabber");
+            grabber.init(hwMap);
         }
         if (TeamMarkerConnected) {
             Markerservo = new HWTeamMarkerServo() ;
@@ -703,7 +717,7 @@ public class HardwareRukusMecBot
         period.reset();
         if(gyroConnected) {
             gyroScope.Update();
-            //gyroScope.UpdateAcceleration();
+            gyroScope.UpdateAcceleration();
         }
 
         if (vuForWebConnected || vuForLocalConnected) {
