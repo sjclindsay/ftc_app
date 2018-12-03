@@ -717,7 +717,7 @@ public class HardwareRukusMecBot
         period.reset();
         if(gyroConnected) {
             gyroScope.Update();
-            //gyroScope.UpdateAcceleration();
+            gyroScope.UpdateAcceleration();
         }
 
         if (vuForWebConnected || vuForLocalConnected) {
