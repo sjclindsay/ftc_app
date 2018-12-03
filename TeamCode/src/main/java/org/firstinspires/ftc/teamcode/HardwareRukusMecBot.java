@@ -54,6 +54,8 @@ enum robotHWconnected {
     VuforWebcam,
     MotorGyroVuforWebcam,
     MotorGyroVuforWebcamLifter,
+    MotorGyroVuforWebcamLifterMarker,
+    MotorGyroVuforWebcamLifterMarkerGrabber,
     MotorGyroVuforWebcamMarker
 
 
@@ -207,6 +209,21 @@ public class HardwareRukusMecBot
             mototConnected = true;
             gyroConnected = true;
             lifterConnected = true ;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroVuforWebcamLifterMarker){
+            vuForWebConnected = true;
+            mototConnected = true;
+            gyroConnected = true;
+            lifterConnected = true ;
+            TeamMarkerConnected = true;
+        }
+        if (ConnectedParts == robotHWconnected.MotorGyroVuforWebcamLifterMarkerGrabber){
+            vuForWebConnected = true;
+            mototConnected = true;
+            gyroConnected = true;
+            lifterConnected = true ;
+            TeamMarkerConnected = true;
+            grabberConnected = true;
         }
         if(ConnectedParts == robotHWconnected.MotorGyroVuforWebcamMarker){
             vuForWebConnected = true;
