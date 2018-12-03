@@ -126,8 +126,9 @@ public class MecRevTeleOp2 extends OpMode {
                 MecBot.setMarkerServoPosition(MecBot.getMarkerServoPosition()-0.2);
             }
             if(MecBot.grabberConnected ) {
-                MecBot.grabber.setServoGrabber1Position(gamepad2.left_trigger);
-                MecBot.grabber.setServoGrabber1Position(gamepad2.right_trigger);
+                MecBot.grabber.setServoGrabber1Position(gamepad2.right_trigger); //Grabber up and Down
+                MecBot.grabber.setServoGrabber2Position(gamepad2.left_trigger);  //Grabber open and Shut
+
             }
 
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
