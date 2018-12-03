@@ -38,6 +38,7 @@ public class MecAutoMineral extends OpMode {
         DRIVE_TO_X,
         TURN_COUNTERCLOCKWISE_VU,
         DRIVE_TO_WALL,
+        WAIT_DRIVE_TO_WALL,
         DRIVE_TO_SAFE_ZONE,
         HIT_WALL,
         DRIVE_TO_RELEASE_POINT,
@@ -62,7 +63,7 @@ public class MecAutoMineral extends OpMode {
     double currentHeading = 0 ;
     double kp = 0.0055 ;
     double ki = 0.000001 ;
-    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcam;
+    robotHWconnected autoConnectedHW = robotHWconnected.MotorGyroVuforWebcamMarker;
     HardwareRukusMecBot MecBot ;
     ElapsedTime StabilizationTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     double last_time = 0;
@@ -193,6 +194,8 @@ public class MecAutoMineral extends OpMode {
                     nextState = MotorState.DRIVE_TO_WALL;
                     targetHeading = (float) currentHeading;
                     MecBot.resetFirstPIDDrive(0.0055, 0.000002);
+                    StabilizationTimer.reset();
+
                 }
                 break;
                 /*
@@ -211,25 +214,32 @@ public class MecAutoMineral extends OpMode {
                 */
             case DRIVE_TO_WALL:
                 MecBot.driveBot((float) -0.5, 0,targetHeading, PIDAxis.gyro);
-                if (Math.abs(MecBot.getCurrentAccelerationY()) > 2) {
-                    MecBot.setBotMovement(0.25 ,0.25, 0.25, 0.25);
+                if (StabilizationTimer.time() > 500) {
+                    nextState = MotorState.WAIT_DRIVE_TO_WALL ;
                     WaitTimer.reset();
+                }
+                break;
+            case WAIT_DRIVE_TO_WALL:
+                MecBot.driveBot((float) -0.5, 0,targetHeading, PIDAxis.gyro);
+                if (Math.abs(MecBot.getCurrentAccelerationX()) > 2) {
+                    MecBot.setBotMovement(0.25 ,0.25, 0.25, 0.25);
+                    StabilizationTimer.reset();
                     nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.DRIVE_TO_SAFE_ZONE ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
-                } else if (StabilizationTimer.time()> 4000){
+                } else if (WaitTimer.time() > 4000){
                     nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case DRIVE_TO_SAFE_ZONE:
                 MecBot.driveBot((float) 0.5, -90, targetHeading, PIDAxis.gyro);
-                if (StabilizationTimer.time() > 1000) {
+                if (StabilizationTimer.time() > 500) {
                     nextState = MotorState.HIT_WALL ;
                 }
                 break;
             case HIT_WALL:
                 MecBot.driveBot( (float) 0.5, -90, targetHeading, PIDAxis.gyro );
-                if (Math.abs(MecBot.getCurrentAccelerationX()) > 2) {
+                if (Math.abs(MecBot.getCurrentAccelerationY()) > 2) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
