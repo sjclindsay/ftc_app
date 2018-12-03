@@ -173,13 +173,15 @@ public class HardwareGyro {
     public String formatedAngleX() {
         return FormatHelper.formatAngle(AngleUnit.DEGREES,currentHeadingX);
     }
-    /*
+
     public void UpdateAcceleration () {
         acceleration = imu.getLinearAcceleration().toUnit(DistanceUnit.METER);
         currentAccelerationZ = acceleration.zAccel ;
         currentAccelerationY = acceleration.yAccel ;
         currentAccelerationX = acceleration.xAccel ;
+        RobotLog.i("Gyro Acceleration: Z " + currentAccelerationZ + ", Y " + currentAccelerationY + ", X " + currentAccelerationX) ;
+
     }
-   */
+
 
 }

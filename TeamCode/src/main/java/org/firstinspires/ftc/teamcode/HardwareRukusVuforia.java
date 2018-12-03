@@ -374,12 +374,14 @@ public class HardwareRukusVuforia {
                 VuforiaCoords [1] [1] = rY ;
                 VuforiaCoords [1] [2] = rZ ;
 
+                /*
                 RobotLog.i("Vuforia Rotation: Z " + rotation.thirdAngle +
                         ", Y " + rotation.secondAngle +
                         ", X " + rotation.firstAngle );
                 RobotLog.i("Vuforia Translation: Z " + translation.get (2) +
                         ", Y " + translation.get (1) +
                         ", X " + translation.get(0));
+                        */
 
                 coordinatesNotUpdated = false;
             }
