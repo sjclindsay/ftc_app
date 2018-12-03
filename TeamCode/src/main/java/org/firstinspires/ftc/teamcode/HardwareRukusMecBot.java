@@ -683,6 +683,9 @@ public class HardwareRukusMecBot
         if(jewelConnected) {
             //jewelSystem.addTelemetry(telemetry);
         }
+        if(grabberConnected) {
+            grabber.addTelemetry(telemetry);
+        }
         if(TeamMarkerConnected) {
             Markerservo.addTelemetry(telemetry);
         }
