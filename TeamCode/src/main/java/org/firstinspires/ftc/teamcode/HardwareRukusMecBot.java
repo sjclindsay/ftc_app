@@ -340,7 +340,11 @@ public class HardwareRukusMecBot
         }
     }
     public boolean robotDown() {
-        return true;
+        if (lifterConnected) {
+            return lifter.down() ;
+        } else {
+            return true;
+        }
     }
 
     public boolean hookReleased() {
@@ -352,7 +356,11 @@ public class HardwareRukusMecBot
         }
     }
     public boolean robotUp() {
-        return true;
+        if (lifterConnected) {
+        return lifter.up() ;
+        } else {
+            return true ;
+        }
     }
 
     public void lifterStop() {
@@ -431,7 +439,7 @@ public class HardwareRukusMecBot
     public void liftmarker(){
         Markerservo.liftMarkerHolder();
     }
-    public boolean ismarkerdropped () {
+    public boolean isMarkerDropped () {
         return (Markerservo.isTeamMarkerDropped()) ;
     }
 

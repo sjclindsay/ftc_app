@@ -35,7 +35,7 @@ public class HardwareGrabber {
         servoGrabber2 = hwMap.servo.get("servoGrabber2");
 
         servoGrabber1.setPosition(0.85);
-        servoGrabber2.setPosition(0.75);
+        servoGrabber2.setPosition(0);
 
     }
 

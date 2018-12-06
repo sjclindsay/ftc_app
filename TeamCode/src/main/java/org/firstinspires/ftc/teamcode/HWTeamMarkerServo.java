@@ -19,6 +19,7 @@ public class HWTeamMarkerServo {
     public static double servoMarkerDrop = 0.4;
     public static double servoMarkerUp = 0.95;
     public static double servoMarkStartPosition = servoMarkerUp;
+    public boolean teamMarkerServoDown = false ;
 
     HardwareMap hwMap = null;
 
@@ -50,7 +51,12 @@ public class HWTeamMarkerServo {
     }
 
     public boolean isTeamMarkerDropped() {
-        return (!sensorMarkerDropped.getState());
+        if (teamMarkerServo.getPosition() == 0.4) {
+            teamMarkerServoDown = true ;
+        } else {
+            teamMarkerServoDown = false ;
+        }
+        return teamMarkerServoDown ;
     }
 
     public void dropTeamMarker() {

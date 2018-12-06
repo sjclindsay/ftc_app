@@ -59,6 +59,13 @@ public class HardwareLifter {
         motorLifter.setPower(lifterSpeed);
     }
 
+    public boolean up() {
+        return !lifterRangeUpper.getState() ;
+    }
+    public boolean down() {
+        return !lifterRangeLower.getState() ;
+    }
+
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()
