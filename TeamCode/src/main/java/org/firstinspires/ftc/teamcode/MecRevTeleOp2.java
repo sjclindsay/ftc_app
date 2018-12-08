@@ -38,6 +38,8 @@ public class MecRevTeleOp2 extends OpMode {
     int  dPadRightOff = 0 ;
     boolean headingToggle = false ;
     boolean directionToggle  = false ;
+    boolean yToggle = false ;
+    boolean yDebounce = false ;
 
     @Override
     public void init() {
@@ -90,6 +92,20 @@ public class MecRevTeleOp2 extends OpMode {
             motorLeft2power = (leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar;
             motorRight1power = (leftStickY - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
             motorRight2power = (leftStickY + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar;
+
+        if (gamepad1.y && !yDebounce) {
+            yToggle = true ;
+            yDebounce = true ;
+        } else if (gamepad1.y && yDebounce) {
+            yToggle = false ;
+            yDebounce = false ;
+        }
+        if (yToggle) {
+            motorLeft1power = -(leftStickY + gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar ;
+            motorLeft2power = -(leftStickY - gamepad1.left_stick_x + gamepad1.right_stick_x)/dPadScalar ;
+            motorRight1power = -(leftStickY  - gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar ;
+            motorRight2power = -(leftStickY  + gamepad1.left_stick_x - gamepad1.right_stick_x)/dPadScalar ;
+        }
 
 /*            if (dPadLeftOff == 1) {
                 motorLeft1power = 0 ;
