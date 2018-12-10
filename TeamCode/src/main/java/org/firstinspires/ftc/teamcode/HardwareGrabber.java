@@ -47,7 +47,7 @@ public class HardwareGrabber {
 
     public void setServoGrabber1Position(double position) {
 
-        position = position * 0.35 + 0.20;
+        position = position * 0.50 + 0.20;
 
         position = Range.clip(position, servoGrabberMinPosition, servoGrabberMaxPosition);
 

@@ -339,6 +339,11 @@ public class HardwareRukusMecBot
             lifter.setLifter((float)-0.5);
         }
     }
+    public void lowerRobotSlow() {
+        if (lifterConnected) {
+            lifter.setLifter((float)-0.25);
+        }
+    }
     public boolean robotDown() {
         if (lifterConnected) {
             return lifter.down() ;

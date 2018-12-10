@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 
-import java.io.WriteAbortedException;
-import java.math.MathContext;
-
 /**
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Mec: AutoMineral", group="Mec")
-public class MecAutoMineral extends OpMode {
+@Autonomous(name="Mec: V2_AutoMineral", group="Mec")
+public class V2_MecAutoMineral extends OpMode {
     public enum MotorState{
         WAIT_START,  //0
         CHECK_ROBOT_DOWN,  //1
@@ -134,7 +130,7 @@ public class MecAutoMineral extends OpMode {
                 break;
             case RAISE_ROBOT:
                 MecBot.setBotMovement(0,0,0,0);
-                MecBot.lowerRobot();
+                MecBot.lowerRobotSlow();
                 nextState = MotorState.TURN_CLOCKWISE;
                 break;
             case CHECK_ROBOT_UP:
@@ -279,7 +275,7 @@ public class MecAutoMineral extends OpMode {
                     nextState = MotorState.SPIN_TO_CRATER ;
                     targetHeadingY = MecBot.gyroScope.currentHeadingY ;
                     targetHeading = targetHeading + 89 ;
-                    MecBot.resetFirstPIDDrive(kp, 0.000003);
+                    MecBot.resetFirstPIDDrive(kp, 0.000002);
                 }
                 break;
             case SPIN_TO_CRATER:
