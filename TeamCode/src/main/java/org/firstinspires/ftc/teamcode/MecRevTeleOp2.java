@@ -44,7 +44,7 @@ public class MecRevTeleOp2 extends OpMode {
     @Override
     public void init() {
 
-        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorOnly) ;
+        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorLifter) ;
         MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -96,7 +96,7 @@ public class MecRevTeleOp2 extends OpMode {
         if (gamepad1.y && !yDebounce) {
             yToggle = true ;
             yDebounce = true ;
-        } else if (gamepad1.y && yDebounce) {
+        } else if (!gamepad1.y && yDebounce) {
             yToggle = false ;
             yDebounce = false ;
         }
