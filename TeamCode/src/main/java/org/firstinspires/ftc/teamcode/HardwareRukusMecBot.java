@@ -41,6 +41,7 @@ enum robotHWconnected {
     MotorLifter,
     MotorLifterMarker,
     MotorLifterMarkerGrabber,
+    MotorLifterMarkerGrabberArm,
     MotorGyro,
     MotorGyroServo,
     MotorGyroLifter,
@@ -104,12 +105,14 @@ public class HardwareRukusMecBot
     protected boolean jewelConnected = false;
     protected boolean grabberConnected = false;
     protected boolean vuForWebConnected = false;
+    protected boolean armConnected = false ;
     protected HardwareJewel jewelSystem = null ;
     protected HardwareGyro gyroScope = null;
     protected HardwareLifter lifter = null ;
     protected HardwareGrabber grabber = null;
     public HardwareRukusVuforia VuReader = null ;
     protected HWTeamMarkerServo Markerservo = null ;
+    protected HardwareArm arm = null ;
     protected double TargetHeading = 0.0;
     private PIDController motorPID = null;
     protected boolean FirstCallPIDDrive = true;
@@ -157,6 +160,13 @@ public class HardwareRukusMecBot
             lifterConnected = true ;
             TeamMarkerConnected = true;
             grabberConnected = true;
+        }
+        if (ConnectedParts == robotHWconnected.MotorLifterMarkerGrabberArm) {
+            mototConnected = true;
+            lifterConnected = true ;
+            TeamMarkerConnected = true;
+            grabberConnected = true;
+            armConnected = true ;
         }
         if (ConnectedParts == robotHWconnected.MotorGyroLifter) {
             mototConnected = true;
@@ -298,6 +308,11 @@ public class HardwareRukusMecBot
             RobotLog.i("Jewel Defined");
             jewelSystem.init(hwMap, targColor);
         }
+        if (armConnected){
+            arm = new HardwareArm();
+            RobotLog.i("Arm Defined");
+            arm.init(hwMap);
+        }
 
         if(mototConnected) {
             // Set all motors to zero power
@@ -331,6 +346,9 @@ public class HardwareRukusMecBot
         }
         if(jewelConnected) {
             jewelSystem.start();
+        }
+        if(armConnected) {
+            arm.start();
         }
     }
 

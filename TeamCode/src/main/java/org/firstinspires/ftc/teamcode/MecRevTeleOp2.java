@@ -44,7 +44,7 @@ public class MecRevTeleOp2 extends OpMode {
     @Override
     public void init() {
 
-        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorLifter) ;
+        MecBot = new HardwareRukusMecBot(robotHWconnected.MotorLifterMarkerGrabberArm) ;
         MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
@@ -142,6 +142,18 @@ public class MecRevTeleOp2 extends OpMode {
                 MecBot.grabber.setServoGrabber1Position(gamepad2.right_trigger); //Grabber up and Down
                 MecBot.grabber.setServoGrabber2Position(gamepad2.left_trigger);  //Grabber open and Shut
 
+            }
+            if (MecBot.armConnected) {
+                if (gamepad2.dpad_left) {
+                    MecBot.arm.stowArm();
+                }
+                if (gamepad2.dpad_up) {
+                    MecBot.arm.raiseArm();
+                }
+                if (gamepad2.dpad_right) {
+                    MecBot.arm.lowerArm();
+                }
+                MecBot.arm.manualArmControl(-gamepad2.left_stick_y);
             }
 
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);

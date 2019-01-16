@@ -148,7 +148,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                 break;
             case TURN_CLOCKWISE:
                 MecBot.resetFirstPIDDrive(0.0055,0.000003);
-                targetHeading = (float) (currentHeading + 40.0); //turn to get in line with wall-ish
+                targetHeading = (float) (currentHeading + 50.0); //turn to get in line with wall-ish
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
                 target_mag = 0;
@@ -167,7 +167,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
             case DRIVE_TO_VUFORIA:
                 MecBot.driveBot((float) -0.15,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
-                    targetHeading = targetHeading - 5 ;//turn straight again
+                    targetHeading = targetHeading - 10 ;//turn straight again
                     target_x = 0.0 ;
                     MecBot.resetFirstPIDDrive(0.0055, 0.00001);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU ;
@@ -220,19 +220,17 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                 break;
             case WAIT_DRIVE_TO_WALL:
                 MecBot.driveBot((float) -0.4, 0,targetHeading, PIDAxis.gyro);
-                if (Math.abs(MecBot.getCurrentAccelerationX()) > 4) {
+                if ( (Math.abs(MecBot.getCurrentAccelerationX()) > 4) || (WaitTimer.time() >= 4000) ) {
                     MecBot.setBotMovement(-0.4 ,-0.4, -0.4, -0.4);
                     StabilizationTimer.reset();
                     nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.DRIVE_TO_SAFE_ZONE;
                     targetHeading = (float) currentHeading ;
-                } else if (WaitTimer.time() > 4000){
-                    nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case DRIVE_AWAY_FROM_WALL:
                 targetHeading = (float) currentHeading ;
-                MecBot.setBotMovement(0.4,0.4,0.4,0.4);
+                MecBot.setBotMovement(0.9,0.9,0.9,0.9);
                 WaitTimer.reset();
                 nextState = MotorState.WAIT ;
                 stateAfterNext = MotorState.DRIVE_TO_SAFE_ZONE ;
@@ -252,7 +250,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
                     WaitTimer.reset();
-                } else if (StabilizationTimer.time() > 3000) {
+                } else if (StabilizationTimer.time() > 4000) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
