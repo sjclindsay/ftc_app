@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 /**
  * Created by conno on 8/17/2017.
@@ -144,16 +145,16 @@ public class MecRevTeleOp2 extends OpMode {
 
             }
             if (MecBot.armConnected) {
+                RobotLog.i("Arm is connected") ;
                 if (gamepad2.dpad_left) {
                     MecBot.arm.stowArm();
-                }
-                if (gamepad2.dpad_up) {
+                } else if (gamepad2.dpad_up) {
                     MecBot.arm.raiseArm();
-                }
-                if (gamepad2.dpad_right) {
+                } else if (gamepad2.dpad_right) {
                     MecBot.arm.lowerArm();
                 }
                 MecBot.arm.manualArmControl(-gamepad2.left_stick_y);
+
             }
 
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);

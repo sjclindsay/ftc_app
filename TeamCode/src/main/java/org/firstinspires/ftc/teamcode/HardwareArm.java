@@ -55,7 +55,8 @@ public class HardwareArm {
     }
 
     public void manualArmControl(float stickPos) {
-        targetPositionManual = targetPosition + 140 * (int)stickPos ;
+        targetPositionManual = targetPosition + (int)(140*stickPos) ;
+        motorArm.setPower(0.5);
         motorArm.setTargetPosition(targetPositionManual);
     }
 
@@ -75,6 +76,12 @@ public class HardwareArm {
                         return String.valueOf(motorArm.getCurrentPosition());
                     }
                 });
+        telemetry.addData("Target Power ", new Func<String>() {
+            @Override
+            public String value() {
+                return FormatHelper.formatDouble(targetPositionManual);
+            }
+        });
     }
 
 }

@@ -220,7 +220,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                 break;
             case WAIT_DRIVE_TO_WALL:
                 MecBot.driveBot((float) -0.4, 0,targetHeading, PIDAxis.gyro);
-                if ( (Math.abs(MecBot.getCurrentAccelerationX()) > 4) || (WaitTimer.time() >= 4000) ) {
+                if ( (Math.abs(MecBot.getCurrentAccelerationX()) > 4) || (WaitTimer.time() >= 2000) ) {
                     MecBot.setBotMovement(-0.4 ,-0.4, -0.4, -0.4);
                     StabilizationTimer.reset();
                     nextState = MotorState.WAIT ;
@@ -250,7 +250,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
                     WaitTimer.reset();
-                } else if (StabilizationTimer.time() > 4000) {
+                } else if (StabilizationTimer.time() > 2000) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);

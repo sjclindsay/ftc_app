@@ -740,6 +740,9 @@ public class HardwareRukusMecBot
         if(vuForLocalConnected || vuForWebConnected) {
             VuReader.addTelemetry(telemetry);
         }
+        if (armConnected) {
+            arm.addTelemetry(telemetry);
+        }
     }
 
     /***
