@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -19,6 +20,16 @@ public class HardwareArm {
 
     int targetPosition = 0 ;
     int targetPositionManual = 0 ;
+    float armPower = 0 ;
+
+    private PIDController armPID = null ;
+    private double kp = 0.0055 ;
+    private double ki = 0.00001 ;
+    private double kd = 0 ;
+
+
+    private int lastPosition = 1 ;
+    private float correction = 0 ;
 
     /* Constructor */
     public HardwareArm() {
@@ -33,7 +44,7 @@ public class HardwareArm {
 
         motorArm = hwMap.dcMotor.get("motorArm") ;
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorArm.setTargetPosition(0);
 
@@ -54,12 +65,32 @@ public class HardwareArm {
         targetPosition = 210 ;
     }
 
-    public void manualArmControl(float stickPos) {
-        targetPositionManual = targetPosition + (int)(140*stickPos) ;
-        motorArm.setPower(0.5);
-        motorArm.setTargetPosition(targetPositionManual);
+    public void manualArmControl(float stickPos, float power) {
+        targetPositionManual = targetPosition ;//+ (int)(140*stickPos) ;
+        //Encoder HAS to change
+        //different teeth ratio
+
+        armPower = getPower(targetPositionManual, power);
+        if (Math.abs(targetPositionManual - motorArm.getCurrentPosition()) > 5) {
+            motorArm.setPower(armPower);
+        }
+
     }
 
+    float getPower(int position, float power) {
+
+        if (position != lastPosition) {
+            RobotLog.i("initialized PID") ;
+            armPID = new PIDController(position, kp, ki, kd) ;
+        }
+
+        correction = (float) armPID.Update((double) motorArm.getCurrentPosition()) ;
+        power = power + correction ;
+
+        lastPosition = position ;
+
+        return power ;
+    }
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addLine()

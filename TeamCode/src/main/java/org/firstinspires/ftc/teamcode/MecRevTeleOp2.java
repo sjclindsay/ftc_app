@@ -153,7 +153,7 @@ public class MecRevTeleOp2 extends OpMode {
                 } else if (gamepad2.dpad_right) {
                     MecBot.arm.lowerArm();
                 }
-                MecBot.arm.manualArmControl(-gamepad2.left_stick_y);
+                MecBot.arm.manualArmControl(-gamepad2.left_stick_y, (float)0.3);
 
             }
 
