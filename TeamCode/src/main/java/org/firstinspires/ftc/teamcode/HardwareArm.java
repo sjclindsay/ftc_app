@@ -59,10 +59,10 @@ public class HardwareArm {
         targetPosition = 0 ;
     }
     public void raiseArm() {
-        targetPosition = 140 ;
+        targetPosition = 70 ;
     }
     public void lowerArm() {
-        targetPosition = 210 ;
+        targetPosition = 105 ;
     }
 
     public void manualArmControl(float stickPos, float power) {

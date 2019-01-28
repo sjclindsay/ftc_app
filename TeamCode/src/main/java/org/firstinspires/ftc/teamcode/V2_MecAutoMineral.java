@@ -280,7 +280,7 @@ public class V2_MecAutoMineral extends OpMode {
                 break;
             case SPIN_TO_CRATER:
                 MecBot.driveBot(0, 0, targetHeading, PIDAxis.gyro);
-                if (Math.abs(targetHeading - currentHeading) < 1) {
+                if ((Math.abs(targetHeading - currentHeading) < 1) || (WaitTimer.time() > 1500)) {
                     nextState = MotorState.RETURN_TO_CRATER ;
                     MecBot.setBotMovement(0, 0, 0, 0);
                 }
