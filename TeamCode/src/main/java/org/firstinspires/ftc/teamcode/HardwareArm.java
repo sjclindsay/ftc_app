@@ -44,7 +44,7 @@ public class HardwareArm {
 
         motorArm = hwMap.dcMotor.get("motorArm") ;
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         motorArm.setTargetPosition(0);
 
@@ -59,21 +59,25 @@ public class HardwareArm {
         targetPosition = 0 ;
     }
     public void raiseArm() {
-        targetPosition = 70 ;
+        targetPosition = -350 ;
     }
     public void lowerArm() {
-        targetPosition = 105 ;
+        targetPosition = -1050 ;
     }
 
     public void manualArmControl(float stickPos, float power) {
-        targetPositionManual = targetPosition ;//+ (int)(140*stickPos) ;
-        //Encoder HAS to change
-        //different teeth ratio
+        targetPositionManual = targetPosition + (int) (-200 * stickPos) ;
 
+        motorArm.setPower(0.3);
+        motorArm.setTargetPosition(targetPositionManual);
+
+        /*
+        //for use with out own PID controller
         armPower = getPower(targetPositionManual, power);
         if (Math.abs(targetPositionManual - motorArm.getCurrentPosition()) > 5) {
             motorArm.setPower(armPower);
         }
+        */
 
     }
 
