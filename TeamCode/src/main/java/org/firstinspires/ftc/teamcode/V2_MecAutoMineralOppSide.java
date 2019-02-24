@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  * Created by conno on 8/17/2017.
  */
 
-@Autonomous(name="Mec: V2_AutoMineralOpppSide", group="Mec")
+@Autonomous(name="Mec: V2_AutoMineralOppSide", group="Mec")
 public class V2_MecAutoMineralOppSide extends OpMode {
     public enum MotorState{
         WAIT_START,  //0
@@ -40,6 +40,7 @@ public class V2_MecAutoMineralOppSide extends OpMode {
         DRIVE_TO_SAFE_ZONE,
         HIT_WALL,
         DRIVE_TO_RELEASE_POINT,
+        SPIN_AROUND,
         DELIVER_PAYLOAD,
         SPIN_TO_CRATER,
         RETURN_TO_CRATER,
@@ -148,7 +149,7 @@ public class V2_MecAutoMineralOppSide extends OpMode {
                 break;
             case TURN_CLOCKWISE:
                 MecBot.resetFirstPIDDrive(0.0055,0.000003);
-                targetHeading = (float) (currentHeading + 40.0); //turn to get in line with wall-ish
+                targetHeading = (float) (currentHeading + 50.0); //turn to get in line with wall-ish
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);
                 target_mag = 0;
@@ -167,7 +168,7 @@ public class V2_MecAutoMineralOppSide extends OpMode {
             case DRIVE_TO_VUFORIA:
                 MecBot.driveBot((float) -0.15,0,targetHeading,PIDAxis.gyro);
                 if(MecBot.VuRukusSeen()){
-                    targetHeading = targetHeading - 185 ;//turn straight again
+                    targetHeading = targetHeading - 10 ;//turn straight again
                     target_x = 0.0 ;
                     MecBot.resetFirstPIDDrive(0.0055, 0.00001);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU ;
@@ -212,47 +213,45 @@ public class V2_MecAutoMineralOppSide extends OpMode {
                 break;
                 */
             case DRIVE_TO_WALL:
-                MecBot.driveBot((float) 0.4, 0,targetHeading, PIDAxis.gyro);
+                MecBot.driveBot((float) -0.4, 0,targetHeading, PIDAxis.gyro);
                 if (StabilizationTimer.time() > 1000) {
                     nextState = MotorState.WAIT_DRIVE_TO_WALL ;
                     WaitTimer.reset();
                 }
                 break;
             case WAIT_DRIVE_TO_WALL:
-                MecBot.driveBot((float) 0.4, 0,targetHeading, PIDAxis.gyro);
-                if (Math.abs(MecBot.getCurrentAccelerationX()) > 4) {
-                    MecBot.setBotMovement(0.4 ,0.4, 0.4, 0.4);
+                MecBot.driveBot((float) -0.4, 0,targetHeading, PIDAxis.gyro);
+                if ( (Math.abs(MecBot.getCurrentAccelerationX()) > 4) || (WaitTimer.time() >= 2000) ) {
+                    MecBot.setBotMovement(-0.4 ,-0.4, -0.4, -0.4);
                     StabilizationTimer.reset();
                     nextState = MotorState.WAIT ;
                     stateAfterNext = MotorState.DRIVE_TO_SAFE_ZONE;
                     targetHeading = (float) currentHeading ;
-                } else if (WaitTimer.time() > 4000){
-                    nextState = MotorState.STOPROBOT ;
                 }
                 break;
             case DRIVE_AWAY_FROM_WALL:
                 targetHeading = (float) currentHeading ;
-                MecBot.setBotMovement(-0.4,-0.4,-0.4,-0.4);
+                MecBot.setBotMovement(0.9,0.9,0.9,0.9);
                 WaitTimer.reset();
                 nextState = MotorState.WAIT ;
                 stateAfterNext = MotorState.DRIVE_TO_SAFE_ZONE ;
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 break;
             case DRIVE_TO_SAFE_ZONE:
-                MecBot.driveBot((float) 0.4, -90, targetHeading, PIDAxis.gyro);
+                MecBot.driveBot((float) 0.6, 90, targetHeading, PIDAxis.gyro);
                 if (StabilizationTimer.time() > 1000) {
                     nextState = MotorState.HIT_WALL ;
                     StabilizationTimer.reset();
                 }
                 break;
             case HIT_WALL:
-                MecBot.driveBot( (float) 0.6, -90, targetHeading, PIDAxis.gyro );
-                if (Math.abs(MecBot.getCurrentAccelerationY()) > 3.5) {
+                MecBot.driveBot( (float) 0.6, 90, targetHeading, PIDAxis.gyro );
+                if (Math.abs(MecBot.getCurrentAccelerationY()) > 5) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
                     WaitTimer.reset();
-                } else if (StabilizationTimer.time() > 3000) {
+                } else if (StabilizationTimer.time() > 5000) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
@@ -260,26 +259,36 @@ public class V2_MecAutoMineralOppSide extends OpMode {
                 }
                 break;
             case DRIVE_TO_RELEASE_POINT:
-                MecBot.driveBot( (float) 0.4, 90, targetHeading, PIDAxis.gyro);
+                MecBot.driveBot( (float) 0.4, -90, targetHeading, PIDAxis.gyro);
                 if (WaitTimer.time() > 2500) {
-                    nextState = MotorState.DELIVER_PAYLOAD ;
-                    MecBot.setBotMovement(0, 0, 0, 0);
+                    nextState = MotorState.SPIN_AROUND;
+                    targetHeading = targetHeading - 180 ;
+                    MecBot.resetFirstPIDDrive(0.0055,0.000001);
                     WaitTimer.reset();
                 }
                 break;
+            case SPIN_AROUND:
+                MecBot.driveBot((float)0.4, 0, targetHeading, PIDAxis.gyro);
+                if ((Math.abs(targetHeading - MecBot.gyroScope.currentHeadingX) < 2) || (WaitTimer.time() > 5000)) {
+                    nextState = MotorState.DELIVER_PAYLOAD;
+                    MecBot.setBotMovement(0, 0, 0, 0);
+                    WaitTimer.reset();
+                }
+                    break;
             case DELIVER_PAYLOAD:
                 MecBot.dropmarker();
                 if (WaitTimer.time() > 500) {
                     MecBot.liftmarker();
                     nextState = MotorState.SPIN_TO_CRATER ;
                     targetHeadingY = MecBot.gyroScope.currentHeadingY ;
-                    targetHeading = targetHeading + 89 ;
+                    WaitTimer.reset();
+                    targetHeading = targetHeading - 89 ;
                     MecBot.resetFirstPIDDrive(kp, 0.000002);
                 }
                 break;
             case SPIN_TO_CRATER:
                 MecBot.driveBot(0, 0, targetHeading, PIDAxis.gyro);
-                if (Math.abs(targetHeading - currentHeading) < 1) {
+                if ((Math.abs(targetHeading - currentHeading) < 1) || (WaitTimer.time() > 1500)) {
                     nextState = MotorState.RETURN_TO_CRATER ;
                     MecBot.setBotMovement(0, 0, 0, 0);
                 }

@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+
 /**
  * Created by conno on 8/17/2017.
  */
@@ -24,6 +26,7 @@ public class MecRevTeleOp2 extends OpMode {
     boolean controller1 = true;
     boolean controller2 = false ;
     float dPadScalar = 1 ;
+    int dPadScalarPower = 0 ;
     HardwareRukusMecBot MecBot ;
     boolean waitForUpRelease = false ;
     boolean waitForDownRelease = false ;
@@ -40,7 +43,9 @@ public class MecRevTeleOp2 extends OpMode {
     boolean headingToggle = false ;
     boolean directionToggle  = false ;
     boolean yToggle = false ;
-    boolean yDebounce = false ;
+    boolean yDebounce = false;
+
+    int armCase = 0 ;
 
     @Override
     public void init() {
@@ -49,7 +54,7 @@ public class MecRevTeleOp2 extends OpMode {
         MecBot.init(hardwareMap, Color.Red);
         waitForUpRelease = false ;
         waitForUpRelease = false ;
-        dPadScalar = 1 ;
+        dPadScalarPower = 0 ;
         motorLeft1power = 0;
         motorLeft2power = 0;
         motorRight1power = 0;
@@ -68,7 +73,9 @@ public class MecRevTeleOp2 extends OpMode {
     public void loop() {
         leftStickY = -gamepad1.left_stick_y ;
 
-        dPadScalar = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalar) ;
+        dPadScalarPower = dPadScale(gamepad1.dpad_up,gamepad1.dpad_down,dPadScalarPower) ;
+        dPadScalar = (float) Math.pow(2, dPadScalarPower) ;
+
 
         //currentPolarCoordinates = getCurrentPolarCoordinate(-gamepad2.left_stick_y, gamepad2.left_stick_x) ;
         //currentPolarCoordinates[0] = currentPolarCoordinates[0]/dPadScalar ;
@@ -132,7 +139,7 @@ public class MecRevTeleOp2 extends OpMode {
                     }
                 }
             }
-            if(MecBot.TeamMarkerConnected && gamepad2.a) {
+            if(MecBot.TeamMarkerConnected && gamepad2.y) {
                 MecBot.setMarkerServoPosition(MecBot.getMarkerServoPosition()+0.2);
 
             }
@@ -144,17 +151,37 @@ public class MecRevTeleOp2 extends OpMode {
                 MecBot.grabber.setServoGrabber2Position(gamepad2.left_trigger);  //Grabber open and Shut
 
             }
-            if (MecBot.armConnected) {
-                RobotLog.i("Arm is connected") ;
-                if (gamepad2.dpad_left) {
-                    MecBot.arm.stowArm();
-                } else if (gamepad2.dpad_up) {
-                    MecBot.arm.raiseArm();
-                } else if (gamepad2.dpad_right) {
-                    MecBot.arm.lowerArm();
-                }
-                MecBot.arm.manualArmControl(-gamepad2.left_stick_y, (float)0.3);
 
+
+            if (MecBot.armConnected) {
+                if (gamepad2.a) {
+                    armCase = 1 ;
+                } else if (gamepad2.b) {
+                    armCase = 2 ;
+                } else {
+                 armCase = 0 ;
+                }
+                switch(armCase) {
+                    case 0:
+                        RobotLog.i("Arm is connected") ;
+                        if (gamepad2.dpad_left) {
+                            MecBot.arm.stowArm();
+                        } else if (gamepad2.dpad_up) {
+                            MecBot.arm.raiseArm();
+                        } else if (gamepad2.dpad_right) {
+                            MecBot.arm.lowerArm();
+                        }
+                        MecBot.arm.manualArmControl(-gamepad2.left_stick_y, (float)0.3);
+                    break;
+                    case 1:
+                        //MecBot.arm.calibrateArmUp();
+                    break;
+                    case 2:
+                        //MecBot.arm.calibrateArmDown();
+                    break;
+                }
+
+                MecBot.arm.setServoExtender(gamepad1.right_trigger, gamepad1.left_trigger);
             }
 
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);
@@ -172,25 +199,31 @@ public class MecRevTeleOp2 extends OpMode {
 
     }
     void composeTelemetry() {
+        telemetry.addLine()
+                .addData("Motor Speed " , new Func<String>() {
+                    @Override
+                    public String value() {
+                        return String.valueOf(100/dPadScalar);
+                    }
+                });
         MecBot.addTelemetry(telemetry);
     }
 
 
-    public float dPadScale (boolean dPadUpValue, boolean dPadDownValue, float dPadScalar) {
+    public int dPadScale (boolean dPadUpValue, boolean dPadDownValue, int dPadScale) {
         if (dPadUpValue && !waitForUpRelease) {
-            waitForDownRelease = true ;
-            dPadScalar -= 2 ;
+            waitForUpRelease = true ;
+            dPadScale -- ;
         } else if (!dPadUpValue && waitForUpRelease) {
             waitForUpRelease = false ;
-        }
-        if (dPadDownValue && !waitForDownRelease) {
+        } else if (dPadDownValue && !waitForDownRelease) {
             waitForDownRelease = true ;
-            dPadScalar += 2 ;
+            dPadScale ++ ;
         } else if (!dPadDownValue && waitForDownRelease) {
             waitForDownRelease = false ;
         }
-        dPadScalar = Range.clip(dPadScalar,1, 21) ;
-        return dPadScalar ;
+        dPadScale = Range.clip(dPadScale,0, 3) ;
+        return dPadScale ;
     }
 
     public double normalizeAngle(double angle) {
