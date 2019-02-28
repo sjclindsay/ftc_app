@@ -154,6 +154,9 @@ public class MecRevTeleOp2 extends OpMode {
 
 
             if (MecBot.armConnected) {
+                MecBot.arm.bumperServoExtender(gamepad1.right_bumper, gamepad1.left_bumper);
+                MecBot.arm.triggerArmControl(gamepad1.right_trigger, gamepad1.left_trigger);
+                /*
                 if (gamepad2.a) {
                     armCase = 1 ;
                 } else if (gamepad2.b) {
@@ -182,6 +185,7 @@ public class MecRevTeleOp2 extends OpMode {
                 }
 
                 MecBot.arm.setServoExtender(gamepad1.right_trigger, gamepad1.left_trigger);
+                */
             }
 
             MecBot.setBotMovement(motorLeft1power, motorLeft2power, motorRight1power, motorRight2power);

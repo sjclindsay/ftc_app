@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Debug;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -237,7 +239,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
                 break;
             case DRIVE_TO_SAFE_ZONE:
-                MecBot.driveBot((float) 0.4, -90, targetHeading, PIDAxis.gyro);
+                MecBot.driveBot((float) 0.6, -90, targetHeading, PIDAxis.gyro);
                 if (StabilizationTimer.time() > 1000) {
                     nextState = MotorState.HIT_WALL ;
                     StabilizationTimer.reset();
@@ -245,12 +247,14 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
                 break;
             case HIT_WALL:
                 MecBot.driveBot( (float) 0.6, -90, targetHeading, PIDAxis.gyro );
-                if (Math.abs(MecBot.getCurrentAccelerationY()) > 3.5) {
+                if (Math.abs(MecBot.getCurrentAccelerationY()) > 5) {
                     MecBot.setBotMovement(0, 0, 0, 0);
+                    RobotLog.i("triggered by acceleration " + MecBot.getCurrentAccelerationY()) ;
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);
                     WaitTimer.reset();
-                } else if (StabilizationTimer.time() > 2000) {
+                } else if (StabilizationTimer.time() > 10000) {
+                    RobotLog.i("triggered by time " + StabilizationTimer.time()) ;
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.DRIVE_TO_RELEASE_POINT ;
                     MecBot.resetFirstPIDDrive(0.0055,0.000001);

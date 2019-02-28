@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -12,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  */
 
 @Autonomous(name="Mec: AutoMineralCrater", group="Mec")
+@Disabled
 public class MecAutoMineralCrater extends OpMode {
     public enum MotorState{
         WAIT_START,  //0

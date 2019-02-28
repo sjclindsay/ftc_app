@@ -268,8 +268,8 @@ public class V2_MecAutoMineralOppSide extends OpMode {
                 }
                 break;
             case SPIN_AROUND:
-                MecBot.driveBot((float)0.4, 0, targetHeading, PIDAxis.gyro);
-                if ((Math.abs(targetHeading - MecBot.gyroScope.currentHeadingX) < 2) || (WaitTimer.time() > 5000)) {
+                MecBot.driveBot(0, 0, targetHeading, PIDAxis.gyro);
+                if ((Math.abs(targetHeading - currentHeading) < 2) || (WaitTimer.time() > 5000)) {
                     nextState = MotorState.DELIVER_PAYLOAD;
                     MecBot.setBotMovement(0, 0, 0, 0);
                     WaitTimer.reset();
@@ -282,7 +282,7 @@ public class V2_MecAutoMineralOppSide extends OpMode {
                     nextState = MotorState.SPIN_TO_CRATER ;
                     targetHeadingY = MecBot.gyroScope.currentHeadingY ;
                     WaitTimer.reset();
-                    targetHeading = targetHeading - 89 ;
+                    targetHeading = targetHeading + 89 ;
                     MecBot.resetFirstPIDDrive(kp, 0.000002);
                 }
                 break;

@@ -16,6 +16,7 @@ import java.math.MathContext;
  */
 
 @Autonomous(name="Mec: AutoMineral", group="Mec")
+@Disabled
 public class MecAutoMineral extends OpMode {
     public enum MotorState{
         WAIT_START,  //0

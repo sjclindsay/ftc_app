@@ -155,7 +155,21 @@ public class HardwareArm {
 
         return power ;
     }
-
+    void triggerArmControl(float extendo, float retracto) {
+        targetPosition = (int) (-20*extendo + 20*retracto) ;
+        motorArm.setPower(2.0);
+        motorArm.setTargetPosition(targetPosition);
+    }
+    void bumperServoExtender(boolean out, boolean in) {
+        float servoPower = (float)0.5 ;
+        if (out) {
+            servoPower = 1 ;
+        }
+        if (in) {
+            servoPower = 0 ;
+        }
+        servoExtender.setPosition(servoPower);
+    }
     void setServoExtender(float extendo, float retracto) {
         float servoPower = (float)0.52 ;
         servoPower = servoPower + extendo - retracto ;
