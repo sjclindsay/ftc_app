@@ -181,7 +181,7 @@ public class V2_MecAutoMineralCraterSide extends OpMode {
             case STOP_TO_VUFORIA:
                 MecBot.setBotMovement(0,0,0,0);
                 if(MecBot.VuRukusSeen()){
-                    targetHeading = targetHeading+5 ;
+                    targetHeading = targetHeading-10 ;
                     target_x = 0.0 ;
                     MecBot.resetFirstPIDDrive(0.0055,0.00001);
                     nextState = MotorState.TURN_COUNTERCLOCKWISE_VU;

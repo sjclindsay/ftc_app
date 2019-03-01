@@ -156,17 +156,18 @@ public class HardwareArm {
         return power ;
     }
     void triggerArmControl(float extendo, float retracto) {
-        targetPosition = (int) (-20*extendo + 20*retracto) ;
-        motorArm.setPower(2.0);
-        motorArm.setTargetPosition(targetPosition);
+        targetPositionManual += (int) -(40*extendo - 40*retracto) ;
+        targetPositionManual = Range.clip(targetPositionManual, -1600, 0) ;
+        motorArm.setPower(4.0);
+        motorArm.setTargetPosition(targetPositionManual);
     }
     void bumperServoExtender(boolean out, boolean in) {
         float servoPower = (float)0.5 ;
         if (out) {
-            servoPower = 1 ;
+            servoPower = 0 ;
         }
         if (in) {
-            servoPower = 0 ;
+            servoPower = 1 ;
         }
         servoExtender.setPosition(servoPower);
     }
@@ -192,7 +193,7 @@ public class HardwareArm {
                         return String.valueOf(motorArm.getCurrentPosition());
                     }
                 });
-        telemetry.addData("Target Power ", new Func<String>() {
+        telemetry.addData("Target Position ", new Func<String>() {
             @Override
             public String value() {
                 return FormatHelper.formatDouble(targetPositionManual);
