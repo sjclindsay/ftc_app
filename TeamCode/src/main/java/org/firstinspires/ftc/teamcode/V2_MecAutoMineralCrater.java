@@ -289,7 +289,7 @@ public class V2_MecAutoMineralCrater extends OpMode {
                 break;
             case RETURN_TO_CRATER:
                 //dont fail
-                MecBot.driveBot( (float) -0.7, 0, targetHeading, PIDAxis.gyro);
+                MecBot.driveBot( (float) -0.5, 0, targetHeading, PIDAxis.gyro);
                 if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) > 4) {
                     nextState = MotorState.CLIMB_HILL;
                     WaitTimer.reset();
