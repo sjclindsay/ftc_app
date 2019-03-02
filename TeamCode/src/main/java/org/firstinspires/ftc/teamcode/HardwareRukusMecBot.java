@@ -375,7 +375,7 @@ public class HardwareRukusMecBot
     }
     public void raiseRobot() {
         if (lifterConnected) {
-            lifter.setLifter((float)0.5);
+            lifter.setLifter((float)0.8);
         }
     }
     public boolean robotUp() {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
  */
 
 @Autonomous(name="Mec: AutoMineralLand", group="Mec")
+@Disabled
 public class MecAutoMineralLand extends OpMode {
     public enum MotorState{
         WAIT_START,  //0
@@ -123,7 +125,7 @@ public class MecAutoMineralLand extends OpMode {
             case CHECK_HOOK_RELEASE:
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
-                MecBot.driveBot((float)0.2,-90,(float) currentHeading,PIDAxis.gyro);
+                MecBot.driveBot((float)0.2,90,(float) currentHeading,PIDAxis.gyro);
                 delay_time = 3;
                 nextState = MotorState.DELAY;
                 stateAfterNext = MotorState.TURN_CLOCKWISE;
@@ -147,7 +149,7 @@ public class MecAutoMineralLand extends OpMode {
                 nextState = MotorState.HitWait;
                 break;
             case TURN_CLOCKWISE:
-                targetHeading = (float) (currentHeading - 50.0);
+                targetHeading = (float) (currentHeading + 50.0);
                 RobotLog.i("Start Turn " + currentHeading);
                 MecBot.resetFirstPIDDrive(0.0055,0.000003);
                 MecBot.driveBot(0,0,targetHeading,PIDAxis.gyro);

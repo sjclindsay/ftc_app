@@ -124,7 +124,7 @@ public class V2_MecAutoMineralCrater extends OpMode {
                 RobotLog.i("Start Turn " + currentHeading);
                 targetHeading = (float) currentHeading ;
                 MecBot.resetFirstPIDDrive(0.0055,0.000001);
-                MecBot.driveBot((float)0.2,-90,targetHeading,PIDAxis.gyro);
+                MecBot.driveBot((float)0.3,90,targetHeading,PIDAxis.gyro);
                 delay_time = 4;
                 nextState = MotorState.DELAY;
                 targetHeadingY = MecBot.gyroScope.currentHeadingY ;
@@ -314,11 +314,13 @@ public class V2_MecAutoMineralCrater extends OpMode {
                 break;
             case CLIMB_HILL:
                 MecBot. driveBot((float) -0.4, 0, targetHeading, PIDAxis.gyro);
-                if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) < -2) {
+                if (Math.abs(targetHeadingY - MecBot.gyroScope.currentHeadingY) < 2) {
                     MecBot.setBotMovement(0, 0, 0, 0);
                     nextState = MotorState.STOPROBOT ;
                     RobotLog.i("Finished program!!!!!") ;
-                } else if (WaitTimer.time() > 5000)
+                } else if (WaitTimer.time() > 2000) {
+                    nextState = MotorState.STOPROBOT ;
+                }
                 break;
             case STOPROBOT:
                 MecBot.setBotMovement(0, 0, 0, 0);
